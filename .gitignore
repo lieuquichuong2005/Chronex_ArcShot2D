@@ -14,6 +14,62 @@
 /[Ll]ogs/
 /[Uu]ser[Ss]ettings/
 *.log
+# ========================================
+# Unity Generated Folders
+# ========================================
+
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+UserSettings/
+
+# ========================================
+# Unity Package Manager
+# ========================================
+
+# Không commit packages-lock nếu muốn mọi máy tự resolve dependency
+Packages/packages-lock.json
+
+# ========================================
+# Visual Studio / Rider / VS Code
+# ========================================
+
+.vs/
+.idea/
+*.csproj
+*.sln
+*.sln.DotSettings.user
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+
+# ========================================
+# Unity Generated Files
+# ========================================
+
+*.tmp
+*.temp
+*.utmp
+*.apk
+*.aab
+
+# ========================================
+# Odin Inspector
+# ========================================
+
+Assets/Packages/com.teamsirenix.odin*/
+*_ButDontShipItWithYourGame/
+*_DoNotShip/
+
+# ========================================
+# Build Reports
+# ========================================
+
 
 # By default unity supports Blender asset imports, *.blend1 blender files do not need to be commited to version control.
 *.blend1
@@ -104,3 +160,16 @@ InitTestScene*.unity*
 
 # Auto-generated cache in Assets folder
 /[Aa]ssets/[Ss]ceneDependencyCache*
+BuildReports*/
+
+# ========================================
+# macOS
+# ========================================
+
+.DS_Store
+
+# ========================================
+# Crash Reports
+# ========================================
+
+sysinfo.txt
