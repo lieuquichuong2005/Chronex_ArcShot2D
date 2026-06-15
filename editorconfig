@@ -1,0 +1,227 @@
+# References:
+# https://github.com/editorconfig/editorconfig/wiki/EditorConfig-Properties
+# https://kent-boogaart.com/blog/editorconfig-reference-for-c-developers
+# https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/csharp-formatting-options
+
+root = true
+
+# ─── Universal ────────────────────────────────────────────────────────────────
+
+[*]
+charset                  = utf-8
+end_of_line              = lf
+indent_style             = space
+indent_size              = 4
+max_line_length          = 120
+insert_final_newline     = false
+trim_trailing_whitespace = true
+
+# ─── File-type overrides ──────────────────────────────────────────────────────
+
+[*.{yaml,yml}]
+indent_size = 2
+
+[*.{js,ts}]
+indent_size = 2
+
+[*.json]
+indent_size = 2
+
+# ─── C# — Roslyn style rules ──────────────────────────────────────────────────
+
+[*.cs]
+
+# var usage  (resharper_for_*_types = use_var mirrors these; kept here as the canonical source)
+csharp_style_var_for_built_in_types  = true:error
+csharp_style_var_when_type_is_apparent = true:error
+csharp_style_var_elsewhere           = true:error
+
+# Expression-body / pattern matching
+csharp_prefer_simple_default_expression               = true:error
+csharp_style_inlined_variable_declaration             = true:error
+csharp_style_throw_expression                         = true:error
+csharp_style_conditional_delegate_call                = true:error
+csharp_style_pattern_matching_over_is_with_cast_check = true:error
+csharp_style_pattern_matching_over_as_with_null_check = true:error
+
+# Braces & spacing
+csharp_prefer_braces          = true:error
+csharp_new_line_before_open_brace = none
+csharp_new_line_before_else   = false
+csharp_new_line_before_catch  = false
+csharp_new_line_before_finally = false
+csharp_space_after_cast       = true
+
+# ─── C# — .NET style rules ────────────────────────────────────────────────────
+
+# Null-safety
+dotnet_style_null_propagation  = true:error
+dotnet_style_coalesce_expression = true:error
+
+# Initializers
+dotnet_style_object_initializer     = true:error
+dotnet_style_collection_initializer = true:error
+
+# Naming & type references
+dotnet_style_explicit_tuple_names                         = true:error
+dotnet_style_predefined_type_for_locals_parameters_members = true:error
+dotnet_style_predefined_type_for_member_access            = true:error
+
+# Accessibility & qualification
+dotnet_style_require_accessibility_modifiers = for_non_interface_members:error
+dotnet_style_qualification_for_field    = false:error
+dotnet_style_qualification_for_property = false:error
+dotnet_style_qualification_for_method   = false:error
+dotnet_style_qualification_for_event    = false:error
+
+# ─── ReSharper / Rider — Blank lines ──────────────────────────────────────────
+# https://www.jetbrains.com/help/resharper/EditorConfig_CSHARP_BlankLinesPageScheme.html
+
+resharper_keep_blank_lines_in_declarations    = 1  # default: 2
+resharper_keep_blank_lines_in_code            = 1  # default: 2
+resharper_blank_lines_between_using_groups    = 1  # default: 0
+resharper_blank_lines_around_single_line_type = 0  # default: 1
+resharper_blank_lines_around_local_method     = 0
+resharper_blank_lines_after_block_statements  = 0  # default: 1
+
+# ─── ReSharper / Rider — Indentation ──────────────────────────────────────────
+# https://www.jetbrains.com/help/resharper/EditorConfig_CSHARP_CSharpIndentStylePageSchema.html
+
+resharper_continuous_indent_multiplier      = 1
+resharper_use_continuous_indent_inside_parens = true
+
+# Nested statement indentation
+resharper_indent_nested_usings_stmt  = true
+resharper_indent_nested_fixed_stmt   = true
+resharper_indent_nested_lock_stmt    = true
+resharper_indent_nested_for_stmt     = true
+resharper_indent_nested_foreach_stmt = true
+resharper_indent_nested_while_stmt   = true
+
+# Parenthesis & angle bracket indentation
+resharper_indent_method_decl_pars  = inside
+resharper_indent_invocation_pars   = inside
+resharper_indent_statement_pars    = inside
+resharper_indent_typeparam_angles  = inside
+resharper_indent_typearg_angles    = inside
+resharper_indent_pars              = inside
+
+# Preprocessor / switch / misc
+resharper_indent_preprocessor_if     = no_indent
+resharper_indent_preprocessor_region = usual_indent
+resharper_indent_preprocessor_other  = no_indent
+resharper_indent_switch_labels       = true
+resharper_outdent_statement_labels   = false
+resharper_indent_type_constraints    = true
+resharper_indent_braces_inside_statement_conditions = true
+
+# ─── ReSharper / Rider — Syntax style ────────────────────────────────────────
+# https://www.jetbrains.com/help/resharper/EditorConfig_CSHARP_CSharpCodeStylePageImplSchema.html
+
+# var  (mirrors csharp_style_var_* above; Rider uses these to drive the editor)
+resharper_for_built_in_types = use_var
+resharper_for_simple_types   = use_var
+resharper_for_other_types    = use_var
+
+# Type keyword style  (mirrors dotnet_style_predefined_type_for_*)
+resharper_builtin_type_reference_style            = use_keyword
+resharper_builtin_type_reference_for_member_access_style = use_keyword
+
+# Qualification  (mirrors dotnet_style_qualification_for_*)
+resharper_instance_members_qualify_members = none
+
+# Modifiers
+resharper_default_private_modifier   = explicit
+resharper_default_internal_modifier  = explicit
+
+# Braces
+resharper_brace_style            = end_of_line
+resharper_csharp_empty_block_style = together_same_line
+resharper_braces_for_ifelse      = required
+resharper_braces_for_for         = required
+resharper_braces_for_foreach     = required
+resharper_braces_for_while       = required
+
+# Namespace & block
+resharper_indent_inside_namespace  = true
+resharper_allow_comment_after_lbrace = true
+
+# Trailing commas
+resharper_trailing_comma_in_multiline_lists  = true
+resharper_trailing_comma_in_singleline_lists = false
+
+# ─── ReSharper / Rider — Spacing ─────────────────────────────────────────────
+# https://www.jetbrains.com/help/resharper/EditorConfig_CSHARP_SpacesPageSchema.html
+
+resharper_space_after_cast                          = true
+resharper_space_within_single_line_array_initializer_braces = true
+resharper_extra_spaces                              = remove_all
+
+# ─── ReSharper / Rider — Attributes ──────────────────────────────────────────
+# https://www.jetbrains.com/help/resharper/EditorConfig_CSHARP_LineBreaksPageSchema.html
+
+resharper_keep_existing_attribute_arrangement = true
+resharper_place_attribute_on_same_line        = false
+
+# ─── ReSharper / Rider — Inspection severities ───────────────────────────────
+# https://www.jetbrains.com/help/resharper/Reference__Code_Inspections_CSHARP.html
+
+# Style enforcement — errors
+resharper_arrange_this_qualifier_highlighting                    = error
+resharper_arrange_type_member_modifiers_highlighting             = error
+resharper_arrange_type_modifiers_highlighting                    = error
+resharper_built_in_type_reference_style_highlighting             = error
+resharper_built_in_type_reference_style_for_member_access_highlighting = error
+resharper_redundant_base_qualifier_highlighting                  = error
+resharper_suggest_var_or_type_built_in_types_highlighting        = error
+resharper_suggest_var_or_type_simple_types_highlighting          = error
+resharper_suggest_var_or_type_elsewhere_highlighting             = error
+
+# Brace enforcement — errors
+resharper_enforce_if_statement_braces_highlighting      = error
+resharper_enforce_for_statement_braces_highlighting     = error
+resharper_enforce_foreach_statement_braces_highlighting = error
+resharper_enforce_while_statement_braces_highlighting   = error
+resharper_enforce_do_while_statement_braces_highlighting = error
+resharper_enforce_fixed_statement_braces_highlighting   = error
+resharper_enforce_lock_statement_braces_highlighting    = error
+resharper_enforce_using_statement_braces_highlighting   = error
+
+# Indentation — warnings
+resharper_bad_child_statement_indent_highlighting   = warning
+resharper_bad_declaration_braces_indent_highlighting = warning
+resharper_bad_expression_braces_indent_highlighting  = warning
+resharper_bad_namespace_braces_indent_highlighting   = warning
+resharper_bad_preprocessor_indent_highlighting       = warning
+resharper_bad_switch_braces_indent_highlighting      = warning
+resharper_wrong_indent_size_highlighting             = warning
+resharper_outdent_is_off_prev_level_highlighting     = warning
+resharper_bad_indent_highlighting                    = warning
+resharper_missing_indent_highlighting                = warning
+resharper_tabs_and_spaces_mismatch_highlighting      = warning
+resharper_tabs_outside_indent_highlighting           = warning
+
+# Spacing — warnings
+resharper_bad_attribute_brackets_spaces_highlighting = warning
+resharper_bad_braces_spaces_highlighting             = warning
+resharper_bad_colon_spaces_highlighting              = warning
+resharper_bad_comma_spaces_highlighting              = warning
+resharper_bad_generic_brackets_spaces_highlighting   = warning
+resharper_bad_member_access_spaces_highlighting      = warning
+resharper_bad_parens_spaces_highlighting             = warning
+resharper_bad_semicolon_spaces_highlighting          = warning
+resharper_bad_square_brackets_spaces_highlighting    = warning
+resharper_bad_spaces_after_keyword_highlighting      = warning
+resharper_bad_symbol_spaces_highlighting             = warning
+resharper_multiple_spaces_highlighting               = warning
+resharper_missing_space_highlighting                 = warning
+resharper_redundant_space_highlighting               = warning
+
+# Dead code — warnings
+resharper_unused_type_global_highlighting   = warning
+resharper_unused_member_global_highlighting = warning
+resharper_field_can_be_made_read_only_global_highlighting = warning
+resharper_field_can_be_made_read_only_local_highlighting  = warning
+
+# Suppressed
+resharper_check_namespace_highlighting = none
