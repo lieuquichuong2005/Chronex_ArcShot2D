@@ -1,25 +1,31 @@
-using ArtShot2D;
 using UnityEngine;
 
 namespace ArcShot2D
 {
     public class GunController : MonoBehaviour
     {
-        [Header("Reference")] [SerializeField] private PlayerController player;
+        [Header("Reference")]
+        [SerializeField] private PlayerController player;
         [SerializeField] private Transform firePoint;
         [SerializeField] private GameObject bulletPrefab;
 
-        [Header("Aim")] [SerializeField] private float rotateSpeed = 80f;
+        [Header("Aim")]
+        [SerializeField] private float rotateSpeed = 80f;
         [SerializeField] private float minAngle = -10f;
         [SerializeField] private float maxAngle = 80f;
 
-        [Header("Shoot")] [SerializeField] private float minForce = 5f;
+        [Header("Shoot")]
+        [SerializeField] private float minForce = 5f;
         [SerializeField] private float maxForce = 25f;
         [SerializeField] private float chargeTime = 2f;
 
         private float currentAngle = 45f;
 
-        private float aimInput;
+        private float keyboardAimInput;
+        private float mobileAimInput;
+
+        private bool keyboardShootHolding;
+        private bool mobileShootHolding;
 
         private bool isCharging;
         private float currentCharge;
@@ -35,36 +41,47 @@ namespace ArcShot2D
 
         private void HandleKeyboardInput()
         {
-            aimInput = 0;
+            keyboardAimInput = 0;
 
             if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
-                aimInput = 1;
+                keyboardAimInput = 1;
 
             if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow))
-                aimInput = -1;
+                keyboardAimInput = -1;
 
             if (Input.GetKeyDown(KeyCode.Space))
+            {
+                keyboardShootHolding = true;
                 StartCharge();
+            }
 
             if (Input.GetKeyUp(KeyCode.Space))
+            {
+                keyboardShootHolding = false;
                 Shoot();
+            }
         }
 
         private void RotateGun()
         {
-            currentAngle += aimInput * rotateSpeed * Time.deltaTime;
+            float finalAimInput =
+                mobileAimInput != 0
+                    ? mobileAimInput
+                    : keyboardAimInput;
+
+            currentAngle += finalAimInput * rotateSpeed * Time.deltaTime;
 
             currentAngle = Mathf.Clamp(currentAngle, minAngle, maxAngle);
 
             if (player.IsFacingRight())
             {
                 transform.localRotation =
-                    Quaternion.Euler(0, 0, currentAngle);
+                    Quaternion.Euler(0f, 0f, currentAngle);
             }
             else
             {
                 transform.localRotation =
-                    Quaternion.Euler(0, 180, currentAngle);
+                    Quaternion.Euler(0f, 180f, currentAngle);
             }
         }
 
@@ -75,13 +92,16 @@ namespace ArcShot2D
 
             currentCharge += Time.deltaTime;
 
-            currentCharge = Mathf.Clamp(currentCharge, 0, chargeTime);
+            currentCharge = Mathf.Clamp(currentCharge, 0f, chargeTime);
         }
 
         private void StartCharge()
         {
+            if (isCharging)
+                return;
+
             isCharging = true;
-            currentCharge = 0;
+            currentCharge = 0f;
         }
 
         private void Shoot()
@@ -98,36 +118,57 @@ namespace ArcShot2D
                 maxForce,
                 forcePercent);
 
-            GameObject bullet =
-                Instantiate(bulletPrefab,
-                    firePoint.position,
-                    Quaternion.identity);
+            GameObject bullet = Instantiate(
+                bulletPrefab,
+                firePoint.position,
+                Quaternion.identity);
 
             Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();
 
-            rb.linearVelocity =
-                firePoint.right * shootForce;
+            rb.linearVelocity = firePoint.right * shootForce;
         }
 
         #region Mobile Input
 
-        public void AimUp(bool pressed)
+        public void AimUpDown()
         {
-            aimInput = pressed ? 1 : 0;
+            mobileAimInput = 1f;
         }
 
-        public void AimDown(bool pressed)
+        public void AimUpUp()
         {
-            aimInput = pressed ? -1 : 0;
+            if (mobileAimInput > 0)
+                mobileAimInput = 0f;
+        }
+
+        public void AimDownDown()
+        {
+            mobileAimInput = -1f;
+        }
+
+        public void AimDownUp()
+        {
+            if (mobileAimInput < 0)
+                mobileAimInput = 0f;
         }
 
         public void ShootPressed()
         {
+            if (mobileShootHolding)
+                return;
+
+            mobileShootHolding = true;
+
             StartCharge();
         }
 
         public void ShootReleased()
         {
+            if (!mobileShootHolding)
+                return;
+
+            mobileShootHolding = false;
+
             Shoot();
         }
 

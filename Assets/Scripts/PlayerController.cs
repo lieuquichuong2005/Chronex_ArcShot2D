@@ -1,15 +1,24 @@
 using UnityEngine;
 
-namespace ArtShot2D
+namespace ArcShot2D
 {
     public class PlayerController : MonoBehaviour
     {
         [Header("Movement")] [SerializeField] private float moveSpeed = 5f;
 
-        [Header("Reference")] [SerializeField] private Rigidbody2D rb;
+        [Header("References")] [SerializeField]
+        private Rigidbody2D rb;
+
         [SerializeField] private Transform visual;
 
-        private float moveInput;
+        private float keyboardInput;
+        private float mobileInput;
+
+        private void Reset()
+        {
+            rb = GetComponent<Rigidbody2D>();
+            visual = transform;
+        }
 
         private void Update()
         {
@@ -18,23 +27,27 @@ namespace ArtShot2D
 
         private void FixedUpdate()
         {
-            Move();
+            float finalInput = mobileInput != 0 ? mobileInput : keyboardInput;
+
+            Move(finalInput);
         }
 
         private void HandleKeyboardInput()
         {
-            moveInput = Input.GetAxisRaw("Horizontal");
+            keyboardInput = Input.GetAxisRaw("Horizontal");
         }
 
-        private void Move()
+        private void Move(float input)
         {
-            rb.linearVelocity = new Vector2(moveInput * moveSpeed, rb.linearVelocity.y);
+            rb.linearVelocity = new Vector2(
+                input * moveSpeed,
+                rb.linearVelocity.y);
 
-            if (moveInput > 0.01f)
+            if (input > 0.01f)
             {
                 visual.localScale = new Vector3(1, 1, 1);
             }
-            else if (moveInput < -0.01f)
+            else if (input < -0.01f)
             {
                 visual.localScale = new Vector3(-1, 1, 1);
             }
@@ -42,14 +55,26 @@ namespace ArtShot2D
 
         #region Mobile Input
 
-        public void MoveLeft(bool isPressed)
+        public void MoveLeftDown()
         {
-            moveInput = isPressed ? -1f : 0f;
+            mobileInput = -1f;
         }
 
-        public void MoveRight(bool isPressed)
+        public void MoveLeftUp()
         {
-            moveInput = isPressed ? 1f : 0f;
+            if (mobileInput < 0)
+                mobileInput = 0f;
+        }
+
+        public void MoveRightDown()
+        {
+            mobileInput = 1f;
+        }
+
+        public void MoveRightUp()
+        {
+            if (mobileInput > 0)
+                mobileInput = 0f;
         }
 
         #endregion
