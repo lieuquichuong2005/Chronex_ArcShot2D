@@ -1880,6 +1880,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2454470643980487090}
+  - component: {fileID: 7932610585787104710}
   m_Layer: 0
   m_Name: LevelScene
   m_TagString: Untagged
@@ -1907,6 +1908,21 @@ Transform:
   - {fileID: 309021582969191792}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7932610585787104710
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3090683184157618057}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d11d2d795ed07f54a9ba31d2b7c40c0d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _firePower: {fileID: 3438059790319304456}
+  _stamina: {fileID: 899440765357695841}
+  _fireAngle: {fileID: 1844289983428012031}
 --- !u!1 &3112638965370590537
 GameObject:
   m_ObjectHideFlags: 0
@@ -3443,6 +3459,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 309021582969191792}
+  - component: {fileID: 3403177662894547233}
   m_Layer: 0
   m_Name: LevelView
   m_TagString: Untagged
@@ -3466,6 +3483,18 @@ Transform:
   - {fileID: 1092300172580289636}
   m_Father: {fileID: 2454470643980487090}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3403177662894547233
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5803957493423468898}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c31ea1e1d64354740aceeaf8750d016d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6092655447061693683
 GameObject:
   m_ObjectHideFlags: 0
