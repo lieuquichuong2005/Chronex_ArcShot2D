@@ -1,9 +1,13 @@
+using System;
 using UnityEngine;
 
 namespace ArcShot2D
 {
     public class GunController : MonoBehaviour
     {
+        // Bắn xong (sau khi Shoot() thực sự thực thi) - LevelView lắng nghe để kết thúc turn ngay
+        public event Action OnShoot;
+
         [Header("Reference")]
         [SerializeField] private PlayerController player;
         [SerializeField] private Transform firePoint;
@@ -20,6 +24,10 @@ namespace ArcShot2D
         [SerializeField] private float chargeTime = 2f;
 
         private float currentAngle = 45f;
+
+        // Lộ ra cho UI (LevelView) đọc để cập nhật fire power bar và fire angle text
+        public float ChargePercent => chargeTime > 0f ? Mathf.Clamp01(currentCharge / chargeTime) : 0f;
+        public float CurrentAngle => currentAngle;
 
         private float keyboardAimInput;
         private float mobileAimInput;
@@ -126,6 +134,8 @@ namespace ArcShot2D
             Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();
 
             rb.linearVelocity = firePoint.right * shootForce;
+
+            OnShoot?.Invoke();
         }
 
         #region Mobile Input

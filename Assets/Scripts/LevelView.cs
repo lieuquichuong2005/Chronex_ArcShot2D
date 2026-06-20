@@ -1,5 +1,151 @@
+using System;
+using System.Collections.Generic;
+using ArcShot2D;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class LevelView : MonoBehaviour
 {
+    [Header("Spawn")]
+    [SerializeField] private GameObject playerPrefab;
+    [SerializeField] private Transform[] spawnPoints;
+
+    [Header("Turn")]
+    [SerializeField] private TurnManagerConfig turnConfig;
+
+    [Header("UI")]
+    [SerializeField] private LevelScene scene;
+
+    private readonly List<PlayerController> players = new List<PlayerController>();
+    private readonly List<GunController> guns = new List<GunController>();
+
+    private TurnManager turnManager;
+
+    // Gun đang được lắng nghe sự kiện OnShoot (để unsubscribe khi đổi turn)
+    private GunController boundGun;
+
+    private void Start()
+    {
+        SpawnPlayers();
+
+        turnManager = new TurnManager(players, guns, turnConfig);
+        turnManager.OnTurnStarted += HandleTurnStarted;
+
+        if (scene.SkipTurnButton != null)
+            scene.SkipTurnButton.onClick.AddListener(HandleSkipTurnClicked);
+
+        turnManager.StartGame();
+    }
+
+    private void Update()
+    {
+        turnManager?.Tick(Time.deltaTime);
+
+        UpdateHud();
+    }
+
+    private void SpawnPlayers()
+    {
+        int count = Mathf.Min(turnConfig.playerCount, spawnPoints.Length);
+
+        for (int i = 0; i < count; i++)
+        {
+            GameObject go = Instantiate(
+                playerPrefab,
+                spawnPoints[i].position,
+                Quaternion.identity);
+
+            players.Add(go.GetComponent<PlayerController>());
+            guns.Add(go.GetComponentInChildren<GunController>());
+        }
+    }
+
+    private void HandleTurnStarted(int playerIndex)
+    {
+        BindButtons(playerIndex);
+    }
+
+    private void HandleSkipTurnClicked()
+    {
+        turnManager.EndCurrentTurn();
+    }
+
+    /// <summary>
+    /// Gán lại 5 nút di động (trái, phải, ngắm lên, ngắm xuống, bắn)
+    /// để điều khiển đúng player/gun đang tới lượt, và lắng nghe sự kiện bắn
+    /// để kết thúc turn ngay khi bắn xong (không cần đợi hết giờ).
+    /// </summary>
+    private void BindButtons(int playerIndex)
+    {
+        PlayerController player = players[playerIndex];
+        GunController gun = guns[playerIndex];
+
+        BindHold(scene.MoveLeftButton, player.MoveLeftDown, player.MoveLeftUp);
+        BindHold(scene.MoveRightButton, player.MoveRightDown, player.MoveRightUp);
+
+        BindHold(scene.AimUpButton, gun.AimUpDown, gun.AimUpUp);
+        BindHold(scene.AimDownButton, gun.AimDownDown, gun.AimDownUp);
+
+        BindHold(scene.ShootButton, gun.ShootPressed, gun.ShootReleased);
+
+        if (boundGun != null)
+            boundGun.OnShoot -= HandleGunShoot;
+
+        boundGun = gun;
+        boundGun.OnShoot += HandleGunShoot;
+    }
+
+    /// <summary>Player vừa bắn xong -> chuyển turn ngay, không cần đợi hết thời gian.</summary>
+    private void HandleGunShoot()
+    {
+        turnManager.EndCurrentTurn();
+    }
+
+    private void BindHold(EventTrigger trigger, Action onDown, Action onUp)
+    {
+        if (trigger == null)
+            return;
+
+        trigger.triggers.Clear();
+
+        AddEntry(trigger, EventTriggerType.PointerDown, onDown);
+        AddEntry(trigger, EventTriggerType.PointerUp, onUp);
+    }
+
+    private void AddEntry(EventTrigger trigger, EventTriggerType type, Action callback)
+    {
+        EventTrigger.Entry entry = new EventTrigger.Entry { eventID = type };
+        entry.callback.AddListener(_ => callback());
+
+        trigger.triggers.Add(entry);
+    }
+
+    private void UpdateHud()
+    {
+        if (turnManager == null || turnManager.CurrentPlayerIndex < 0)
+            return;
+
+        int index = turnManager.CurrentPlayerIndex;
+
+        GunController gun = guns[index];
+        PlayerController player = players[index];
+
+        if (scene.FirePower != null)
+            scene.FirePower.fillAmount = gun.ChargePercent;
+
+        if (scene.FireAngle != null)
+            scene.FireAngle.text = $"{gun.CurrentAngle:0}°";
+
+        // Stamina = năng lượng di chuyển còn lại của player đang tới lượt
+        if (scene.Stamina != null)
+            scene.Stamina.fillAmount = player.StaminaPercent;
+
+        // Thời gian còn lại của turn (đếm ngược, tự kết thúc turn khi về 0)
+        if (scene.TimeTurnRemain != null)
+        {
+            scene.TimeTurnRemain.text = turnConfig.turnDuration > 0f
+                ? $"{Mathf.CeilToInt(turnManager.RemainingTime)}s"
+                : "∞";
+        }
+    }
 }

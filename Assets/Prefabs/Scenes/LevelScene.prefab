@@ -475,7 +475,7 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 8392842007631400490}
+        - m_Target: {fileID: 0}
           m_TargetAssemblyTypeName: ArcShot2D.GunController, Assembly-CSharp
           m_MethodName: AimUpDown
           m_Mode: 1
@@ -491,7 +491,7 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 8392842007631400490}
+        - m_Target: {fileID: 0}
           m_TargetAssemblyTypeName: ArcShot2D.GunController, Assembly-CSharp
           m_MethodName: AimUpUp
           m_Mode: 1
@@ -642,7 +642,7 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 8392842007631400490}
+        - m_Target: {fileID: 0}
           m_TargetAssemblyTypeName: ArcShot2D.GunController, Assembly-CSharp
           m_MethodName: AimDownDown
           m_Mode: 1
@@ -658,7 +658,7 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 8392842007631400490}
+        - m_Target: {fileID: 0}
           m_TargetAssemblyTypeName: ArcShot2D.GunController, Assembly-CSharp
           m_MethodName: AimDownUp
           m_Mode: 1
@@ -670,6 +670,37 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
+--- !u!1 &1028259666934522367
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8191762642003422058}
+  m_Layer: 0
+  m_Name: Player_02
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8191762642003422058
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1028259666934522367}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 6.73, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5846998515455861744}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1260227953445351902
 GameObject:
   m_ObjectHideFlags: 0
@@ -1220,7 +1251,7 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 4275869718985825967}
+        - m_Target: {fileID: 0}
           m_TargetAssemblyTypeName: ArcShot2D.PlayerController, Assembly-CSharp
           m_MethodName: MoveLeftDown
           m_Mode: 1
@@ -1236,7 +1267,7 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 4275869718985825967}
+        - m_Target: {fileID: 0}
           m_TargetAssemblyTypeName: ArcShot2D.PlayerController, Assembly-CSharp
           m_MethodName: MoveLeftUp
           m_Mode: 1
@@ -1248,6 +1279,39 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
+--- !u!1 &2015224316192112955
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5846998515455861744}
+  m_Layer: 0
+  m_Name: SpawnPoints
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5846998515455861744
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2015224316192112955}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 6901449699957670852}
+  - {fileID: 8191762642003422058}
+  m_Father: {fileID: 1092300172580289636}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2381286841128507856
 GameObject:
   m_ObjectHideFlags: 0
@@ -1366,8 +1430,7 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 2334998280984752010}
+  m_Children: []
   m_Father: {fileID: 1092300172580289636}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2704440706191604639
@@ -1923,6 +1986,13 @@ MonoBehaviour:
   _firePower: {fileID: 3438059790319304456}
   _stamina: {fileID: 899440765357695841}
   _fireAngle: {fileID: 1844289983428012031}
+  _timeTurnRemain: {fileID: 3401262215881952721}
+  _skipTurnButton: {fileID: 6084506062581227666}
+  _moveLeftButton: {fileID: 5139648771773611636}
+  _moveRightButton: {fileID: 7325577646445994401}
+  _aimUpButton: {fileID: 5856875942896459071}
+  _aimDownButton: {fileID: 5674788147753144373}
+  _shootButton: {fileID: 551598999849008290}
 --- !u!1 &3112638965370590537
 GameObject:
   m_ObjectHideFlags: 0
@@ -2443,7 +2513,7 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 4275869718985825967}
+        - m_Target: {fileID: 0}
           m_TargetAssemblyTypeName: ArcShot2D.PlayerController, Assembly-CSharp
           m_MethodName: MoveRightDown
           m_Mode: 1
@@ -2459,7 +2529,7 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 4275869718985825967}
+        - m_Target: {fileID: 0}
           m_TargetAssemblyTypeName: ArcShot2D.PlayerController, Assembly-CSharp
           m_MethodName: MoveRightUp
           m_Mode: 1
@@ -2611,12 +2681,12 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
-  m_Type: 0
+  m_Sprite: {fileID: 10911, guid: 0000000000000000f000000000000000, type: 0}
+  m_Type: 3
   m_PreserveAspect: 0
   m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
+  m_FillMethod: 0
+  m_FillAmount: 0
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
@@ -2960,12 +3030,12 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
-  m_Type: 0
+  m_Sprite: {fileID: 10911, guid: 0000000000000000f000000000000000, type: 0}
+  m_Type: 3
   m_PreserveAspect: 0
   m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
+  m_FillMethod: 0
+  m_FillAmount: 0
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
@@ -3495,6 +3565,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c31ea1e1d64354740aceeaf8750d016d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerPrefab: {fileID: 9051448516502430598, guid: bf12c1ee087e3bb4db5c90b9b4f9d524, type: 3}
+  spawnPoints:
+  - {fileID: 6901449699957670852}
+  - {fileID: 8191762642003422058}
+  turnConfig:
+    playerCount: 2
+    turnDuration: 15
+  scene: {fileID: 7932610585787104710}
 --- !u!1 &6092655447061693683
 GameObject:
   m_ObjectHideFlags: 0
@@ -4362,6 +4440,7 @@ Transform:
   m_Children:
   - {fileID: 92589276210578373}
   - {fileID: 8334513656463451001}
+  - {fileID: 5846998515455861744}
   m_Father: {fileID: 309021582969191792}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7587023473379533674
@@ -4468,6 +4547,37 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!1 &7797244341116186958
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6901449699957670852}
+  m_Layer: 0
+  m_Name: Player_01
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6901449699957670852
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7797244341116186958}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -6.73, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5846998515455861744}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7818986804145738948
 GameObject:
   m_ObjectHideFlags: 0
@@ -4811,7 +4921,7 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 8392842007631400490}
+        - m_Target: {fileID: 0}
           m_TargetAssemblyTypeName: ArcShot2D.GunController, Assembly-CSharp
           m_MethodName: ShootPressed
           m_Mode: 1
@@ -4827,7 +4937,7 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 8392842007631400490}
+        - m_Target: {fileID: 0}
           m_TargetAssemblyTypeName: ArcShot2D.GunController, Assembly-CSharp
           m_MethodName: ShootReleased
           m_Mode: 1
@@ -5305,87 +5415,3 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
---- !u!1001 &6887775943760163214
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 8334513656463451001}
-    m_Modifications:
-    - target: {fileID: 9051448516502430598, guid: bf12c1ee087e3bb4db5c90b9b4f9d524, type: 3}
-      propertyPath: m_Name
-      value: Character
-      objectReference: {fileID: 0}
-    - target: {fileID: 9219395287535083012, guid: bf12c1ee087e3bb4db5c90b9b4f9d524, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9219395287535083012, guid: bf12c1ee087e3bb4db5c90b9b4f9d524, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9219395287535083012, guid: bf12c1ee087e3bb4db5c90b9b4f9d524, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9219395287535083012, guid: bf12c1ee087e3bb4db5c90b9b4f9d524, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 9219395287535083012, guid: bf12c1ee087e3bb4db5c90b9b4f9d524, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9219395287535083012, guid: bf12c1ee087e3bb4db5c90b9b4f9d524, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9219395287535083012, guid: bf12c1ee087e3bb4db5c90b9b4f9d524, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9219395287535083012, guid: bf12c1ee087e3bb4db5c90b9b4f9d524, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9219395287535083012, guid: bf12c1ee087e3bb4db5c90b9b4f9d524, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9219395287535083012, guid: bf12c1ee087e3bb4db5c90b9b4f9d524, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: bf12c1ee087e3bb4db5c90b9b4f9d524, type: 3}
---- !u!4 &2334998280984752010 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 9219395287535083012, guid: bf12c1ee087e3bb4db5c90b9b4f9d524, type: 3}
-  m_PrefabInstance: {fileID: 6887775943760163214}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &4275869718985825967 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7260008622689742625, guid: bf12c1ee087e3bb4db5c90b9b4f9d524, type: 3}
-  m_PrefabInstance: {fileID: 6887775943760163214}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c3793ebc9447f864cb877b92b2e734ab, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &8392842007631400490 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 3165774269902143396, guid: bf12c1ee087e3bb4db5c90b9b4f9d524, type: 3}
-  m_PrefabInstance: {fileID: 6887775943760163214}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 223cce3de273d8b4bb7da159a04bd80c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 

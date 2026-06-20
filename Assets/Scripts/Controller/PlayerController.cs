@@ -6,6 +6,11 @@ namespace ArcShot2D
     {
         [Header("Movement")] [SerializeField] private float moveSpeed = 5f;
 
+        [Header("Stamina")]
+        [SerializeField] private float maxStamina = 10f;
+        [Tooltip("Số stamina bị trừ trên mỗi 1 unit khoảng cách di chuyển")]
+        [SerializeField] private float staminaCostPerUnit = 1f;
+
         [Header("References")] [SerializeField]
         private Rigidbody2D rb;
 
@@ -13,6 +18,16 @@ namespace ArcShot2D
 
         private float keyboardInput;
         private float mobileInput;
+
+        private float currentStamina;
+
+        public float CurrentStamina => currentStamina;
+        public float StaminaPercent => maxStamina > 0f ? Mathf.Clamp01(currentStamina / maxStamina) : 0f;
+
+        private void Awake()
+        {
+            currentStamina = maxStamina;
+        }
 
         private void Reset()
         {
@@ -29,7 +44,9 @@ namespace ArcShot2D
         {
             float finalInput = mobileInput != 0 ? mobileInput : keyboardInput;
 
-            Move(finalInput);
+            float moveInput = currentStamina <= 0f ? 0f : finalInput;
+
+            Move(finalInput, moveInput);
         }
 
         private void HandleKeyboardInput()
@@ -37,20 +54,40 @@ namespace ArcShot2D
             keyboardInput = Input.GetAxisRaw("Horizontal");
         }
 
-        private void Move(float input)
+        private void Move(float faceInput, float moveInput)
         {
             rb.linearVelocity = new Vector2(
-                input * moveSpeed,
+                moveInput * moveSpeed,
                 rb.linearVelocity.y);
 
-            if (input > 0.01f)
+            if (faceInput > 0.01f)
             {
                 visual.localScale = new Vector3(1, 1, 1);
             }
-            else if (input < -0.01f)
+            else if (faceInput < -0.01f)
             {
                 visual.localScale = new Vector3(-1, 1, 1);
             }
+
+            if (Mathf.Abs(moveInput) > 0.01f)
+            {
+                float distance = Mathf.Abs(rb.linearVelocity.x) * Time.fixedDeltaTime;
+
+                ConsumeStamina(distance * staminaCostPerUnit);
+            }
+        }
+
+        private void ConsumeStamina(float amount)
+        {
+            currentStamina -= amount;
+
+            currentStamina = Mathf.Max(currentStamina, 0f);
+        }
+
+        /// <summary>Gọi bởi TurnManager khi tới lượt player này, hồi đầy stamina.</summary>
+        public void ResetStamina()
+        {
+            currentStamina = maxStamina;
         }
 
         #region Mobile Input
