@@ -6,15 +6,12 @@ using UnityEngine.EventSystems;
 
 public class LevelView : MonoBehaviour
 {
-    [Header("Spawn")]
-    [SerializeField] private GameObject playerPrefab;
+    [Header("Spawn")] [SerializeField] private GameObject playerPrefab;
     [SerializeField] private Transform[] spawnPoints;
 
-    [Header("Turn")]
-    [SerializeField] private TurnManagerConfig turnConfig;
+    [Header("Turn")] [SerializeField] private TurnManagerConfig turnConfig;
 
-    [Header("UI")]
-    [SerializeField] private LevelScene scene;
+    [Header("UI")] [SerializeField] private LevelScene scene;
 
     private readonly List<PlayerController> players = new List<PlayerController>();
     private readonly List<GunController> guns = new List<GunController>();
@@ -89,14 +86,25 @@ public class LevelView : MonoBehaviour
         BindHold(scene.ShootButton, gun.ShootPressed, gun.ShootReleased);
 
         if (boundGun != null)
-            boundGun.OnShoot -= HandleGunShoot;
+            boundGun.OnBulletFired -= HandleBulletFired;
 
         boundGun = gun;
-        boundGun.OnShoot += HandleGunShoot;
+        boundGun.OnBulletFired += HandleBulletFired;
     }
 
-    /// <summary>Player vừa bắn xong -> chuyển turn ngay, không cần đợi hết thời gian.</summary>
-    private void HandleGunShoot()
+    /// <summary>
+    /// Đạn vừa được bắn ra - khoá TẤT CẢ player (kể cả người vừa bắn) ngay lập tức.
+    /// Không ai được di chuyển/hành động cho tới khi đạn được xử lý xong.
+    /// </summary>
+    private void HandleBulletFired(Bullet bullet)
+    {
+        turnManager.LockAllPlayers();
+
+        bullet.OnResolved += HandleBulletResolved;
+    }
+
+    /// <summary>Đạn đã trúng mục tiêu/mặt đất hoặc bay ra khỏi map - giờ mới chuyển turn.</summary>
+    private void HandleBulletResolved()
     {
         turnManager.EndCurrentTurn();
     }

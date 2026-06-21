@@ -113,6 +113,19 @@ namespace ArcShot2D
         /// Gọi thủ công khi player hiện tại hành động xong (vd: bắn xong viên đạn),
         /// dùng khi turnDuration <= 0 hoặc muốn kết thúc turn sớm.
         /// </summary>
+        /// <summary>
+        /// Khoá input của TẤT CẢ player, kể cả người đang trong turn -
+        /// dùng trong lúc đạn đang bay/được xử lý va chạm, đảm bảo công bằng
+        /// (không ai né được đạn bằng cách di chuyển trong lúc chờ kết quả).
+        /// </summary>
+        public void LockAllPlayers()
+        {
+            for (int i = 0; i < players.Count; i++)
+            {
+                SetPlayerActive(i, false);
+            }
+        }
+
         public void EndCurrentTurn()
         {
             if (!isRunning)

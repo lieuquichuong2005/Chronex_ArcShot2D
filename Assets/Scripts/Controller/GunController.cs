@@ -5,8 +5,9 @@ namespace ArcShot2D
 {
     public class GunController : MonoBehaviour
     {
-        // Bắn xong (sau khi Shoot() thực sự thực thi) - LevelView lắng nghe để kết thúc turn ngay
-        public event Action OnShoot;
+        // Bắn ra 1 viên đạn - LevelView lắng nghe để khoá toàn bộ player và đợi đạn được xử lý xong
+        // (trúng mục tiêu/mặt đất/bay ra khỏi map) rồi mới chuyển turn, thay vì chuyển ngay khi bắn.
+        public event Action<Bullet> OnBulletFired;
 
         [Header("Reference")]
         [SerializeField] private PlayerController player;
@@ -126,16 +127,18 @@ namespace ArcShot2D
                 maxForce,
                 forcePercent);
 
-            GameObject bullet = Instantiate(
+            GameObject bulletObj = Instantiate(
                 bulletPrefab,
                 firePoint.position,
                 Quaternion.identity);
 
-            Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();
+            Rigidbody2D rb = bulletObj.GetComponent<Rigidbody2D>();
 
             rb.linearVelocity = firePoint.right * shootForce;
 
-            OnShoot?.Invoke();
+            Bullet bullet = bulletObj.GetComponent<Bullet>();
+
+            OnBulletFired?.Invoke(bullet);
         }
 
         #region Mobile Input
