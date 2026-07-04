@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 1d6c791eb5aef2d48b745db76f8e450c
+guid: e6f4e1518dd5bf845b70593f2448e00a
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -4346244404228752641
-    second: Arrow_0
+      213: -529378007417496193
+    second: HealtbBarBg_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -52,7 +52,7 @@ TextureImporter:
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
   spritePixelsToUnits: 100
-  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteBorder: {x: 208, y: 60, z: 60, w: 75}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
   alphaIsTransparency: 1
@@ -126,23 +126,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Arrow_0
+      name: HealtbBarBg_0
       rect:
         serializedVersion: 2
-        x: 0
+        x: 245
         y: 0
-        width: 202
-        height: 210
+        width: 922
+        height: 213
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: ffa7ae2edb90fa3c0800000000000000
-      internalID: -4346244404228752641
+      spriteID: f7dd9fbc18547a8f0800000000000000
+      internalID: -529378007417496193
       vertices: []
       indices: 
       edges: []
@@ -151,8 +151,8 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 5e97eb03825dee720800000000000000
-    internalID: 0
+    spriteID: 2dd6e1736f788d249be514601825bd05
+    internalID: 790711056
     vertices: []
     indices: 
     edges: []
@@ -161,7 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Arrow_0: -4346244404228752641
+      HealtbBarBg_0: -529378007417496193
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

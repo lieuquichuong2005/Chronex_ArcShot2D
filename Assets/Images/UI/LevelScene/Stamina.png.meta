@@ -1,10 +1,19 @@
 fileFormatVersion: 2
-guid: 1d6c791eb5aef2d48b745db76f8e450c
+guid: a8cb374c5df736b429295ae53bb7a74b
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -4346244404228752641
-    second: Arrow_0
+      213: 1872956865249672718
+    second: Stamina_0
+  - first:
+      213: 8183090824395472912
+    second: Stamina_1
+  - first:
+      213: -990324236241928543
+    second: Stamina_2
+  - first:
+      213: 5988975159026282830
+    second: Stamina_3
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -47,7 +56,7 @@ TextureImporter:
   lightmap: 0
   compressionQuality: 50
   spriteMode: 1
-  spriteExtrude: 0
+  spriteExtrude: 1
   spriteMeshType: 0
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
@@ -126,13 +135,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Arrow_0
+      name: Stamina_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 202
-        height: 210
+        width: 212
+        height: 211
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -141,8 +150,74 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: ffa7ae2edb90fa3c0800000000000000
-      internalID: -4346244404228752641
+      spriteID: e0ef5d878541ef910800000000000000
+      internalID: 1872956865249672718
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Stamina_1
+      rect:
+        serializedVersion: 2
+        x: 67
+        y: 204
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 010c9d8bfbd209170800000000000000
+      internalID: 8183090824395472912
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Stamina_2
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 119
+        width: 5
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1aef656aa59a142f0800000000000000
+      internalID: -990324236241928543
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Stamina_3
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 91
+        width: 5
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e41766a1d2d1d1350800000000000000
+      internalID: 5988975159026282830
       vertices: []
       indices: 
       edges: []
@@ -161,7 +236,10 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Arrow_0: -4346244404228752641
+      Stamina_0: 1872956865249672718
+      Stamina_1: 8183090824395472912
+      Stamina_2: -990324236241928543
+      Stamina_3: 5988975159026282830
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 1d6c791eb5aef2d48b745db76f8e450c
+guid: 7a648f9cb1f6df24ca81b6284af3fe73
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -4346244404228752641
-    second: Arrow_0
+      213: 6663671943774697673
+    second: HralthBarCover_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -126,13 +126,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Arrow_0
+      name: HralthBarCover_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 202
-        height: 210
+        width: 1227
+        height: 222
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -141,8 +141,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: ffa7ae2edb90fa3c0800000000000000
-      internalID: -4346244404228752641
+      spriteID: 9c87d64c35e1a7c50800000000000000
+      internalID: 6663671943774697673
       vertices: []
       indices: 
       edges: []
@@ -161,7 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Arrow_0: -4346244404228752641
+      HralthBarCover_0: 6663671943774697673
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
