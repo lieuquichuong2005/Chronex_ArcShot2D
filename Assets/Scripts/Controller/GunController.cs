@@ -17,7 +17,7 @@ namespace ArcShot2D
         [Header("Aim")]
         [SerializeField] private float rotateSpeed = 80f;
         [SerializeField] private float minAngle = -10f;
-        [SerializeField] private float maxAngle = 80f;
+        [SerializeField] private float maxAngle = 65f;
 
         [Header("Shoot")]
         [SerializeField] private float minForce = 5f;

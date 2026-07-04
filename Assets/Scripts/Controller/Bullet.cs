@@ -8,8 +8,9 @@ namespace ArcShot2D
         [SerializeField] private float lifeTime = 10f;
         [SerializeField] private int damage = 25;
 
-        // Báo cho LevelView biết đạn đã được xử lý xong (đã trừ máu nếu trúng, hoặc đã huỷ vì
-        // hết thời gian / bay ra khỏi map) - lúc này mới được phép chuyển sang turn kế tiếp.
+        [Header("Rotation")]
+        [SerializeField] private Rigidbody2D rb; // kéo Rigidbody2D vào đây trong Inspector
+
         public event Action OnResolved;
 
         private bool resolved;
@@ -17,6 +18,21 @@ namespace ArcShot2D
         private void Start()
         {
             Invoke(nameof(ResolveTimeout), lifeTime);
+        }
+
+        private void Update()
+        {
+            RotateTowardsVelocity();
+        }
+
+        private void RotateTowardsVelocity()
+        {
+            if (rb.linearVelocity.sqrMagnitude < 0.0001f)
+                return;
+
+            float angle = Mathf.Atan2(rb.linearVelocity.y, rb.linearVelocity.x) * Mathf.Rad2Deg;
+
+            transform.rotation = Quaternion.Euler(0f, 0f, angle);
         }
 
         private void OnTriggerEnter2D(Collider2D other)
