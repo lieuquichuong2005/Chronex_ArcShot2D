@@ -1,10 +1,18 @@
 {
   "dependencies": {
+    "com.cysharp.unitask": {
+      "version": "https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "e5acc106ee196bc5a32fb14cdf2987b0f96d11e0"
+    },
     "com.quichuong2005.framework": {
       "version": "file:C:/Users/ADMIN/Documents/Unity/QuiChuong2005",
       "depth": 0,
       "source": "local",
       "dependencies": {
+        "com.cysharp.unitask": "https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask",
         "com.unity.addressables": "2.7.4",
         "com.unity.inputsystem": "1.14.2",
         "com.unity.nuget.newtonsoft-json": "3.2.1",
