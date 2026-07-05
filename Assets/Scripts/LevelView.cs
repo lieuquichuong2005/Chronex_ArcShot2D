@@ -6,14 +6,31 @@ using UnityEngine.EventSystems;
 
 public class LevelView : MonoBehaviour
 {
-    [Header("Camera")] [SerializeField] private CameraFollowController cameraFollow;
-    
-    [Header("Spawn")] [SerializeField] private GameObject playerPrefab;
-    [SerializeField] private Transform[] spawnPoints;
+    [Header("Camera")]
+    [SerializeField]
+    private CameraFollowController cameraFollow;
 
-    [Header("Turn")] [SerializeField] private TurnManagerConfig turnConfig;
+    [Header("Spawn")]
+    [SerializeField]
+    private GameObject playerPrefab;
 
-    [Header("UI")] [SerializeField] private LevelScene scene;
+    [Header("Configs")]
+    [SerializeField]
+    private MapConfigsManager mapConfigsManager;
+
+    [SerializeField]
+    private Transform[] spawnPoints;
+
+    [Header("Turn")]
+    [SerializeField]
+    private TurnManagerConfig turnConfig;
+
+    [Header("UI")]
+    [SerializeField]
+    private LevelScene scene;
+
+    [SerializeField]
+    private Transform _mapTransform;
 
     private readonly List<PlayerController> players = new();
     private readonly List<GunController> guns = new();
