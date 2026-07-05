@@ -4,6 +4,8 @@ namespace ArcShot2D
 {
     public class PlayerController : MonoBehaviour
     {
+        [SerializeField] private HealthController _healthController;
+
         [Header("Movement")] [SerializeField] private float moveSpeed = 5f;
 
         [Header("Stamina")] [SerializeField] private float maxStamina = 10f;
@@ -26,10 +28,16 @@ namespace ArcShot2D
         public float CurrentStamina => currentStamina;
         public float StaminaPercent => maxStamina > 0f ? Mathf.Clamp01(currentStamina / maxStamina) : 0f;
 
+        private bool IsAlive { get; set; }
+
         private void Awake()
         {
+            IsAlive = true;
             currentStamina = maxStamina;
+
+            _healthController.OnDeath += OnDeath;
         }
+
 
         private void Reset()
         {
@@ -127,6 +135,17 @@ namespace ArcShot2D
         {
             if (_turnTransform != null)
                 _turnTransform.SetActive(active);
+        }
+
+        private void OnDestroy()
+        {
+            _healthController.OnDeath -= OnDeath;
+        }
+
+        private void OnDeath()
+        {
+            IsAlive = false;
+            gameObject.SetActive(false);
         }
     }
 }

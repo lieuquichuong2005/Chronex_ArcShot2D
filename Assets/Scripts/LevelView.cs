@@ -13,8 +13,8 @@ public class LevelView : MonoBehaviour
 
     [Header("UI")] [SerializeField] private LevelScene scene;
 
-    private readonly List<PlayerController> players = new List<PlayerController>();
-    private readonly List<GunController> guns = new List<GunController>();
+    private readonly List<PlayerController> players = new();
+    private readonly List<GunController> guns = new();
 
     private TurnManager turnManager;
 
@@ -43,11 +43,11 @@ public class LevelView : MonoBehaviour
 
     private void SpawnPlayers()
     {
-        int count = Mathf.Min(turnConfig.playerCount, spawnPoints.Length);
+        var count = Mathf.Min(turnConfig.playerCount, spawnPoints.Length);
 
-        for (int i = 0; i < count; i++)
+        for (var i = 0; i < count; i++)
         {
-            GameObject go = Instantiate(
+            var go = Instantiate(
                 playerPrefab,
                 spawnPoints[i].position,
                 Quaternion.identity);
@@ -74,8 +74,8 @@ public class LevelView : MonoBehaviour
     /// </summary>
     private void BindButtons(int playerIndex)
     {
-        PlayerController player = players[playerIndex];
-        GunController gun = guns[playerIndex];
+        var player = players[playerIndex];
+        var gun = guns[playerIndex];
 
         BindHold(scene.MoveLeftButton, player.MoveLeftDown, player.MoveLeftUp);
         BindHold(scene.MoveRightButton, player.MoveRightDown, player.MoveRightUp);
@@ -122,7 +122,7 @@ public class LevelView : MonoBehaviour
 
     private void AddEntry(EventTrigger trigger, EventTriggerType type, Action callback)
     {
-        EventTrigger.Entry entry = new EventTrigger.Entry { eventID = type };
+        var entry = new EventTrigger.Entry { eventID = type };
         entry.callback.AddListener(_ => callback());
 
         trigger.triggers.Add(entry);
@@ -133,10 +133,10 @@ public class LevelView : MonoBehaviour
         if (turnManager == null || turnManager.CurrentPlayerIndex < 0)
             return;
 
-        int index = turnManager.CurrentPlayerIndex;
+        var index = turnManager.CurrentPlayerIndex;
 
-        GunController gun = guns[index];
-        PlayerController player = players[index];
+        var gun = guns[index];
+        var player = players[index];
 
         if (scene.FirePower != null)
             scene.FirePower.fillAmount = gun.ChargePercent;
@@ -150,10 +150,8 @@ public class LevelView : MonoBehaviour
 
         // Thời gian còn lại của turn (đếm ngược, tự kết thúc turn khi về 0)
         if (scene.TimeTurnRemain != null)
-        {
             scene.TimeTurnRemain.text = turnConfig.turnDuration > 0f
                 ? $"{Mathf.CeilToInt(turnManager.RemainingTime)}s"
                 : "∞";
-        }
     }
 }

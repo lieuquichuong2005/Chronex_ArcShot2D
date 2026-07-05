@@ -999,6 +999,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c3793ebc9447f864cb877b92b2e734ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _healthController: {fileID: 2741139840021786381}
   moveSpeed: 5
   maxStamina: 10
   staminaCostPerUnit: 2.5

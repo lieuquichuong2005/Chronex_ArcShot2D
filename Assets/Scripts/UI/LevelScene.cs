@@ -9,8 +9,7 @@ using UnityEngine.UI;
 /// </summary>
 public class LevelScene : MonoBehaviour
 {
-    [Header("HUD")]
-    [SerializeField] private Image _firePower;
+    [Header("HUD")] [SerializeField] private Image _firePower;
     [SerializeField] private Image _stamina;
     [SerializeField] private TextMeshProUGUI _fireAngle;
     [SerializeField] private TextMeshProUGUI _timeTurnRemain;
