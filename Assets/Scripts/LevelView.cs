@@ -6,6 +6,8 @@ using UnityEngine.EventSystems;
 
 public class LevelView : MonoBehaviour
 {
+    [Header("Camera")] [SerializeField] private CameraFollowController cameraFollow;
+    
     [Header("Spawn")] [SerializeField] private GameObject playerPrefab;
     [SerializeField] private Transform[] spawnPoints;
 
@@ -60,6 +62,8 @@ public class LevelView : MonoBehaviour
     private void HandleTurnStarted(int playerIndex)
     {
         BindButtons(playerIndex);
+
+        cameraFollow.FollowPlayer(players[playerIndex]);
     }
 
     private void HandleSkipTurnClicked()
@@ -100,12 +104,18 @@ public class LevelView : MonoBehaviour
     {
         turnManager.LockAllPlayers();
 
+        cameraFollow.FollowBullet(bullet);
+
         bullet.OnResolved += HandleBulletResolved;
     }
 
     /// <summary>Đạn đã trúng mục tiêu/mặt đất hoặc bay ra khỏi map - giờ mới chuyển turn.</summary>
     private void HandleBulletResolved()
     {
+        var currentIndex = turnManager.CurrentPlayerIndex;
+
+        cameraFollow.FollowPlayer(players[currentIndex]);
+
         turnManager.EndCurrentTurn();
     }
 

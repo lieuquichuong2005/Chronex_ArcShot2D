@@ -1265,7 +1265,7 @@ MonoBehaviour:
   bulletPrefab: {fileID: 8342645501551783403, guid: b6c664fc554297246b322f97967e1b99, type: 3}
   rotateSpeed: 80
   minAngle: -10
-  maxAngle: 65
+  maxAngle: 90
   minForce: 2
   maxForce: 20
   chargeTime: 3
