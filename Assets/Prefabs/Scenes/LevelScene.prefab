@@ -2997,9 +2997,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cameraFollow: {fileID: 8808471095808600263}
-  playerPrefab: {fileID: 9051448516502430598, guid: bf12c1ee087e3bb4db5c90b9b4f9d524, type: 3}
   mapConfigsManager: {fileID: 11400000, guid: e25b4d48c44494f46b2ae31a4c8a80f3, type: 2}
-  selectedMapId: map_01
+  _characterManager: {fileID: 11400000, guid: 161592d942013ff40a340360b450480c, type: 2}
+  selectedMapId: map_02
   turnConfig:
     playerCount: 2
     turnDuration: 15

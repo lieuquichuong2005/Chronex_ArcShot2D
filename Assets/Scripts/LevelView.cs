@@ -10,13 +10,12 @@ public class LevelView : MonoBehaviour
     [SerializeField]
     private CameraFollowController cameraFollow;
 
-    [Header("Spawn")]
-    [SerializeField]
-    private GameObject playerPrefab;
-
     [Header("Configs")]
     [SerializeField]
     private MapConfigsManager mapConfigsManager;
+
+    [SerializeField]
+    private CharacterManager _characterManager;
 
     [SerializeField]
     private string selectedMapId;
@@ -70,27 +69,26 @@ public class LevelView : MonoBehaviour
 
     private void SpawnPlayers()
     {
-        int totalCount = turnConfig.playerCount;
+        var totalCount = turnConfig.playerCount;
 
-        int leftCount = Mathf.CeilToInt(totalCount / 2f);
-        int rightCount = totalCount - leftCount;
+        var leftCount = Mathf.CeilToInt(totalCount / 2f);
+        var rightCount = totalCount - leftCount;
 
         leftCount = Mathf.Min(leftCount, currentMapConfig.SpawnPoints_Left.Count);
         rightCount = Mathf.Min(rightCount, currentMapConfig.SpawnPoints_Right.Count);
 
         for (var i = 0; i < leftCount; i++)
-            SpawnPlayerAt(currentMapConfig.SpawnPoints_Left[i], teamId: 0, facingRight: true);
+            SpawnPlayerAt(currentMapConfig.SpawnPoints_Left[i], 0, true);
 
         for (var i = 0; i < rightCount; i++)
-            SpawnPlayerAt(currentMapConfig.SpawnPoints_Right[i], teamId: 1, facingRight: false);
+            SpawnPlayerAt(currentMapConfig.SpawnPoints_Right[i], 1, false);
     }
 
     private void SpawnPlayerAt(Vector2 localSpawnPos, int teamId, bool facingRight)
     {
-        Vector3 worldPos = _mapTransform.TransformPoint(localSpawnPos);
-
-        var go = Instantiate(playerPrefab, worldPos, Quaternion.identity, _playerTransform);
-
+        var characterGo = _characterManager.GetRandomCharacter();
+        var worldPos = _mapTransform.TransformPoint(localSpawnPos);
+        var go = Instantiate(characterGo, worldPos, Quaternion.identity, _playerTransform);
         var player = go.GetComponent<PlayerController>();
         player.SetTeam(teamId);
         player.SetFacing(facingRight);
