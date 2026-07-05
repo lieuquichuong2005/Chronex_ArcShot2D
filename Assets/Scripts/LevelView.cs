@@ -142,7 +142,7 @@ public class LevelView : MonoBehaviour
             scene.FirePower.fillAmount = gun.ChargePercent;
 
         if (scene.FireAngle != null)
-            scene.FireAngle.text = $"{gun.CurrentAngle:0}°";
+            scene.FireAngle.text = $"{gun.CurrentAngle:0}";
 
         // Stamina = năng lượng di chuyển còn lại của player đang tới lượt
         if (scene.Stamina != null)

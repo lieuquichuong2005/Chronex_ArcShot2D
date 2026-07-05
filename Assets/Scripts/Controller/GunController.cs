@@ -20,9 +20,9 @@ namespace ArcShot2D
         [SerializeField] private float maxAngle = 65f;
 
         [Header("Shoot")]
-        [SerializeField] private float minForce = 5f;
-        [SerializeField] private float maxForce = 25f;
-        [SerializeField] private float chargeTime = 2f;
+        [SerializeField] private float minForce = 2f;
+        [SerializeField] private float maxForce = 15f;
+        [SerializeField] private float chargeTime = 4f;
 
         private float currentAngle = 45f;
 

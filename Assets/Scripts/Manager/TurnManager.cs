@@ -26,9 +26,9 @@ namespace ArcShot2D
     public class TurnManager
     {
         // ----- Events để LevelView / UI lắng nghe -----
-        public event Action<int> OnTurnStarted;      // index player vừa bắt đầu turn
-        public event Action<int> OnTurnEnded;        // index player vừa kết thúc turn
-        public event Action<int> OnRoundCompleted;    // số round vừa hoàn thành (mọi player đã đi 1 lượt)
+        public event Action<int> OnTurnStarted; // index player vừa bắt đầu turn
+        public event Action<int> OnTurnEnded; // index player vừa kết thúc turn
+        public event Action<int> OnRoundCompleted; // số round vừa hoàn thành (mọi player đã đi 1 lượt)
         public event Action<float> OnTurnTimeChanged; // thời gian còn lại của turn hiện tại
 
         private readonly List<PlayerController> players;
@@ -58,7 +58,7 @@ namespace ArcShot2D
             if (config != null && config.playerCount != this.players.Count)
             {
                 Debug.LogWarning($"[TurnManager] playerCount config ({config.playerCount}) " +
-                                  $"khác số lượng player truyền vào ({this.players.Count}).");
+                                 $"khác số lượng player truyền vào ({this.players.Count}).");
             }
 
             if (this.guns.Count > 0 && this.guns.Count != this.players.Count)
@@ -166,6 +166,7 @@ namespace ArcShot2D
             if (players[index] != null)
             {
                 players[index].enabled = active;
+                players[index].SetTurnIndicator(active);
 
                 if (active)
                     players[index].ResetStamina();

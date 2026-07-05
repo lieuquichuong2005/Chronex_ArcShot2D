@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 86a8891fba2422d479ba2d56e317f9f5
+guid: f74b7a8a993c3c24ca7fa24396eb4a0f
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 4333506099822530379
-    second: Tank_0001_CoverCharacter_0
+      213: -4565277893826926653
+    second: GameIcon_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -126,13 +126,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Tank_0001_CoverCharacter_0
+      name: GameIcon_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 174
-        height: 129
+        width: 1254
+        height: 1254
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -141,8 +141,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: b4f09ef76d4b32c30800000000000000
-      internalID: 4333506099822530379
+      spriteID: 3c7a08581ffd4a0c0800000000000000
+      internalID: -4565277893826926653
       vertices: []
       indices: 
       edges: []
@@ -160,8 +160,7 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable:
-      Tank_0001_CoverCharacter_0: 4333506099822530379
+    nameFileIdTable: {}
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

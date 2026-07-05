@@ -6,10 +6,12 @@ namespace ArcShot2D
     {
         [Header("Movement")] [SerializeField] private float moveSpeed = 5f;
 
-        [Header("Stamina")]
-        [SerializeField] private float maxStamina = 10f;
-        [Tooltip("Số stamina bị trừ trên mỗi 1 unit khoảng cách di chuyển")]
-        [SerializeField] private float staminaCostPerUnit = 1f;
+        [Header("Stamina")] [SerializeField] private float maxStamina = 10f;
+
+        [Tooltip("Số stamina bị trừ trên mỗi 1 unit khoảng cách di chuyển")] [SerializeField]
+        private float staminaCostPerUnit = 1f;
+
+        [SerializeField] private GameObject _turnTransform;
 
         [Header("References")] [SerializeField]
         private Rigidbody2D rb;
@@ -119,6 +121,12 @@ namespace ArcShot2D
         public bool IsFacingRight()
         {
             return visual.localScale.x > 0;
+        }
+
+        public void SetTurnIndicator(bool active)
+        {
+            if (_turnTransform != null)
+                _turnTransform.SetActive(active);
         }
     }
 }
