@@ -131,6 +131,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: SplashScene
       objectReference: {fileID: 0}
+    - target: {fileID: 2874604931898025825, guid: 17090786b6f366a4d90a463ebe986965, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2874604931898025825, guid: 17090786b6f366a4d90a463ebe986965, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2874604931898025825, guid: 17090786b6f366a4d90a463ebe986965, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6791705957905870276, guid: 17090786b6f366a4d90a463ebe986965, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
