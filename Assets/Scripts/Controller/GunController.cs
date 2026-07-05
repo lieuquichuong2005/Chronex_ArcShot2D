@@ -10,19 +10,34 @@ namespace ArcShot2D
         public event Action<Bullet> OnBulletFired;
 
         [Header("Reference")]
-        [SerializeField] private PlayerController player;
-        [SerializeField] private Transform firePoint;
-        [SerializeField] private GameObject bulletPrefab;
+        [SerializeField]
+        private PlayerController player;
+
+        [SerializeField]
+        private Transform firePoint;
+
+        [SerializeField]
+        private GameObject bulletPrefab;
 
         [Header("Aim")]
-        [SerializeField] private float rotateSpeed = 80f;
-        [SerializeField] private float minAngle = -10f;
-        [SerializeField] private float maxAngle = 65f;
+        [SerializeField]
+        private float rotateSpeed = 80f;
+
+        [SerializeField]
+        private float minAngle = -10f;
+
+        [SerializeField]
+        private float maxAngle = 65f;
 
         [Header("Shoot")]
-        [SerializeField] private float minForce = 2f;
-        [SerializeField] private float maxForce = 15f;
-        [SerializeField] private float chargeTime = 4f;
+        [SerializeField]
+        private float minForce = 2f;
+
+        [SerializeField]
+        private float maxForce = 15f;
+
+        [SerializeField]
+        private float chargeTime = 4f;
 
         private float currentAngle = 45f;
 
@@ -38,6 +53,7 @@ namespace ArcShot2D
 
         private bool isCharging;
         private float currentCharge;
+
 
         private void Update()
         {
@@ -145,28 +161,43 @@ namespace ArcShot2D
 
         public void AimUpDown()
         {
+            if (!enabled)
+                return;
+
             mobileAimInput = 1f;
         }
 
         public void AimUpUp()
         {
+            if (!enabled)
+                return;
+
             if (mobileAimInput > 0)
                 mobileAimInput = 0f;
         }
 
         public void AimDownDown()
         {
+            if (!enabled)
+                return;
+
             mobileAimInput = -1f;
         }
 
         public void AimDownUp()
         {
+            if (!enabled)
+                return;
+
             if (mobileAimInput < 0)
                 mobileAimInput = 0f;
         }
 
         public void ShootPressed()
         {
+            if (!enabled)
+                return;
+
             if (mobileShootHolding)
                 return;
 
@@ -177,6 +208,9 @@ namespace ArcShot2D
 
         public void ShootReleased()
         {
+            if (!enabled)
+                return;
+
             if (!mobileShootHolding)
                 return;
 

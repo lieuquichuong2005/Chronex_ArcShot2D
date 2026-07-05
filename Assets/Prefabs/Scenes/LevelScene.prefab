@@ -2998,13 +2998,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cameraFollow: {fileID: 8808471095808600263}
   playerPrefab: {fileID: 9051448516502430598, guid: bf12c1ee087e3bb4db5c90b9b4f9d524, type: 3}
-  spawnPoints:
-  - {fileID: 6901449699957670852}
-  - {fileID: 8191762642003422058}
+  mapConfigsManager: {fileID: 11400000, guid: e25b4d48c44494f46b2ae31a4c8a80f3, type: 2}
+  selectedMapId: map_01
   turnConfig:
     playerCount: 2
     turnDuration: 15
   scene: {fileID: 7932610585787104710}
+  _playerTransform: {fileID: 8334513656463451001}
+  _mapTransform: {fileID: 92589276210578373}
 --- !u!114 &8808471095808600263
 MonoBehaviour:
   m_ObjectHideFlags: 0

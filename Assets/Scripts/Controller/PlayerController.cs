@@ -4,25 +4,35 @@ namespace ArcShot2D
 {
     public class PlayerController : MonoBehaviour
     {
-        [SerializeField] private HealthController _healthController;
+        [SerializeField]
+        private HealthController _healthController;
 
-        [Header("Movement")] [SerializeField] private float moveSpeed = 5f;
+        [Header("Movement")]
+        [SerializeField]
+        private float moveSpeed = 5f;
 
-        [Header("Stamina")] [SerializeField] private float maxStamina = 10f;
+        [Header("Stamina")]
+        [SerializeField]
+        private float maxStamina = 10f;
 
-        [Tooltip("Số stamina bị trừ trên mỗi 1 unit khoảng cách di chuyển")] [SerializeField]
+        [Tooltip("Số stamina bị trừ trên mỗi 1 unit khoảng cách di chuyển")]
+        [SerializeField]
         private float staminaCostPerUnit = 1f;
 
-        [SerializeField] private GameObject _turnTransform;
+        [SerializeField]
+        private GameObject _turnTransform;
 
-        [Header("References")] [SerializeField]
+        [Header("References")]
+        [SerializeField]
         private Rigidbody2D rb;
 
-        [SerializeField] private Transform visual;
+        [SerializeField]
+        private Transform visual;
 
         private float keyboardInput;
         private float mobileInput;
 
+        private int _teamId;
         private float currentStamina;
 
         public float CurrentStamina => currentStamina;
@@ -104,27 +114,51 @@ namespace ArcShot2D
 
         public void MoveLeftDown()
         {
+            if (!enabled)
+                return;
+
             mobileInput = -1f;
         }
 
         public void MoveLeftUp()
         {
+            if (!enabled)
+                return;
+
             if (mobileInput < 0)
                 mobileInput = 0f;
         }
 
         public void MoveRightDown()
         {
+            if (!enabled)
+                return;
+
             mobileInput = 1f;
         }
 
         public void MoveRightUp()
         {
+            if (!enabled)
+                return;
+
             if (mobileInput > 0)
                 mobileInput = 0f;
         }
 
         #endregion
+
+        public void SetTeam(int id)
+        {
+            _teamId = id;
+        }
+
+        public void SetFacing(bool facingRight)
+        {
+            visual.localScale = facingRight
+                ? new Vector3(1, 1, 1)
+                : new Vector3(-1, 1, 1);
+        }
 
         public bool IsFacingRight()
         {

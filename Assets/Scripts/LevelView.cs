@@ -19,7 +19,7 @@ public class LevelView : MonoBehaviour
     private MapConfigsManager mapConfigsManager;
 
     [SerializeField]
-    private Transform[] spawnPoints;
+    private string selectedMapId;
 
     [Header("Turn")]
     [SerializeField]
@@ -30,6 +30,9 @@ public class LevelView : MonoBehaviour
     private LevelScene scene;
 
     [SerializeField]
+    private Transform _playerTransform;
+
+    [SerializeField]
     private Transform _mapTransform;
 
     private readonly List<PlayerController> players = new();
@@ -37,11 +40,16 @@ public class LevelView : MonoBehaviour
 
     private TurnManager turnManager;
 
+    private MapConfig currentMapConfig;
+
     // Gun đang được lắng nghe sự kiện OnShoot (để unsubscribe khi đổi turn)
     private GunController boundGun;
 
     private void Start()
     {
+        if (!SpawnMap())
+            return;
+
         SpawnPlayers();
 
         turnManager = new TurnManager(players, guns, turnConfig);
@@ -62,18 +70,33 @@ public class LevelView : MonoBehaviour
 
     private void SpawnPlayers()
     {
-        var count = Mathf.Min(turnConfig.playerCount, spawnPoints.Length);
+        int totalCount = turnConfig.playerCount;
 
-        for (var i = 0; i < count; i++)
-        {
-            var go = Instantiate(
-                playerPrefab,
-                spawnPoints[i].position,
-                Quaternion.identity);
+        int leftCount = Mathf.CeilToInt(totalCount / 2f);
+        int rightCount = totalCount - leftCount;
 
-            players.Add(go.GetComponent<PlayerController>());
-            guns.Add(go.GetComponentInChildren<GunController>());
-        }
+        leftCount = Mathf.Min(leftCount, currentMapConfig.SpawnPoints_Left.Count);
+        rightCount = Mathf.Min(rightCount, currentMapConfig.SpawnPoints_Right.Count);
+
+        for (var i = 0; i < leftCount; i++)
+            SpawnPlayerAt(currentMapConfig.SpawnPoints_Left[i], teamId: 0, facingRight: true);
+
+        for (var i = 0; i < rightCount; i++)
+            SpawnPlayerAt(currentMapConfig.SpawnPoints_Right[i], teamId: 1, facingRight: false);
+    }
+
+    private void SpawnPlayerAt(Vector2 localSpawnPos, int teamId, bool facingRight)
+    {
+        Vector3 worldPos = _mapTransform.TransformPoint(localSpawnPos);
+
+        var go = Instantiate(playerPrefab, worldPos, Quaternion.identity, _playerTransform);
+
+        var player = go.GetComponent<PlayerController>();
+        player.SetTeam(teamId);
+        player.SetFacing(facingRight);
+
+        players.Add(player);
+        guns.Add(go.GetComponentInChildren<GunController>());
     }
 
     private void HandleTurnStarted(int playerIndex)
@@ -180,5 +203,26 @@ public class LevelView : MonoBehaviour
             scene.TimeTurnRemain.text = turnConfig.turnDuration > 0f
                 ? $"{Mathf.CeilToInt(turnManager.RemainingTime)}s"
                 : "∞";
+    }
+
+    private bool SpawnMap()
+    {
+        if (mapConfigsManager == null)
+        {
+            Debug.LogError("[LevelView] Chưa gán MapConfigsManager.");
+            return false;
+        }
+
+        currentMapConfig = mapConfigsManager.GetMapConfig(selectedMapId);
+
+        if (currentMapConfig == null || currentMapConfig.MapPrefab == null)
+        {
+            Debug.LogError($"[LevelView] Không tìm thấy MapConfig hoặc MapPrefab cho mapId '{selectedMapId}'.");
+            return false;
+        }
+
+        Instantiate(currentMapConfig.MapPrefab, _mapTransform);
+
+        return true;
     }
 }
