@@ -143,12 +143,12 @@ public class LogInScene : MonoBehaviour
 
         if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(pass))
         {
-            _messageText.text = "Vui lòng nhập đầy đủ thông tin.";
+            _messageText.text = "Please fill in all required fields.";
             return;
         }
 
         SetProcessing(true);
-        _messageText.text = "Đang đăng nhập...";
+        _messageText.text = "Logging in...";
         _authService.LoginAsync(email, pass).Forget();
     }
 
@@ -163,24 +163,24 @@ public class LogInScene : MonoBehaviour
 
         if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(pass) || string.IsNullOrEmpty(confirmPass))
         {
-            _messageText.text = "Vui lòng nhập đầy đủ thông tin.";
+            _messageText.text = "Please fill in all required fields.";
             return;
         }
 
         if (pass != confirmPass)
         {
-            _messageText.text = "Mật khẩu nhập lại không khớp.";
+            _messageText.text = "Passwords do not match.";
             return;
         }
 
         if (pass.Length < 6)
         {
-            _messageText.text = "Mật khẩu phải có ít nhất 6 ký tự.";
+            _messageText.text = "Password must be at least 6 characters long.";
             return;
         }
 
         SetProcessing(true);
-        _messageText.text = "Đang đăng ký...";
+        _messageText.text = "Registering...";
         _authService.RegisterAsync(email, pass).Forget();
     }
 
