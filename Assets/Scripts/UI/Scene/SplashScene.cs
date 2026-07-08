@@ -8,9 +8,6 @@ namespace Chronex.Bootstrap
     public sealed class SplashScene : MonoBehaviour
     {
         [SerializeField]
-        private string _loginSceneName = "LoginScene";
-
-        [SerializeField]
         private Bootstrap _bootstrapPrefab; // kéo prefab GO "Bootstrap" vào đây
 
         private Bootstrap _bootstrap;
@@ -53,7 +50,7 @@ namespace Chronex.Bootstrap
         private void HandleCompleted()
         {
             var sceneService = ServiceLocator.Instance.Get<ISceneService>();
-            sceneService.LoadSceneAsync(_loginSceneName).Forget();
+            sceneService.LoadSceneAsync<LogInScene>(nameof(LogInScene)).Forget();
         }
 
         private void HandleError(string message)

@@ -4,6 +4,7 @@ using Chronex.Services;
 using Cysharp.Threading.Tasks;
 using QuiChuong2005.Framework.Core;
 using QuiChuong2005.Framework.Core.DI;
+using QuiChuong2005.Framework.Services.Scenes;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -228,8 +229,9 @@ public class LogInScene : MonoBehaviour
     {
         SetProcessing(false);
         _messageText.text = "";
-        var sceneService = ServiceLocator.Instance.Get<QuiChuong2005.Framework.Services.Scenes.ISceneService>();
-        sceneService.LoadSceneAsync("GameScene").Forget();
+
+        var sceneService = ServiceLocator.Instance.Get<ISceneService>();
+        // sceneService.LoadSceneAsync<>(nameof(Lobb)).Forget();
     }
 
     private void HandleError(string errorMsg)
