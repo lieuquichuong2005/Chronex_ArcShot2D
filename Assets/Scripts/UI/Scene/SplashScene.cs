@@ -1,6 +1,8 @@
+using System.Threading;
 using Cysharp.Threading.Tasks;
 using QuiChuong2005.Framework.Core;
 using QuiChuong2005.Framework.Services.Scenes;
+using TMPro;
 using UnityEngine;
 
 namespace Chronex.Bootstrap
@@ -8,14 +10,23 @@ namespace Chronex.Bootstrap
     public sealed class SplashScene : MonoBehaviour
     {
         [SerializeField]
-        private Bootstrap _bootstrapPrefab; // kéo prefab GO "Bootstrap" vào đây
+        private Bootstrap _bootstrapPrefab;
+
+        [SerializeField]
+        private TextMeshProUGUI _loadingText;
+
+        [SerializeField, Tooltip("Số giây giữa mỗi lần đổi số chấm")]
+        private float _dotIntervalSeconds = 0.4f;
+
+        [SerializeField, Tooltip("Số chấm tối đa trước khi lặp lại")]
+        private int _maxDotCount = 3;
 
         private Bootstrap _bootstrap;
+        private string _currentBaseMessage = "Loading";
+        private CancellationTokenSource _dotAnimationCts;
 
         private void Awake()
         {
-            // Nếu Bootstrap đã tồn tại từ trước (persist qua lần chạy trước) thì dùng lại,
-            // chưa có thì instantiate mới từ prefab.
             _bootstrap = Bootstrap.Instance != null
                 ? Bootstrap.Instance
                 : Instantiate(_bootstrapPrefab);
@@ -30,33 +41,82 @@ namespace Chronex.Bootstrap
 
         private void OnDisable()
         {
-            // _bootstrap không bị huỷ theo scene này nên luôn còn sống để unsubscribe an toàn.
             _bootstrap.OnStatusChanged -= HandleStatusChanged;
             _bootstrap.OnCompleted -= HandleCompleted;
             _bootstrap.OnError -= HandleError;
+
+            StopDotAnimation();
         }
 
         private void Start()
         {
+            StartDotAnimation();
             _bootstrap.RunAsync().Forget();
         }
 
         private void HandleStatusChanged(string message)
         {
             Debug.Log($"[Splash] {message}");
-            // TODO: cập nhật SplashUIView (progress bar/text)
+            _currentBaseMessage = message;
         }
 
         private void HandleCompleted()
         {
+            StopDotAnimation();
+            if (_loadingText != null)
+            {
+                _loadingText.text = "Load Complete";
+            }
+
             var sceneService = ServiceLocator.Instance.Get<ISceneService>();
             sceneService.LoadSceneAsync<LogInScene>(nameof(LogInScene)).Forget();
         }
 
         private void HandleError(string message)
         {
+            StopDotAnimation();
             Debug.LogError($"[Splash] Lỗi: {message}");
+
+            if (_loadingText != null)
+            {
+                _loadingText.text = message;
+            }
             // TODO: show ErrorPopupController kèm nút Retry
+        }
+
+        private void StartDotAnimation()
+        {
+            StopDotAnimation();
+            _dotAnimationCts = new CancellationTokenSource();
+            AnimateDotsAsync(_dotAnimationCts.Token).Forget();
+        }
+
+        private void StopDotAnimation()
+        {
+            _dotAnimationCts?.Cancel();
+            _dotAnimationCts?.Dispose();
+            _dotAnimationCts = null;
+        }
+
+        private async UniTaskVoid AnimateDotsAsync(CancellationToken token)
+        {
+            int dotCount = 0;
+
+            while (!token.IsCancellationRequested)
+            {
+                if (_loadingText != null)
+                {
+                    _loadingText.text = _currentBaseMessage + new string('.', dotCount);
+                }
+
+                dotCount = (dotCount + 1) % (_maxDotCount + 1);
+
+                await UniTask.Delay(
+                    System.TimeSpan.FromSeconds(_dotIntervalSeconds),
+                    cancellationToken: token,
+                    cancelImmediately: true
+                ).SuppressCancellationThrow();
+            }
         }
     }
 }
