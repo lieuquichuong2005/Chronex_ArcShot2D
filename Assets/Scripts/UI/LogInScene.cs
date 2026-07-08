@@ -1,5 +1,9 @@
 using System;
 using System.Collections.Generic;
+using Chronex.Services;
+using Cysharp.Threading.Tasks;
+using QuiChuong2005.Framework.Core;
+using QuiChuong2005.Framework.Core.DI;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -23,6 +27,9 @@ public class LogInScene : MonoBehaviour
         public Sprite TabActive;
         public Sprite TabInactive;
     }
+
+    [Inject]
+    private AuthenticationService _authService;
 
     [Header("Log In")]
     [SerializeField]
@@ -74,6 +81,8 @@ public class LogInScene : MonoBehaviour
 
     private void Awake()
     {
+        ServiceLocator.Instance.Resolve(this);
+
         _currentTab = AccountTab.SignIn;
         InitButtonTab();
         InitActionButtons();
@@ -82,17 +91,16 @@ public class LogInScene : MonoBehaviour
 
     private void OnEnable()
     {
-        FirebaseAuthManager.Instance.OnLoginSuccess += HandleLoginSuccess;
-        FirebaseAuthManager.Instance.OnAuthError += HandleError;
-        FirebaseAuthManager.Instance.OnLogout += HandleLogout;
+        _authService.OnLoginSuccess += HandleLoginSuccess;
+        _authService.OnAuthError += HandleError;
+        _authService.OnLogout += HandleLogout;
     }
 
     private void OnDisable()
     {
-        if (FirebaseAuthManager.Instance == null) return;
-        FirebaseAuthManager.Instance.OnLoginSuccess -= HandleLoginSuccess;
-        FirebaseAuthManager.Instance.OnAuthError -= HandleError;
-        FirebaseAuthManager.Instance.OnLogout -= HandleLogout;
+        _authService.OnLoginSuccess -= HandleLoginSuccess;
+        _authService.OnAuthError -= HandleError;
+        _authService.OnLogout -= HandleLogout;
     }
 
     private void OnDestroy()
@@ -140,7 +148,7 @@ public class LogInScene : MonoBehaviour
 
         SetProcessing(true);
         _messageText.text = "Đang đăng nhập...";
-        FirebaseAuthManager.Instance.Login(email, pass);
+        _authService.LoginAsync(email, pass).Forget();
     }
 
     // Gắn vào nút "Đăng ký"
@@ -172,34 +180,25 @@ public class LogInScene : MonoBehaviour
 
         SetProcessing(true);
         _messageText.text = "Đang đăng ký...";
-        FirebaseAuthManager.Instance.Register(email, pass);
+        _authService.RegisterAsync(email, pass).Forget();
     }
 
     // Gắn vào nút "Đăng xuất"
     public void OnClickLogout()
     {
-        FirebaseAuthManager.Instance.Logout();
+        _authService.Logout();
     }
 
-    // Nút hiện/ẩn mật khẩu bên tab LogIn
     public void OnClickToggleLoginPassword()
     {
         _isLoginPasswordVisible = !_isLoginPasswordVisible;
-        ApplyPasswordVisibility(
-            _isLoginPasswordVisible,
-            _showPasswordButton_01,
-            _passwordInput);
+        ApplyPasswordVisibility(_isLoginPasswordVisible, _showPasswordButton_01, _passwordInput);
     }
 
-    // Nút hiện/ẩn mật khẩu bên tab SignIn (áp dụng cho cả password và confirm password)
     public void OnClickToggleSignInPassword()
     {
         _isSignInPasswordVisible = !_isSignInPasswordVisible;
-        ApplyPasswordVisibility(
-            _isSignInPasswordVisible,
-            _showPasswordButton_02,
-            _password,
-            _confirmPassword);
+        ApplyPasswordVisibility(_isSignInPasswordVisible, _showPasswordButton_02, _password, _confirmPassword);
     }
 
     private void ApplyPasswordVisibility(bool isVisible, Button toggleButton, params TMP_InputField[] fields)
@@ -229,8 +228,8 @@ public class LogInScene : MonoBehaviour
     {
         SetProcessing(false);
         _messageText.text = "";
-        // TODO: chuyển sang scene chính của game sau khi đăng nhập/đăng ký thành công
-        // Ví dụ: UnityEngine.SceneManagement.SceneManager.LoadScene("GameScene");
+        var sceneService = ServiceLocator.Instance.Get<QuiChuong2005.Framework.Services.Scenes.ISceneService>();
+        sceneService.LoadSceneAsync("GameScene").Forget();
     }
 
     private void HandleError(string errorMsg)
@@ -249,15 +248,10 @@ public class LogInScene : MonoBehaviour
 
     private void SetTab(AccountTab tab)
     {
-        if (tab == _currentTab)
-        {
-            return;
-        }
+        if (tab == _currentTab) return;
 
         _currentTab = tab;
         _messageText.text = "";
-
-        // Tự động reset mật khẩu về dạng ẩn mỗi khi chuyển tab
         ResetPasswordVisibility();
 
         foreach (var tabConfig in _tabConfig)
