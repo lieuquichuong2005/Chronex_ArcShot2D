@@ -231,7 +231,7 @@ public class LogInScene : MonoBehaviour
         _messageText.text = "";
 
         var sceneService = ServiceLocator.Instance.Get<ISceneService>();
-        // sceneService.LoadSceneAsync<>(nameof(Lobb)).Forget();
+        sceneService.LoadSceneAsync<MenuScene>(nameof(MenuScene)).Forget();
     }
 
     private void HandleError(string errorMsg)
