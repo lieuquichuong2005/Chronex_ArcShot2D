@@ -1,16 +1,17 @@
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using QuiChuong2005.Framework.Core;
+using QuiChuong2005.Framework.Services;
 using QuiChuong2005.Framework.Services.Scenes;
 using TMPro;
 using UnityEngine;
 
-namespace Chronex.Bootstrap
+namespace QuiChuong2005.Arcshot
 {
     public sealed class SplashScene : MonoBehaviour
     {
         [SerializeField]
-        private Bootstrap _bootstrapPrefab;
+        private QuiChuong2005.Framework.Services.Bootstrap _bootstrapPrefab;
 
         [SerializeField]
         private TextMeshProUGUI _loadingText;
@@ -21,7 +22,7 @@ namespace Chronex.Bootstrap
         [SerializeField, Tooltip("Số chấm tối đa trước khi lặp lại")]
         private int _maxDotCount = 3;
 
-        private Bootstrap _bootstrap;
+        private QuiChuong2005.Framework.Services.Bootstrap _bootstrap;
         private string _currentBaseMessage = "Loading";
         private CancellationTokenSource _dotAnimationCts;
 

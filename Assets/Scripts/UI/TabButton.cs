@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
 using EditorAttributes;
+using QuiChuong2005.Framework.Core;
+using QuiChuong2005.Framework.Core.DI;
+using QuiChuong2005.Framework.Services.Audio;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -21,6 +24,9 @@ namespace Arcshot
 
     public class TabButton : MonoBehaviour
     {
+        [Inject]
+        private IAudioService _audioService;
+
         [Serializable]
         public class ButtonConfig
         {
@@ -30,6 +36,9 @@ namespace Arcshot
 
         [SerializeField]
         private MenuTab _tab;
+
+        [SerializeField]
+        private Image _icon;
 
         [SerializeField]
         private TextMeshProUGUI _title;
@@ -46,8 +55,7 @@ namespace Arcshot
         private bool _isActivate;
         private bool _isLocked;
 
-        public Action OnClick;
-
+        public Action<MenuTab> OnClick;
 
         public bool IsActivate
         {
@@ -67,31 +75,36 @@ namespace Arcshot
 
         private void Awake()
         {
-            _selectedImage.sprite = GetIcon(_tab);
+            ServiceLocator.Instance.Resolve(this);
+
+            _icon.sprite = GetIcon(_tab);
             _title.text = $"{_tab.ToString().ToUpper()}";
             IsActivate = false;
         }
 
         public void OnPressed()
         {
-            if (!_isReleased)
-            {
-                Debug.Log($"Coming Soon ...");
-                return;
-            }
+            Debug.Log($"OnPressed");
+            _audioService.PlaySfx(Audio.SFX_Click);
 
-            if (_isLocked)
-            {
-                Debug.Log($"Tab Is Being Locked.");
-                return;
-            }
+            // if (!_isReleased)
+            // {
+            //     Debug.Log($"Coming Soon ...");
+            //     return;
+            // }
+            //
+            // if (_isLocked)
+            // {
+            //     Debug.Log($"Tab Is Being Locked.");
+            //     return;
+            // }
 
-            OnClick?.Invoke();
+            OnClick?.Invoke(_tab);
         }
 
         private void SetSelectState()
         {
-            _selectedImage.enabled = _isActivate;
+            _selectedImage.gameObject.SetActive(IsActivate);
         }
 
         private Sprite GetIcon(MenuTab tab)
