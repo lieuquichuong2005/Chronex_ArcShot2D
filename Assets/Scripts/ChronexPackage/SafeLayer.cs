@@ -19,10 +19,7 @@ namespace Game.UI
 
         private void Update()
         {
-            if (NeedRefresh())
-            {
-                ApplySafeArea();
-            }
+            if (NeedRefresh()) ApplySafeArea();
         }
 
         private bool NeedRefresh()
@@ -35,14 +32,14 @@ namespace Game.UI
 
         private void ApplySafeArea()
         {
-            Rect safeArea = Screen.safeArea;
+            var safeArea = Screen.safeArea;
 
             lastSafeArea = safeArea;
             lastScreenSize = new Vector2Int(Screen.width, Screen.height);
             lastOrientation = Screen.orientation;
 
-            Vector2 anchorMin = safeArea.position;
-            Vector2 anchorMax = safeArea.position + safeArea.size;
+            var anchorMin = safeArea.position;
+            var anchorMax = safeArea.position + safeArea.size;
 
             anchorMin.x /= Screen.width;
             anchorMin.y /= Screen.height;
