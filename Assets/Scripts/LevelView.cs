@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using ArcShot2D;
+using ArcShot;
 using UnityEngine;
 using UnityEngine.EventSystems;
 

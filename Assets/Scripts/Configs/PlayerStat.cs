@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace ArcShot2D
+namespace ArcShot
 {
     /// <summary>
     /// Lưu các thông số (stat) của một nhân vật/player trong game bắn súng tọa độ

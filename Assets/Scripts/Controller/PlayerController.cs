@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace ArcShot2D
+namespace ArcShot
 {
     public class PlayerController : MonoBehaviour
     {

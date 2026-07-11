@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace ArcShot2D
+namespace ArcShot
 {
     [RequireComponent(typeof(HealthController))]
     public class DamageReceiver : MonoBehaviour

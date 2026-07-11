@@ -1,7 +1,7 @@
 using Unity.Cinemachine;
 using UnityEngine;
 
-namespace ArcShot2D
+namespace ArcShot
 {
     /// <summary>
     /// Điều khiển target camera theo dõi: player đang tới lượt, hoặc viên đạn khi đang bay.

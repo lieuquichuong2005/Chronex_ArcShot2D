@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace ArcShot2D
+namespace ArcShot
 {
     public class HealthController : MonoBehaviour
     {

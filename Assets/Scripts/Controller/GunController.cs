@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace ArcShot2D
+namespace ArcShot
 {
     public class GunController : MonoBehaviour
     {

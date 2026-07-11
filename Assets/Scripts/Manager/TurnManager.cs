@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace ArcShot2D
+namespace ArcShot
 {
     /// <summary>
     /// Config cho TurnManager, set từ LevelView (Inspector hoặc code).
