@@ -1,8 +1,11 @@
 using System;
 using System.Collections.Generic;
 using Arcshot;
+using Chronex.UI.Room;
+using Photon.Realtime;
 using QuiChuong2005.Framework.Core;
 using QuiChuong2005.Framework.Core.DI;
+using QuiChuong2005.Framework.Services.Scenes;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -19,6 +22,8 @@ public class MenuScene : MonoBehaviour
     [Inject]
     private Chronex.Services.Networking.INetworkService _networkService;
 
+    [Inject]
+    private ISceneService _sceneService;
 
     [SerializeField]
     private List<MenuTabPanel> _tabConfigs = new();
@@ -34,6 +39,7 @@ public class MenuScene : MonoBehaviour
     private Button _joinRoomButton;
 
     private MenuTabPanel _currentTab;
+    private bool _isConnecting;
 
     private void Awake()
     {
@@ -57,35 +63,56 @@ public class MenuScene : MonoBehaviour
 
     private async void OnClickCreateRoom()
     {
+        if (_isConnecting) return;
+        _isConnecting = true;
+        SetRoomButtonsInteractable(false);
+
         try
         {
             string code = await _networkService.CreateRoomAsync(maxPlayers: 4);
             Debug.Log($"[Menu] Tạo phòng thành công, code: {code}");
-            // TODO: chuyển sang LobbyScene khi class đó xong
+
+            await _sceneService.LoadSceneAsync<RoomScene>(nameof(RoomScene));
         }
         catch (Exception ex)
         {
             Debug.LogError($"[Menu] Tạo phòng lỗi: {ex.Message}");
+            _isConnecting = false;
+            SetRoomButtonsInteractable(true);
         }
     }
 
     private async void OnClickQuickMatch()
     {
+        if (_isConnecting) return;
+        _isConnecting = true;
+        SetRoomButtonsInteractable(false);
+
         try
         {
             await _networkService.QuickMatchAsync(maxPlayers: 4);
             Debug.Log("[Menu] Quick match thành công.");
+
+            await _sceneService.LoadSceneAsync<RoomScene>(nameof(RoomScene));
         }
         catch (Exception ex)
         {
             Debug.LogError($"[Menu] Quick match lỗi: {ex.Message}");
+            _isConnecting = false;
+            SetRoomButtonsInteractable(true);
         }
     }
 
     private void OnClickJoinRoom()
     {
-        // TODO: mở JoinRoomDialog khi class đó xong
-        Debug.Log("[Menu] Mở dialog Join Room (chưa implement).");
+        Debug.Log("Comming Soon");
+        // TODO: mở LobbyScene khi class đó xong
+    }
+
+    private void SetRoomButtonsInteractable(bool interactable)
+    {
+        _createRoomButton.interactable = interactable;
+        _quickMatchButton.interactable = interactable;
     }
 
     private void RegisterNetworkServiceIfNeeded()
