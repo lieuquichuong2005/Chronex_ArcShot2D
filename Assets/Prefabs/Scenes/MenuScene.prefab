@@ -526,6 +526,9 @@ MonoBehaviour:
   - tabKind: 7
     tabButton: {fileID: 252979364155552240}
     tabPanel: {fileID: 1984288581876969878}
+  _createRoomButton: {fileID: 7121217679574992112}
+  _quickMatchButton: {fileID: 5763932280555516234}
+  _joinRoomButton: {fileID: 6774776078108907649}
 --- !u!1 &2043388154510868721
 GameObject:
   m_ObjectHideFlags: 0
