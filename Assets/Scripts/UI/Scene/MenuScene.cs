@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Arcshot;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MenuScene : MonoBehaviour
 {
@@ -15,6 +16,16 @@ public class MenuScene : MonoBehaviour
 
     [SerializeField]
     private List<MenuTabPanel> _tabConfigs = new();
+
+    [Header("Room")]
+    [SerializeField]
+    private Button _createRoomButton;
+
+    [SerializeField]
+    private Button _quickMatchButton;
+
+    [SerializeField]
+    private Button _joinRoomButton;
 
     private MenuTabPanel _currentTab;
 
