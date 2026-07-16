@@ -1,5 +1,6 @@
+using System;
 using Fusion;
-using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Chronex.Networking
 {
@@ -13,6 +14,7 @@ namespace Chronex.Networking
         [Networked] public NetworkString<_32> PlayerName { get; set; }
         [Networked] public NetworkBool IsReady { get; set; }
         [Networked] public NetworkBool IsHost { get; set; }
+        public event Action OnDespawned;
 
         public override void Spawned()
         {
@@ -22,6 +24,11 @@ namespace Chronex.Networking
                 string autoName = $"Player{Random.Range(1000, 9999)}";
                 RPC_SetName(autoName);
             }
+        }
+
+        public override void Despawned(NetworkRunner runner, bool hasState)
+        {
+            OnDespawned?.Invoke();
         }
 
         [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]

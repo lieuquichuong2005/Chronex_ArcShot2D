@@ -123,7 +123,14 @@ namespace Chronex.UI.Room
 
         private void Update()
         {
-            if (_isHost) _readyStartButton.interactable = AreAllClientsReady();
+            if (!_isHost)
+                return;
+
+            if (_networkService?.Runner == null ||
+                !_networkService.Runner.IsRunning)
+                return;
+
+            _readyStartButton.interactable = AreAllClientsReady();
         }
 
         private void SetupButtons()
@@ -216,11 +223,16 @@ namespace Chronex.UI.Room
 
         private bool AreAllClientsReady()
         {
+            if (_networkService == null || _networkService.Runner == null || !_networkService.Runner.IsRunning)
+            {
+                return false;
+            }
+
             var clients = _networkService.Runner.ActivePlayers
                 .Select(p => _networkService.Runner.GetPlayerObject(p))
                 .Where(o => o != null)
                 .Select(o => o.GetComponent<RoomPlayerNetworkObject>())
-                .Where(d => !d.IsHost)
+                .Where(d => d != null && !d.IsHost)
                 .ToList();
 
             return clients.Count > 0 && clients.All(d => d.IsReady);

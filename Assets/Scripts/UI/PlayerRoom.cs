@@ -73,17 +73,32 @@ public class PlayerRoom : MonoBehaviour
         _isLocalPlayer = isLocalPlayer;
         _changeDetector = data.GetChangeDetector(NetworkBehaviour.ChangeDetector.Source.SimulationState);
 
-        // TODO: gán _playerLevel/_playerRank/_player (avatar) khi có dữ liệu profile thật từ DataService.
+        _data.OnDespawned += HandleDespawn;
+
         _playerLevel.text = "Lv. 1";
 
         Refresh();
     }
 
+
+    private void HandleDespawn()
+    {
+        if (_data != null)
+            _data.OnDespawned -= HandleDespawn;
+
+        _data = null;
+        _changeDetector = null;
+    }
+
     private void Update()
     {
-        if (_data == null || _changeDetector == null) return;
+        if (_data == null)
+            return;
 
-        foreach (string _ in _changeDetector.DetectChanges(_data))
+        if (_data.Object == null)
+            return;
+
+        foreach (var _ in _changeDetector.DetectChanges(_data))
         {
             Refresh();
         }
