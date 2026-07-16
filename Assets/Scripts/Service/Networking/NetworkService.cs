@@ -22,14 +22,17 @@ namespace Chronex.Services.Networking
 
         private NetworkRunnerCallbacks _callbacks;
         private List<SessionInfo> _lastSessionList = new();
+        private UniTaskCompletionSource<List<SessionInfo>> _sessionListTcs;
 
-        public async UniTask<string> CreateRoomAsync(int maxPlayers, CancellationToken cancellationToken = default)
+        public async UniTask<string> CreateRoomAsync(
+            int maxPlayers,
+            CancellationToken cancellationToken = default)
         {
-            await EnsureCleanRunnerAsync();
+            await EnsureRunnerAsync();
 
             string roomCode = RoomCodeGenerator.Generate();
 
-            StartGameResult result = await Runner.StartGame(new StartGameArgs
+            var result = await Runner.StartGame(new StartGameArgs
             {
                 GameMode = GameMode.Host,
                 SessionName = roomCode,
@@ -39,26 +42,28 @@ namespace Chronex.Services.Networking
             cancellationToken.ThrowIfCancellationRequested();
 
             if (!result.Ok)
-            {
-                throw new NetworkServiceException($"Không thể tạo phòng: {result.ShutdownReason}");
-            }
+                throw new NetworkServiceException(
+                    $"Không thể tạo phòng: {result.ShutdownReason}");
 
             CurrentRoomCode = roomCode;
+
             return roomCode;
         }
 
-        public async UniTask JoinRoomByCodeAsync(string roomCode, CancellationToken cancellationToken = default)
+        public async UniTask JoinRoomByCodeAsync(
+            string roomCode,
+            CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrWhiteSpace(roomCode))
-            {
-                throw new ArgumentException("Room code không được để trống.", nameof(roomCode));
-            }
+                throw new ArgumentException(
+                    "Room code không được để trống.",
+                    nameof(roomCode));
 
-            await EnsureCleanRunnerAsync();
+            await EnsureRunnerAsync();
 
             string normalizedCode = roomCode.Trim().ToUpperInvariant();
 
-            StartGameResult result = await Runner.StartGame(new StartGameArgs
+            var result = await Runner.StartGame(new StartGameArgs
             {
                 GameMode = GameMode.Client,
                 SessionName = normalizedCode
@@ -67,67 +72,76 @@ namespace Chronex.Services.Networking
             cancellationToken.ThrowIfCancellationRequested();
 
             if (!result.Ok)
-            {
                 throw new NetworkServiceException(
                     result.ShutdownReason == ShutdownReason.GameNotFound
                         ? $"Không tìm thấy phòng '{normalizedCode}'."
                         : $"Không thể vào phòng: {result.ShutdownReason}");
-            }
 
             CurrentRoomCode = normalizedCode;
         }
 
-        public async UniTask<List<SessionInfo>> BrowseRoomsAsync(CancellationToken cancellationToken = default)
+        public async UniTask<List<SessionInfo>> BrowseRoomsAsync(
+            CancellationToken cancellationToken = default)
         {
-            await EnsureCleanRunnerAsync();
+            await EnsureRunnerAsync();
 
-            StartGameResult result = await Runner.JoinSessionLobby(SessionLobby.ClientServer);
-            cancellationToken.ThrowIfCancellationRequested();
+            _sessionListTcs = new UniTaskCompletionSource<List<SessionInfo>>();
+
+            var result = await Runner.JoinSessionLobby(SessionLobby.ClientServer);
 
             if (!result.Ok)
+                throw new NetworkServiceException(
+                    $"Không thể lấy danh sách phòng: {result.ShutdownReason}");
+
+            using (cancellationToken.Register(() =>
+                       _sessionListTcs.TrySetCanceled()))
             {
-                throw new NetworkServiceException($"Không thể lấy danh sách phòng: {result.ShutdownReason}");
+                var rooms = await _sessionListTcs.Task;
+
+                return rooms
+                    .Where(x => x.IsOpen && x.IsVisible)
+                    .ToList();
             }
-
-            // Danh sách phòng đến qua callback OnSessionListUpdated (bất đồng bộ, không có
-            // "await" trực tiếp được) - đợi 1 nhịp để callback đầu tiên kịp chạy trước khi trả kết quả.
-            await UniTask.Delay(TimeSpan.FromSeconds(1), cancellationToken: cancellationToken);
-
-            return _lastSessionList.Where(s => s.IsOpen && s.IsVisible).ToList();
         }
 
-        public async UniTask QuickMatchAsync(int maxPlayers, CancellationToken cancellationToken = default)
+        public async UniTask QuickMatchAsync(
+            int maxPlayers,
+            CancellationToken cancellationToken = default)
         {
-            List<SessionInfo> rooms = await BrowseRoomsAsync(cancellationToken);
+            var rooms = await BrowseRoomsAsync(cancellationToken);
 
-            SessionInfo joinable = rooms.FirstOrDefault(s => s.PlayerCount < s.MaxPlayers);
+            var room = rooms.FirstOrDefault(r => r.PlayerCount < r.MaxPlayers);
 
-            if (joinable != null)
+            if (room != null)
             {
-                await JoinRoomByCodeAsync(joinable.Name, cancellationToken);
+                Debug.Log($"Join room: {room.Name}");
+                await JoinRoomByCodeAsync(room.Name, cancellationToken);
             }
             else
             {
+                Debug.Log("Không có phòng -> tạo mới");
                 await CreateRoomAsync(maxPlayers, cancellationToken);
             }
         }
 
         public async UniTask LeaveRoomAsync()
         {
-            if (Runner == null) return;
+            if (Runner == null)
+                return;
 
             await Runner.Shutdown();
+
+            UnityEngine.Object.Destroy(Runner.gameObject);
+
+            Runner = null;
+
             CurrentRoomCode = null;
         }
 
-        private async UniTask EnsureCleanRunnerAsync()
+        private async UniTask EnsureRunnerAsync()
         {
             if (Runner != null)
-            {
-                await Runner.Shutdown();
-                UnityEngine.Object.Destroy(Runner.gameObject);
-                Runner = null;
-            }
+                return;
 
             var runnerObject = new GameObject(RunnerObjectName);
             UnityEngine.Object.DontDestroyOnLoad(runnerObject);
@@ -136,13 +150,16 @@ namespace Chronex.Services.Networking
             Runner.ProvideInput = true;
 
             _callbacks = runnerObject.AddComponent<NetworkRunnerCallbacks>();
+
             _callbacks.Initialize(
-                onPlayerJoined: p => PlayerJoined?.Invoke(p),
-                onPlayerLeft: p => PlayerLeft?.Invoke(p),
-                onSessionListUpdated: list =>
+                p => PlayerJoined?.Invoke(p),
+                p => PlayerLeft?.Invoke(p),
+                list =>
                 {
                     _lastSessionList = list;
                     SessionListUpdated?.Invoke(list);
+
+                    _sessionListTcs?.TrySetResult(list);
                 });
 
             Runner.AddCallbacks(_callbacks);
