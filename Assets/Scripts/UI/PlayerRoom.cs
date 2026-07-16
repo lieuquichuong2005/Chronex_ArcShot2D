@@ -31,6 +31,9 @@ public class PlayerRoom : MonoBehaviour
     private Image _player;
 
     [SerializeField]
+    private TextMeshProUGUI _stateText;
+
+    [SerializeField]
     private Image _buttonImage;
 
     [SerializeField]
@@ -103,8 +106,17 @@ public class PlayerRoom : MonoBehaviour
     private void UpdateReadyState()
     {
         bool ready = _data.IsReady;
+        bool isHost = _data.IsHost;
+        if (isHost)
+        {
+            _buttonImage.sprite = _readyButtonSprite;
+            _iconState.sprite = _tickSprite;
+            _stateText.text = "Host";
+            return;
+        }
+
         _buttonImage.sprite = ready ? _readyButtonSprite : _prepareButtonSprite;
-        _iconState.sprite =
-            ready ? _tickSprite : _xSprite; // Sửa bug: bản gốc lặp _prepareButtonSprite ở đây thay vì _xSprite.
+        _iconState.sprite = ready ? _tickSprite : _xSprite;
+        _stateText.text = ready ? "Ready" : "Prepare";
     }
 }

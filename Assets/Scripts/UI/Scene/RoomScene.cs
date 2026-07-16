@@ -1,6 +1,7 @@
 using System.Linq;
 using Chronex.Networking;
 using Chronex.Services.Networking;
+using Cysharp.Threading.Tasks;
 using Fusion;
 using QuiChuong2005.Framework.Core;
 using QuiChuong2005.Framework.Core.DI;
@@ -93,10 +94,7 @@ namespace Chronex.UI.Room
             _networkService.PlayerJoined -= HandlePlayerJoined;
             _networkService.PlayerLeft -= HandlePlayerLeft;
 
-            if (RoomChatRelay.Instance != null)
-            {
-                RoomChatRelay.Instance.MessageReceived -= HandleChatMessageReceived;
-            }
+            if (RoomChatRelay.Instance != null) RoomChatRelay.Instance.MessageReceived -= HandleChatMessageReceived;
         }
 
         private void Start()
@@ -117,7 +115,7 @@ namespace Chronex.UI.Room
             }
             else
             {
-                BindExistingPlayers();
+                BindExistingPlayersAsync().Forget();
             }
 
             TrySubscribeChatRelay();
@@ -125,10 +123,7 @@ namespace Chronex.UI.Room
 
         private void Update()
         {
-            if (_isHost)
-            {
-                _readyStartButton.interactable = AreAllClientsReady();
-            }
+            if (_isHost) _readyStartButton.interactable = AreAllClientsReady();
         }
 
         private void SetupButtons()
@@ -151,20 +146,18 @@ namespace Chronex.UI.Room
 
         private void SpawnMissingPlayerObjects()
         {
-            PlayerRef hostRef = _networkService.Runner.LocalPlayer;
+            var hostRef = _networkService.Runner.LocalPlayer;
 
-            foreach (PlayerRef player in _networkService.Runner.ActivePlayers)
-            {
+            foreach (var player in _networkService.Runner.ActivePlayers)
                 if (_networkService.Runner.GetPlayerObject(player) == null)
-                {
-                    SpawnPlayerObject(player, isHost: player == hostRef);
-                }
-            }
+                    SpawnPlayerObject(player, player == hostRef);
         }
 
         private void SpawnPlayerObject(PlayerRef player, bool isHost)
         {
-            NetworkObject spawned = _networkService.Runner.Spawn(_roomPlayerNetworkPrefab, inputAuthority: player);
+            Debug.Log($"Spawn player object: {player}");
+
+            var spawned = _networkService.Runner.Spawn(_roomPlayerNetworkPrefab, inputAuthority: player);
             _networkService.Runner.SetPlayerObject(player, spawned);
 
             var data = spawned.GetComponent<RoomPlayerNetworkObject>();
@@ -176,13 +169,10 @@ namespace Chronex.UI.Room
 
         private void BindExistingPlayers()
         {
-            foreach (PlayerRef player in _networkService.Runner.ActivePlayers)
+            foreach (var player in _networkService.Runner.ActivePlayers)
             {
-                NetworkObject obj = _networkService.Runner.GetPlayerObject(player);
-                if (obj != null)
-                {
-                    BindPlayerView(player, obj.GetComponent<RoomPlayerNetworkObject>());
-                }
+                var obj = _networkService.Runner.GetPlayerObject(player);
+                if (obj != null) BindPlayerView(player, obj.GetComponent<RoomPlayerNetworkObject>());
             }
         }
 
@@ -190,32 +180,32 @@ namespace Chronex.UI.Room
         {
             if (_spawnedViews.ContainsKey(player)) return;
 
-            PlayerRoom view = Instantiate(_playerRoom, _playerParent);
-            bool isLocal = player == _networkService.Runner.LocalPlayer;
+            var view = Instantiate(_playerRoom, _playerParent);
+            var isLocal = player == _networkService.Runner.LocalPlayer;
 
             view.Bind(data, isLocal);
 
-            if (isLocal && !data.IsHost)
-            {
-                view.PressedCallback += OnLocalPlayerTogglePressed;
-            }
+            if (isLocal && !data.IsHost) view.PressedCallback += OnLocalPlayerTogglePressed;
 
             _spawnedViews[player] = view;
         }
 
         private void HandlePlayerJoined(PlayerRef player)
         {
-            if (_isHost && _networkService.Runner.GetPlayerObject(player) == null)
-            {
-                SpawnPlayerObject(player, isHost: false);
-            }
+            Debug.Log($"[RoomScene] PlayerJoined: {player}");
+
+            if (_isHost)
+                if (_networkService.Runner.GetPlayerObject(player) == null)
+                    SpawnPlayerObject(player, false);
+
+            BindPlayerViewWhenReady(player).Forget();
 
             UpdatePlayerCountText();
         }
 
         private void HandlePlayerLeft(PlayerRef player)
         {
-            if (_spawnedViews.TryGetValue(player, out PlayerRoom view))
+            if (_spawnedViews.TryGetValue(player, out var view))
             {
                 Destroy(view.gameObject);
                 _spawnedViews.Remove(player);
@@ -240,7 +230,7 @@ namespace Chronex.UI.Room
 
         private void OnLocalPlayerTogglePressed()
         {
-            NetworkObject myObj = _networkService.Runner.GetPlayerObject(_networkService.Runner.LocalPlayer);
+            var myObj = _networkService.Runner.GetPlayerObject(_networkService.Runner.LocalPlayer);
             var data = myObj?.GetComponent<RoomPlayerNetworkObject>();
             if (data == null) return;
 
@@ -285,23 +275,19 @@ namespace Chronex.UI.Room
         private void TrySubscribeChatRelay()
         {
             if (RoomChatRelay.Instance != null)
-            {
                 RoomChatRelay.Instance.MessageReceived += HandleChatMessageReceived;
-            }
             else
-            {
                 // Client vào trước khi Host kịp Spawn relay - thử lại sau 1 khoảng ngắn.
                 Invoke(nameof(TrySubscribeChatRelay), 0.5f);
-            }
         }
 
         private void OnClickSendChat()
         {
-            string message = _chatInput.text?.Trim();
+            var message = _chatInput.text?.Trim();
             if (string.IsNullOrEmpty(message) || RoomChatRelay.Instance == null) return;
 
-            NetworkObject myObj = _networkService.Runner.GetPlayerObject(_networkService.Runner.LocalPlayer);
-            string myName = myObj?.GetComponent<RoomPlayerNetworkObject>()?.PlayerName.ToString() ?? "???";
+            var myObj = _networkService.Runner.GetPlayerObject(_networkService.Runner.LocalPlayer);
+            var myName = myObj?.GetComponent<RoomPlayerNetworkObject>()?.PlayerName.ToString() ?? "???";
 
             RoomChatRelay.Instance.RPC_SendMessage(myName, message);
             _chatInput.text = "";
@@ -312,6 +298,36 @@ namespace Chronex.UI.Room
             // TODO: cần 1 chat message prefab (TMP Text) để Instantiate vào _chatParent -
             // hiện tại field _chatParent chỉ là Transform container, chưa có prefab dòng chat cụ thể.
             Debug.Log($"[Chat] {playerName}: {message}");
+        }
+
+        private async UniTaskVoid BindPlayerViewWhenReady(PlayerRef player)
+        {
+            while (_networkService.Runner.GetPlayerObject(player) == null) await UniTask.Yield();
+
+            if (_spawnedViews.ContainsKey(player))
+                return;
+
+            var obj = _networkService.Runner.GetPlayerObject(player);
+
+            BindPlayerView(
+                player,
+                obj.GetComponent<RoomPlayerNetworkObject>());
+        }
+
+        private async UniTaskVoid BindExistingPlayersAsync()
+        {
+            await UniTask.DelayFrame(1);
+
+            foreach (var player in _networkService.Runner.ActivePlayers)
+            {
+                while (_networkService.Runner.GetPlayerObject(player) == null) await UniTask.Yield();
+
+                BindPlayerView(
+                    player,
+                    _networkService.Runner
+                        .GetPlayerObject(player)
+                        .GetComponent<RoomPlayerNetworkObject>());
+            }
         }
     }
 }
