@@ -985,6 +985,12 @@ MonoBehaviour:
   _playerLevel: {fileID: 200576977627495336}
   _playerRank: {fileID: 3050500494573582948}
   _player: {fileID: 8699641390194517120}
+  _buttonImage: {fileID: 2237270802020449985}
+  _iconState: {fileID: 997446161927794236}
+  _readyButtonSprite: {fileID: 21300000, guid: 247df315c9cfc7442b8aad36e53cfda4, type: 3}
+  _tickSprite: {fileID: 21300000, guid: 1aaa8bd3e094a964f87c2d6cdef05525, type: 3}
+  _prepareButtonSprite: {fileID: 21300000, guid: c20f60d220158f94e86cbcfdfdfc5ed9, type: 3}
+  _xSprite: {fileID: 21300000, guid: 1e743d482d77c4a4997a355505ce2011, type: 3}
 --- !u!1 &4789920896546001819
 GameObject:
   m_ObjectHideFlags: 0
