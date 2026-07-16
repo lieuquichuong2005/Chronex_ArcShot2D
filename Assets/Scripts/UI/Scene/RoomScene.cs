@@ -121,18 +121,6 @@ namespace Chronex.UI.Room
             TrySubscribeChatRelay();
         }
 
-        private void Update()
-        {
-            if (!_isHost)
-                return;
-
-            if (_networkService?.Runner == null ||
-                !_networkService.Runner.IsRunning)
-                return;
-
-            _readyStartButton.interactable = AreAllClientsReady();
-        }
-
         private void SetupButtons()
         {
             _readyStartButtonText.text = _isHost ? "Bắt đầu" : "Sẵn sàng";
@@ -188,8 +176,9 @@ namespace Chronex.UI.Room
             if (_spawnedViews.ContainsKey(player)) return;
 
             var view = Instantiate(_playerRoom, _playerParent);
-            var isLocal = player == _networkService.Runner.LocalPlayer;
+            view.ReadyStateChanged += RefreshRoomState;
 
+            var isLocal = player == _networkService.Runner.LocalPlayer;
             view.Bind(data, isLocal);
 
             if (isLocal && !data.IsHost) view.PressedCallback += OnLocalPlayerTogglePressed;
@@ -206,8 +195,8 @@ namespace Chronex.UI.Room
                     SpawnPlayerObject(player, false);
 
             BindPlayerViewWhenReady(player).Forget();
-
             UpdatePlayerCountText();
+            RefreshRoomState();
         }
 
         private void HandlePlayerLeft(PlayerRef player)
@@ -219,6 +208,7 @@ namespace Chronex.UI.Room
             }
 
             UpdatePlayerCountText();
+            RefreshRoomState();
         }
 
         private bool AreAllClientsReady()
@@ -340,6 +330,14 @@ namespace Chronex.UI.Room
                         .GetPlayerObject(player)
                         .GetComponent<RoomPlayerNetworkObject>());
             }
+        }
+
+        private void RefreshRoomState()
+        {
+            UpdatePlayerCountText();
+
+            if (_isHost)
+                _readyStartButton.interactable = AreAllClientsReady();
         }
     }
 }

@@ -11,10 +11,20 @@ namespace Chronex.Networking
     /// </summary>
     public sealed class RoomPlayerNetworkObject : NetworkBehaviour
     {
-        [Networked] public NetworkString<_32> PlayerName { get; set; }
-        [Networked] public NetworkBool IsReady { get; set; }
-        [Networked] public NetworkBool IsHost { get; set; }
+        [Networked, OnChangedRender(nameof(OnPlayerNameChanged))]
+        public NetworkString<_32> PlayerName { get; set; }
+
+        [Networked, OnChangedRender(nameof(OnReadyChanged))]
+        public NetworkBool IsReady { get; set; }
+
+        [Networked, OnChangedRender(nameof(OnHostChanged))]
+        public NetworkBool IsHost { get; set; }
+
         public event Action OnDespawned;
+
+        public event Action PlayerNameChanged;
+        public event Action ReadyChanged;
+        public event Action HostChanged;
 
         public override void Spawned()
         {
@@ -36,5 +46,20 @@ namespace Chronex.Networking
 
         [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
         public void RPC_SetReady(NetworkBool ready) => IsReady = ready;
+
+        private void OnPlayerNameChanged()
+        {
+            PlayerNameChanged?.Invoke();
+        }
+
+        private void OnReadyChanged()
+        {
+            ReadyChanged?.Invoke();
+        }
+
+        private void OnHostChanged()
+        {
+            HostChanged?.Invoke();
+        }
     }
 }

@@ -52,10 +52,10 @@ public class PlayerRoom : MonoBehaviour
     private Sprite _xSprite;
 
     private RoomPlayerNetworkObject _data;
-    private NetworkBehaviour.ChangeDetector _changeDetector;
     private bool _isLocalPlayer;
 
     public Action PressedCallback;
+    public event Action ReadyStateChanged;
 
     public bool IsReady => _data != null && _data.IsReady;
 
@@ -71,38 +71,30 @@ public class PlayerRoom : MonoBehaviour
     {
         _data = data;
         _isLocalPlayer = isLocalPlayer;
-        _changeDetector = data.GetChangeDetector(NetworkBehaviour.ChangeDetector.Source.SimulationState);
 
+        _data.PlayerNameChanged += Refresh;
+        _data.ReadyChanged += Refresh;
+        _data.HostChanged += Refresh;
         _data.OnDespawned += HandleDespawn;
 
-        _playerLevel.text = "Lv. 1";
+        _playerLevel.text = "Lv.1";
 
         Refresh();
     }
 
-
     private void HandleDespawn()
-    {
-        if (_data != null)
-            _data.OnDespawned -= HandleDespawn;
-
-        _data = null;
-        _changeDetector = null;
-    }
-
-    private void Update()
     {
         if (_data == null)
             return;
 
-        if (_data.Object == null)
-            return;
+        _data.PlayerNameChanged -= Refresh;
+        _data.ReadyChanged -= Refresh;
+        _data.HostChanged -= Refresh;
+        _data.OnDespawned -= HandleDespawn;
 
-        foreach (var _ in _changeDetector.DetectChanges(_data))
-        {
-            Refresh();
-        }
+        _data = null;
     }
+
 
     public void OnPressed()
     {
