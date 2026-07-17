@@ -30,7 +30,7 @@ namespace Chronex.Services.Networking
         {
             await EnsureRunnerAsync();
 
-            string roomCode = RoomCodeGenerator.Generate();
+            var roomCode = RoomCodeGenerator.Generate();
 
             var result = await Runner.StartGame(new StartGameArgs
             {
@@ -61,7 +61,7 @@ namespace Chronex.Services.Networking
 
             await EnsureRunnerAsync();
 
-            string normalizedCode = roomCode.Trim().ToUpperInvariant();
+            var normalizedCode = roomCode.Trim().ToUpperInvariant();
 
             var result = await Runner.StartGame(new StartGameArgs
             {
@@ -80,27 +80,36 @@ namespace Chronex.Services.Networking
             CurrentRoomCode = normalizedCode;
         }
 
-        public async UniTask<List<SessionInfo>> BrowseRoomsAsync(
-            CancellationToken cancellationToken = default)
+        public async UniTask<List<SessionInfo>> BrowseRoomsAsync(CancellationToken cancellationToken = default)
         {
             await EnsureRunnerAsync();
 
-            _sessionListTcs = new UniTaskCompletionSource<List<SessionInfo>>();
+            var tcs = new UniTaskCompletionSource<List<SessionInfo>>();
 
-            var result = await Runner.JoinSessionLobby(SessionLobby.ClientServer);
-
-            if (!result.Ok)
-                throw new NetworkServiceException(
-                    $"Không thể lấy danh sách phòng: {result.ShutdownReason}");
-
-            using (cancellationToken.Register(() =>
-                       _sessionListTcs.TrySetCanceled()))
+            void OnUpdated(List<SessionInfo> list)
             {
-                var rooms = await _sessionListTcs.Task;
+                tcs.TrySetResult(list);
+            }
 
-                return rooms
-                    .Where(x => x.IsOpen && x.IsVisible)
-                    .ToList();
+            SessionListUpdated += OnUpdated;
+
+            try
+            {
+                var result = await Runner.JoinSessionLobby(SessionLobby.ClientServer);
+                cancellationToken.ThrowIfCancellationRequested();
+
+                if (!result.Ok)
+                    throw new NetworkServiceException($"Không thể lấy danh sách phòng: {result.ShutdownReason}");
+
+                using var timeoutCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+                timeoutCts.CancelAfter(TimeSpan.FromSeconds(5));
+
+                var sessions = await tcs.Task.AttachExternalCancellation(timeoutCts.Token);
+                return sessions.Where(s => s.IsOpen && s.IsVisible).ToList();
+            }
+            finally
+            {
+                SessionListUpdated -= OnUpdated;
             }
         }
 
