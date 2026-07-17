@@ -9,25 +9,47 @@ using UnityEngine.UI;
 /// </summary>
 public class LevelScene : MonoBehaviour
 {
-    [Header("HUD")] [SerializeField] private Image _firePower;
-    [SerializeField] private Image _stamina;
-    [SerializeField] private TextMeshProUGUI _fireAngle;
-    [SerializeField] private TextMeshProUGUI _timeTurnRemain;
-    [SerializeField] private Button _skipTurnButton;
+    [Header("HUD")]
+    [SerializeField]
+    private Image _firePower;
+
+    [SerializeField]
+    private Image _stamina;
+
+    [SerializeField]
+    private TextMeshProUGUI _fireAngle;
+
+    [SerializeField]
+    private TextMeshProUGUI _timeTurnRemain;
+
+    [SerializeField]
+    private Button _skipTurnButton;
 
 
-    [Header("Movement Buttons")] [SerializeField]
+    [Header("Movement Buttons")]
+    [SerializeField]
     private EventTrigger _moveLeftButton;
 
-    [SerializeField] private EventTrigger _moveRightButton;
+    [SerializeField]
+    private EventTrigger _moveRightButton;
 
-    [Header("Aim Buttons")] [SerializeField]
+    [Header("Aim Buttons")]
+    [SerializeField]
     private EventTrigger _aimUpButton;
 
-    [SerializeField] private EventTrigger _aimDownButton;
+    [SerializeField]
+    private EventTrigger _aimDownButton;
 
-    [Header("Shoot Button")] [SerializeField]
+    [Header("Shoot Button")]
+    [SerializeField]
     private EventTrigger _shootButton;
+
+    [SerializeField]
+    private GameObject _inputLayer;
+
+    [SerializeField]
+    private GameObject _bottomLayer;
+
 
     public Image FirePower => _firePower;
     public Image Stamina => _stamina;
@@ -40,4 +62,10 @@ public class LevelScene : MonoBehaviour
     public EventTrigger AimUpButton => _aimUpButton;
     public EventTrigger AimDownButton => _aimDownButton;
     public EventTrigger ShootButton => _shootButton;
+
+    public void SetTurn(bool isActive)
+    {
+        _inputLayer.SetActive(isActive);
+        _bottomLayer.SetActive(isActive);
+    }
 }

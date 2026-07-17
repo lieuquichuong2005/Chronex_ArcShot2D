@@ -1,3 +1,4 @@
+using System;
 using ArcShot.Networking;
 using Fusion;
 using UnityEngine;
@@ -43,7 +44,11 @@ namespace ArcShot
         [Networked] public NetworkBool FacingRight { get; set; } = true;
         [Networked] public float CurrentStamina { get; set; }
 
+        public static PlayerNetworkController LocalPlayer { get; private set; }
+
         public float StaminaPercent => maxStamina > 0f ? Mathf.Clamp01(CurrentStamina / maxStamina) : 0f;
+        public event Action<bool> OnTurnChanged;
+        public bool IsLocalPlayer => Object.HasInputAuthority;
 
         private ChangeDetector _changeDetector;
         private HealthNetworkController _health;
@@ -56,14 +61,24 @@ namespace ArcShot
 
             AllPlayers.Add(this);
 
-            if (Object.HasStateAuthority) CurrentStamina = maxStamina;
+            if (Object.HasInputAuthority)
+                LocalPlayer = this;
+
+            if (Object.HasStateAuthority)
+                CurrentStamina = maxStamina;
         }
 
         public override void Despawned(NetworkRunner runner, bool hasState)
         {
             AllPlayers.Remove(this);
 
-            if (_health != null) _health.OnDeath -= HandleDeath;
+            AllPlayers.Remove(this);
+
+            if (LocalPlayer == this)
+                LocalPlayer = null;
+
+            if (_health != null)
+                _health.OnDeath -= HandleDeath;
         }
 
         public override void FixedUpdateNetwork()
@@ -80,14 +95,27 @@ namespace ArcShot
 
         public override void Render()
         {
-            if (_changeDetector == null) return;
+            if (_changeDetector == null)
+                return;
 
             foreach (var change in _changeDetector.DetectChanges(this))
-                if (change == nameof(FacingRight))
-                    ApplyFacingVisual(FacingRight);
-                else if (change == nameof(IsMyTurn))
-                    if (_turnTransform != null)
-                        _turnTransform.SetActive(IsMyTurn);
+            {
+                switch (change)
+                {
+                    case nameof(FacingRight):
+                        ApplyFacingVisual(FacingRight);
+                        break;
+
+                    case nameof(IsMyTurn):
+
+                        if (_turnTransform != null)
+                            _turnTransform.SetActive(IsMyTurn);
+
+                        OnTurnChanged?.Invoke(IsMyTurn);
+
+                        break;
+                }
+            }
         }
 
         private void Move(float faceInput, float moveInput)
@@ -119,10 +147,13 @@ namespace ArcShot
         /// <summary>Chỉ Host gọi - từ LevelViewNetwork khi bắt đầu turn mới.</summary>
         public void HostSetTurnActive(bool active)
         {
-            if (!Object.HasStateAuthority) return;
+            if (!Object.HasStateAuthority)
+                return;
 
             IsMyTurn = active;
-            if (active) CurrentStamina = maxStamina;
+
+            if (active)
+                CurrentStamina = maxStamina;
         }
 
         public bool IsFacingRight()

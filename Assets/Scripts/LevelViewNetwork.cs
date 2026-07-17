@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using ArcShot.Networking;
@@ -50,6 +51,7 @@ namespace ArcShot
         private GunNetworkController boundGun;
         private bool _isHost; // THÊM: lưu lại thay cho Object.HasStateAuthority (không còn dùng được nữa)
 
+
         private void Awake()
         {
             ServiceLocator.Instance.Resolve(this);
@@ -68,15 +70,21 @@ namespace ArcShot
             }
 
             SubscribeTurnManagerWhenReady().Forget(); // ĐỔI: thay dòng _turnManagerNetwork.OnTurnStarted += ...
+            BindLocalPlayer().Forget();
 
             if (scene.SkipTurnButton != null)
                 scene.SkipTurnButton.onClick.AddListener(HandleSkipTurnClicked);
+            // RegisterLocalPlayer().Forget();
         }
 
         private void OnDestroy()
         {
             if (TurnManagerNetwork.Instance != null) // ĐỔI: dùng Instance thay vì field _turnManagerNetwork
                 TurnManagerNetwork.Instance.OnTurnStarted -= HandleTurnStarted;
+            if (PlayerNetworkController.LocalPlayer != null)
+            {
+                PlayerNetworkController.LocalPlayer.OnTurnChanged -= HandleLocalTurnChanged;
+            }
         }
 
         private void SpawnPlayersHost()
@@ -252,6 +260,34 @@ namespace ArcShot
 
             Instantiate(currentMapConfig.MapPrefab, _mapTransform);
             return true;
+        }
+
+        private async UniTaskVoid RegisterLocalPlayer()
+        {
+            PlayerNetworkController localPlayer = null;
+
+            while (localPlayer == null)
+            {
+                localPlayer = PlayerNetworkController.AllPlayers
+                    .FirstOrDefault(p => p.Object.HasInputAuthority);
+
+                await UniTask.Yield();
+            }
+
+            localPlayer.OnTurnChanged += HandleLocalTurnChanged;
+        }
+
+        private void HandleLocalTurnChanged(bool isMyTurn)
+        {
+            scene.SetTurn(isMyTurn);
+        }
+
+        private async UniTaskVoid BindLocalPlayer()
+        {
+            while (PlayerNetworkController.LocalPlayer == null)
+                await UniTask.Yield();
+
+            PlayerNetworkController.LocalPlayer.OnTurnChanged += HandleLocalTurnChanged;
         }
     }
 }

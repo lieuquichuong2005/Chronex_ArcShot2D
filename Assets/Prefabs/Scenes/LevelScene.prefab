@@ -1508,6 +1508,8 @@ MonoBehaviour:
   _aimUpButton: {fileID: 5856875942896459071}
   _aimDownButton: {fileID: 5674788147753144373}
   _shootButton: {fileID: 551598999849008290}
+  _inputLayer: {fileID: 9146963659086349483}
+  _bottomLayer: {fileID: 8995611749770407656}
 --- !u!1 &3112638965370590537
 GameObject:
   m_ObjectHideFlags: 0
