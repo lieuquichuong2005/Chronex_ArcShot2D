@@ -140,14 +140,20 @@ public class LogInScene : MonoBehaviour
         _showPasswordButton_01.onClick.AddListener(OnClickToggleLoginPassword);
         _showPasswordButton_02.onClick.AddListener(OnClickToggleSignInPassword);
 
-        // Login
-        _emailInput.onSubmit.AddListener(_ => OnClickLogin());
+        // Login: Enter ở email -> nhảy sang password. Enter ở password -> login luôn.
+        _emailInput.onSubmit.AddListener(_ => FocusField(_passwordInput));
         _passwordInput.onSubmit.AddListener(_ => OnClickLogin());
 
-        // Register
-        _username.onSubmit.AddListener(_ => OnClickRegister());
-        _password.onSubmit.AddListener(_ => OnClickRegister());
+        // Register: Enter ở username -> password -> confirmPassword -> register luôn.
+        _username.onSubmit.AddListener(_ => FocusField(_password));
+        _password.onSubmit.AddListener(_ => FocusField(_confirmPassword));
         _confirmPassword.onSubmit.AddListener(_ => OnClickRegister());
+    }
+
+    private void FocusField(TMP_InputField field)
+    {
+        field.Select();
+        field.ActivateInputField();
     }
 
     // Gắn vào nút "Đăng nhập"
