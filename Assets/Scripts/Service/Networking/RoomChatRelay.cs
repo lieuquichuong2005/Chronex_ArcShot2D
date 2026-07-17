@@ -3,16 +3,12 @@ using Fusion;
 
 namespace Chronex.Networking
 {
-    /// <summary>
-    /// NetworkBehaviour riêng chỉ để relay tin nhắn chat - RoomScene (MonoBehaviour thường)
-    /// không tự gọi RPC được nên cần 1 NetworkObject trung gian làm việc này.
-    /// Host spawn 1 instance duy nhất khi tạo phòng, mọi client đều nhận được qua RPC_Broadcast.
-    /// </summary>
     public sealed class RoomChatRelay : NetworkBehaviour
     {
         public static RoomChatRelay Instance { get; private set; }
 
-        public event Action<string, string> MessageReceived; // (playerName, message)
+        public event Action<string, string> MessageReceived;
+        public event Action GameStarted;
 
         public override void Spawned()
         {
@@ -28,6 +24,13 @@ namespace Chronex.Networking
         public void RPC_SendMessage(string playerName, string message)
         {
             MessageReceived?.Invoke(playerName, message);
+        }
+
+        // THÊM METHOD NÀY
+        [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+        public void RPC_StartGame()
+        {
+            GameStarted?.Invoke();
         }
     }
 }

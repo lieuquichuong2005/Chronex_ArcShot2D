@@ -834,7 +834,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: -1
   m_Sprite: {fileID: 21300000, guid: 86a8891fba2422d479ba2d56e317f9f5, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -932,9 +932,12 @@ GameObject:
   - component: {fileID: 9219395287535083012}
   - component: {fileID: 7139648153145819482}
   - component: {fileID: 7260008622689742625}
-  - component: {fileID: 2741139840021786381}
-  - component: {fileID: 484407855196196498}
   - component: {fileID: 636933161040976606}
+  - component: {fileID: 6113708098638433586}
+  - component: {fileID: 6985077213923788883}
+  - component: {fileID: 7773359816927768360}
+  - component: {fileID: 4475922172313489137}
+  - component: {fileID: 7248865234402584718}
   m_Layer: 0
   m_Name: Character_Blue
   m_TagString: Untagged
@@ -999,39 +1002,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c3793ebc9447f864cb877b92b2e734ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _healthController: {fileID: 2741139840021786381}
   moveSpeed: 5
   maxStamina: 10
   staminaCostPerUnit: 2.5
   _turnTransform: {fileID: 7601075159796991118}
   rb: {fileID: 7139648153145819482}
   visual: {fileID: 1023332603411498697}
---- !u!114 &2741139840021786381
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9051448516502430598}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4473fe49c7b098043be2f12346e30de0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxHP: 100
-  _healthBar: {fileID: 2029669105144469733}
---- !u!114 &484407855196196498
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9051448516502430598}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9ee77ec0f385af140b1b8314d9006e2a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  _TurnOrderIndex: -1
+  _IsMyTurn:
+    RawValue: 0
+  _FacingRight:
+    RawValue: 1
+  _CurrentStamina: 0
 --- !u!61 &636933161040976606
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -1078,6 +1060,110 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1.6398823, y: 1.0373652}
   m_EdgeRadius: 0
+--- !u!114 &6113708098638433586
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9051448516502430598}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e7a700f5a2a3954bafbe2168b1f40ba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHP: 100
+  _healthBar: {fileID: 2029669105144469733}
+  _CurrentHP: 0
+--- !u!114 &6985077213923788883
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9051448516502430598}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4473fe49c7b098043be2f12346e30de0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHP: 100
+  _healthBar: {fileID: 2029669105144469733}
+--- !u!114 &7773359816927768360
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9051448516502430598}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ee77ec0f385af140b1b8314d9006e2a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &4475922172313489137
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9051448516502430598}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SortKey: 1566235326
+  SendPriority: 1
+  EnableInterpolation: 1
+  Flags: 262402
+  NestedObjects: []
+  NetworkedBehaviours:
+  - {fileID: 7248865234402584718}
+  - {fileID: 7260008622689742625}
+  - {fileID: 6113708098638433586}
+  - {fileID: 3165774269902143396}
+  ForceRemoteRenderTimeframe: 0
+--- !u!114 &7248865234402584718
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9051448516502430598}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 158639473, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _stateAuthorityChangeErrorCorrectionDelta: 0
+  SyncScale: 0
+  SyncParent: 0
+  _autoAOIOverride: 1
+  ConfigFlags: 0
+  PhysicsSettings:
+    ForecastEnabled: 1
+    DebugPhysics: 0
+    GravityForecast: 2
+    MaxExtrapolationTime: 0.15
+    MinLinearDetectedError: 0.02
+    MinAngularDetectedError: 3
+    MaxLinearError: 0
+    MaxAngularError: 0
+    LowCorrectionProgressThreshold: 0.015
+    HighErrorSimilarityThreshold: 1
+    MaxErrorTotalTime: 0.5
+    MaxRemoteSleepIgnoreTime: 0.5
+    ErrorCorrectionType: 0
+    LinearVelCorrectionMul: 1
+    AngularVelCorrectionMul: 1
+    PositionCorrectionLerp: 0.15
+    RotationCorrectionLerp: 0.15
+    Spring: 75
+    Damper: 2
+    MinImpactfulCollisionAlignment: 0.3
+    ImpactStartCorrectionTime: 0.1
+    ImpactCorrectionTimeComplete: 0.3
 --- !u!1 &9140056167944730503
 GameObject:
   m_ObjectHideFlags: 0
@@ -1262,10 +1348,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 7260008622689742625}
   firePoint: {fileID: 3923539637291075220}
-  bulletPrefab: {fileID: 8342645501551783403, guid: b6c664fc554297246b322f97967e1b99, type: 3}
+  bulletPrefab: {fileID: 8558755215218715001, guid: b6c664fc554297246b322f97967e1b99, type: 3}
   rotateSpeed: 80
   minAngle: -10
   maxAngle: 90
   minForce: 2
   maxForce: 20
   chargeTime: 3
+  _CurrentAngle: 45
+  _CurrentCharge: 0
+  _IsCharging:
+    RawValue: 0

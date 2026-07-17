@@ -94,7 +94,11 @@ namespace Chronex.UI.Room
             _networkService.PlayerJoined -= HandlePlayerJoined;
             _networkService.PlayerLeft -= HandlePlayerLeft;
 
-            if (RoomChatRelay.Instance != null) RoomChatRelay.Instance.MessageReceived -= HandleChatMessageReceived;
+            if (RoomChatRelay.Instance != null)
+            {
+                RoomChatRelay.Instance.MessageReceived -= HandleChatMessageReceived;
+                RoomChatRelay.Instance.GameStarted -= HandleGameStarted;
+            }
         }
 
         private void Start()
@@ -239,12 +243,12 @@ namespace Chronex.UI.Room
             data.RPC_SetReady(!data.IsReady);
         }
 
-        private async void OnClickReadyOrStart()
+        private void OnClickReadyOrStart()
         {
             if (_isHost)
             {
                 _readyStartButton.interactable = false;
-                await _sceneManager.LoadSceneAsync<LevelScene>(nameof(LevelScene));
+                RoomChatRelay.Instance.RPC_StartGame();
             }
             else
             {
@@ -277,10 +281,14 @@ namespace Chronex.UI.Room
         private void TrySubscribeChatRelay()
         {
             if (RoomChatRelay.Instance != null)
+            {
                 RoomChatRelay.Instance.MessageReceived += HandleChatMessageReceived;
+                RoomChatRelay.Instance.GameStarted += HandleGameStarted;
+            }
             else
-                // Client vào trước khi Host kịp Spawn relay - thử lại sau 1 khoảng ngắn.
+            {
                 Invoke(nameof(TrySubscribeChatRelay), 0.5f);
+            }
         }
 
         private void OnClickSendChat()
@@ -338,6 +346,11 @@ namespace Chronex.UI.Room
 
             if (_isHost)
                 _readyStartButton.interactable = AreAllClientsReady();
+        }
+
+        private void HandleGameStarted()
+        {
+            _sceneManager.LoadSceneAsync<LevelScene>(nameof(LevelScene)).Forget();
         }
     }
 }

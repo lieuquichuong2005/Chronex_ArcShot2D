@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: CharacterConfigManager
   m_EditorClassIdentifier: 
   Characters:
-  - {fileID: 9051448516502430598, guid: bf12c1ee087e3bb4db5c90b9b4f9d524, type: 3}
+  - {fileID: 9051448516502430598, guid: c717b077800e54c43918a5863702dd26, type: 3}
   - {fileID: 9051448516502430598, guid: 24bfb9da12b46384aa21a3723e1e946b, type: 3}

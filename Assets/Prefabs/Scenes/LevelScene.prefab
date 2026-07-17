@@ -2961,6 +2961,7 @@ GameObject:
   - component: {fileID: 309021582969191792}
   - component: {fileID: 3403177662894547233}
   - component: {fileID: 8808471095808600263}
+  - component: {fileID: 8925071998008182861}
   m_Layer: 0
   m_Name: LevelView
   m_TagString: Untagged
@@ -3003,6 +3004,7 @@ MonoBehaviour:
   turnConfig:
     playerCount: 2
     turnDuration: 15
+  _turnManagerNetworkPrefab: {fileID: 5937284617317818917, guid: 49367c59a1797f84d8b909204c0add53, type: 3}
   scene: {fileID: 7932610585787104710}
   _playerTransform: {fileID: 8334513656463451001}
   _mapTransform: {fileID: 92589276210578373}
@@ -3019,6 +3021,25 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   vcam: {fileID: 608509508136595337}
+--- !u!114 &8925071998008182861
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5803957493423468898}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SortKey: 436756390
+  SendPriority: 1
+  EnableInterpolation: 1
+  Flags: 262146
+  NestedObjects: []
+  NetworkedBehaviours: []
+  ForceRemoteRenderTimeframe: 0
 --- !u!1 &5818170498648458071
 GameObject:
   m_ObjectHideFlags: 0

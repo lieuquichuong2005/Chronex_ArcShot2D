@@ -1,3 +1,4 @@
+using ArcShot.Networking;
 using Unity.Cinemachine;
 using UnityEngine;
 
@@ -9,17 +10,18 @@ namespace ArcShot
     /// </summary>
     public class CameraFollowController : MonoBehaviour
     {
-        [SerializeField] private CinemachineCamera vcam;
+        [SerializeField]
+        private CinemachineCamera vcam;
 
-        public void FollowPlayer(PlayerController player)
+        public void FollowPlayer(PlayerNetworkController playerNetwork)
         {
-            if (player == null)
+            if (playerNetwork == null)
                 return;
 
-            SetTarget(player.transform);
+            SetTarget(playerNetwork.transform);
         }
 
-        public void FollowBullet(Bullet bullet)
+        public void FollowBullet(BulletNetwork bullet)
         {
             if (bullet == null)
                 return;
