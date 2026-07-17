@@ -38,6 +38,9 @@ public class MenuScene : MonoBehaviour
     [SerializeField]
     private Button _joinRoomButton;
 
+    [SerializeField]
+    private JoinRoomDialog _joinRoomDialog;
+
     private MenuTabPanel _currentTab;
     private bool _isConnecting;
 
@@ -59,6 +62,8 @@ public class MenuScene : MonoBehaviour
         _createRoomButton.onClick.AddListener(OnClickCreateRoom);
         _quickMatchButton.onClick.AddListener(OnClickQuickMatch);
         _joinRoomButton.onClick.AddListener(OnClickJoinRoom);
+
+        _joinRoomDialog.OnJoinRoom += JoinRoomById;
     }
 
     private async void OnClickCreateRoom()
@@ -105,8 +110,10 @@ public class MenuScene : MonoBehaviour
 
     private void OnClickJoinRoom()
     {
-        Debug.Log("Comming Soon");
-        // TODO: mở LobbyScene khi class đó xong
+        if (_isConnecting)
+            return;
+
+        _joinRoomDialog.Show();
     }
 
     private void SetRoomButtonsInteractable(bool interactable)
@@ -150,5 +157,41 @@ public class MenuScene : MonoBehaviour
     private void SetTab(MenuTab tab)
     {
         foreach (var tabConfig in _tabConfigs) tabConfig.tabPanel.SetActive(tabConfig.tabKind == tab);
+    }
+
+    private void OnDestroy()
+    {
+        if (_joinRoomDialog != null)
+            _joinRoomDialog.OnJoinRoom -= JoinRoomById;
+    }
+
+    private async void JoinRoomById(string roomId)
+    {
+        if (_isConnecting)
+            return;
+
+        _isConnecting = true;
+        SetRoomButtonsInteractable(false);
+
+        try
+        {
+            await _networkService.JoinRoomByCodeAsync(roomId);
+
+            Debug.Log($"[Menu] Join room success: {roomId}");
+
+            _joinRoomDialog.Hide();
+
+            await _sceneService.LoadSceneAsync<RoomScene>(nameof(RoomScene));
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"[Menu] Join room failed: {ex.Message}");
+
+            _isConnecting = false;
+            SetRoomButtonsInteractable(true);
+
+            // Có thể hiện popup lỗi ở đây
+            // _joinRoomDialog.ShowError("Room not found");
+        }
     }
 }
