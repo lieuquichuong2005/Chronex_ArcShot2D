@@ -13,25 +13,38 @@ namespace ArcShot
     public class LevelViewNetwork : MonoBehaviour // ĐỔI: NetworkBehaviour -> MonoBehaviour
     {
         [Header("Camera")]
-        [SerializeField] private CameraFollowController cameraFollow;
+        [SerializeField]
+        private CameraFollowController cameraFollow;
 
         [Header("Configs")]
-        [SerializeField] private MapConfigsManager mapConfigsManager;
-        [SerializeField] private CharacterManager _characterManager;
-        [SerializeField] private string selectedMapId;
+        [SerializeField]
+        private MapConfigsManager mapConfigsManager;
+
+        [SerializeField]
+        private CharacterManager _characterManager;
+
+        [SerializeField]
+        private string selectedMapId;
 
         [Header("Turn")]
-        [SerializeField] private TurnManagerConfig turnConfig;
+        [SerializeField]
+        private TurnManagerConfig turnConfig;
 
         [SerializeField]
         private NetworkObject _turnManagerNetworkPrefab; // ĐỔI: kéo PREFAB vào đây, không phải object trong scene.
 
         [Header("UI")]
-        [SerializeField] private LevelScene scene;
-        [SerializeField] private Transform _playerTransform;
-        [SerializeField] private Transform _mapTransform;
+        [SerializeField]
+        private LevelScene scene;
 
-        [Inject] private Chronex.Services.Networking.INetworkService _networkService;
+        [SerializeField]
+        private Transform _playerTransform;
+
+        [SerializeField]
+        private Transform _mapTransform;
+
+        [Inject]
+        private Chronex.Services.Networking.INetworkService _networkService;
 
         private MapConfig currentMapConfig;
         private GunNetworkController boundGun;
@@ -166,14 +179,41 @@ namespace ArcShot
 
         private void HandleTurnStarted(int playerIndex)
         {
-            var target = PlayerNetworkController.AllPlayers
-                .FirstOrDefault(p => p.TurnOrderIndex == playerIndex);
+            HandleTurnStartedAsync(playerIndex).Forget();
+        }
 
-            if (target == null) return;
+        private async UniTaskVoid HandleTurnStartedAsync(int playerIndex)
+        {
+            PlayerNetworkController target = null;
+            float elapsed = 0f;
+            const float timeoutSeconds = 3f;
 
-            if (_isHost) // ĐỔI: Object.HasStateAuthority -> _isHost
+            while (target == null && elapsed < timeoutSeconds)
+            {
+                target = PlayerNetworkController.AllPlayers
+                    .FirstOrDefault(p => p.TurnOrderIndex == playerIndex);
+
+                if (target == null)
+                {
+                    await UniTask.Yield();
+                    elapsed += Time.deltaTime;
+                }
+            }
+
+            if (target == null)
+            {
+                Debug.LogError(
+                    $"[LevelViewNetwork] Không tìm thấy player với TurnOrderIndex={playerIndex} sau {timeoutSeconds}s.");
+                return;
+            }
+
+            if (_isHost)
+            {
                 foreach (var p in PlayerNetworkController.AllPlayers)
+                {
                     p.HostSetTurnActive(p == target);
+                }
+            }
 
             cameraFollow.FollowPlayer(target);
             boundGun = target.GetComponentInChildren<GunNetworkController>();

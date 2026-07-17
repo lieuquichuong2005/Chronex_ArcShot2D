@@ -38,10 +38,10 @@ namespace ArcShot.Networking
             if (LifeTimer.Expired(Runner)) Resolve();
         }
 
-        // Chỉ chạy thật ở Host vì chỉ Host mới có physics simulation quyết định (State Authority).
         private void OnTriggerEnter2D(Collider2D other)
         {
-            if (!Object.HasStateAuthority) return;
+            if (_resolved) return;
+            if (Object == null || !Object.HasStateAuthority) return;
 
             var receiver = other.attachedRigidbody != null
                 ? other.attachedRigidbody.GetComponent<DamageReceiverNetwork>()
@@ -54,7 +54,20 @@ namespace ArcShot.Networking
 
         private void OnBecameInvisible()
         {
-            if (Object.HasStateAuthority) Resolve();
+            if (_resolved) return; // THÊM
+            if (Object == null || !Object.HasStateAuthority) return;
+
+            Resolve();
+        }
+
+        private void Resolve()
+        {
+            if (_resolved) return;
+            _resolved = true;
+
+            OnResolved?.Invoke();
+
+            if (Object != null && Object.IsValid) Runner.Despawn(Object);
         }
 
         private void Update()
@@ -68,15 +81,6 @@ namespace ArcShot.Networking
 
             var angle = Mathf.Atan2(rb.linearVelocity.y, rb.linearVelocity.x) * Mathf.Rad2Deg;
             transform.rotation = Quaternion.Euler(0f, 0f, angle);
-        }
-
-        private void Resolve()
-        {
-            if (_resolved) return;
-            _resolved = true;
-
-            OnResolved?.Invoke();
-            Runner.Despawn(Object);
         }
     }
 

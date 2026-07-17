@@ -2962,6 +2962,7 @@ GameObject:
   - component: {fileID: 3403177662894547233}
   - component: {fileID: 8808471095808600263}
   - component: {fileID: 8925071998008182861}
+  - component: {fileID: 268558168324739560}
   m_Layer: 0
   m_Name: LevelView
   m_TagString: Untagged
@@ -3040,6 +3041,19 @@ MonoBehaviour:
   NestedObjects: []
   NetworkedBehaviours: []
   ForceRemoteRenderTimeframe: 0
+--- !u!114 &268558168324739560
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5803957493423468898}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1a7d776d0d901c94bb17a4d2a2ae8c39, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _scene: {fileID: 7932610585787104710}
 --- !u!1 &5818170498648458071
 GameObject:
   m_ObjectHideFlags: 0
