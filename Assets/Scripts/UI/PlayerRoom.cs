@@ -107,7 +107,9 @@ public class PlayerRoom : MonoBehaviour
     private void Refresh()
     {
         _playerName.text = _data.PlayerName.ToString();
+
         UpdateReadyState();
+        ReadyStateChanged?.Invoke();
     }
 
     private void UpdateReadyState()
