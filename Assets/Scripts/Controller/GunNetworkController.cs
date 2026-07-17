@@ -87,9 +87,10 @@ namespace ArcShot
 
         private void ApplyRotationVisual()
         {
-            transform.localRotation = player.IsFacingRight()
-                ? Quaternion.Euler(0f, 0f, CurrentAngle)
-                : Quaternion.Euler(0f, 180f, CurrentAngle);
+            transform.localRotation = Quaternion.Euler(0f, 0f, CurrentAngle);
+            // transform.localRotation = player.IsFacingRight()
+            //     ? Quaternion.Euler(0f, 0f, CurrentAngle)
+            //     : Quaternion.Euler(0f, 0f, CurrentAngle);
         }
 
         private void HandleShootInput(bool shootHeld)
