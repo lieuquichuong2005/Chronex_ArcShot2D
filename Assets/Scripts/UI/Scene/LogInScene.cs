@@ -115,6 +115,13 @@ public class LogInScene : MonoBehaviour
         _signInButton.onClick.RemoveAllListeners();
         _showPasswordButton_01.onClick.RemoveAllListeners();
         _showPasswordButton_02.onClick.RemoveAllListeners();
+
+        _emailInput.onSubmit.RemoveAllListeners();
+        _passwordInput.onSubmit.RemoveAllListeners();
+
+        _username.onSubmit.RemoveAllListeners();
+        _password.onSubmit.RemoveAllListeners();
+        _confirmPassword.onSubmit.RemoveAllListeners();
     }
 
     private void InitButtonTab()
@@ -129,8 +136,18 @@ public class LogInScene : MonoBehaviour
     {
         _loginButton.onClick.AddListener(OnClickLogin);
         _signInButton.onClick.AddListener(OnClickRegister);
+
         _showPasswordButton_01.onClick.AddListener(OnClickToggleLoginPassword);
         _showPasswordButton_02.onClick.AddListener(OnClickToggleSignInPassword);
+
+        // Login
+        _emailInput.onSubmit.AddListener(_ => OnClickLogin());
+        _passwordInput.onSubmit.AddListener(_ => OnClickLogin());
+
+        // Register
+        _username.onSubmit.AddListener(_ => OnClickRegister());
+        _password.onSubmit.AddListener(_ => OnClickRegister());
+        _confirmPassword.onSubmit.AddListener(_ => OnClickRegister());
     }
 
     // Gắn vào nút "Đăng nhập"
