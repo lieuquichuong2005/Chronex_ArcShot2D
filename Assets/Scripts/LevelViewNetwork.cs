@@ -176,13 +176,17 @@ namespace ArcShot
             TurnManagerNetwork.Instance.HostInitialize(participants, turnConfig);
         }
 
-        // THÊM MỚI - thay cho dòng _turnManagerNetwork.OnTurnStarted += HandleTurnStarted trực tiếp
         private async UniTaskVoid SubscribeTurnManagerWhenReady()
         {
             while (TurnManagerNetwork.Instance == null)
                 await UniTask.Yield();
 
             TurnManagerNetwork.Instance.OnTurnStarted += HandleTurnStarted;
+
+            if (TurnManagerNetwork.Instance.CurrentPlayerIndex >= 0)
+            {
+                HandleTurnStarted(TurnManagerNetwork.Instance.CurrentPlayerIndex);
+            }
         }
 
         private void HandleTurnStarted(int playerIndex)
@@ -220,6 +224,7 @@ namespace ArcShot
                 foreach (var p in PlayerNetworkController.AllPlayers)
                 {
                     p.HostSetTurnActive(p == target);
+                    HandleLocalTurnChanged(p == target);
                 }
             }
 

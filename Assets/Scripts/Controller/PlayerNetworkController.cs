@@ -66,6 +66,9 @@ namespace ArcShot
 
             if (Object.HasStateAuthority)
                 CurrentStamina = maxStamina;
+
+            ApplyFacingVisual(FacingRight);
+            if (_turnTransform != null) _turnTransform.SetActive(IsMyTurn);
         }
 
         public override void Despawned(NetworkRunner runner, bool hasState)
@@ -99,7 +102,6 @@ namespace ArcShot
                 return;
 
             foreach (var change in _changeDetector.DetectChanges(this))
-            {
                 switch (change)
                 {
                     case nameof(FacingRight):
@@ -115,7 +117,6 @@ namespace ArcShot
 
                         break;
                 }
-            }
         }
 
         private void Move(float faceInput, float moveInput)

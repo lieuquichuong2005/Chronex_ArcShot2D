@@ -55,6 +55,7 @@ namespace ArcShot
         public override void Spawned()
         {
             _changeDetector = GetChangeDetector(ChangeDetector.Source.SimulationState);
+            ApplyRotationVisual();
         }
 
         public override void FixedUpdateNetwork()
@@ -132,7 +133,8 @@ namespace ArcShot
                 Quaternion.identity);
 
             var bulletRb = spawned.GetComponent<Rigidbody2D>();
-            bulletRb.linearVelocity = firePoint.right * shootForce;
+            var direction = player.IsFacingRight() ? firePoint.right : -firePoint.right;
+            bulletRb.linearVelocity = direction * shootForce;
 
             var bullet = spawned.GetComponent<BulletNetwork>();
             OnBulletFired?.Invoke(bullet);
