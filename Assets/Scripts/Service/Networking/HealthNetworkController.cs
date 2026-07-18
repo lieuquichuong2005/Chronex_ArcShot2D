@@ -35,12 +35,13 @@ namespace ArcShot.Networking
             UpdateHealthBar();
         }
 
-        /// <summary>Chỉ được gọi ở Host - VD từ Bullet khi trúng đòn (Bullet chỉ simulate ở Host).</summary>
         public void HostTakeDamage(int damage)
         {
             if (!Object.HasStateAuthority) return;
 
+            var before = CurrentHP;
             CurrentHP = Mathf.Max(CurrentHP - damage, 0);
+            Debug.Log($"[HealthNetworkController] HostTakeDamage: {before} -> {CurrentHP}");
         }
 
         public void HostHeal(int amount)
@@ -50,6 +51,7 @@ namespace ArcShot.Networking
             CurrentHP = Mathf.Min(CurrentHP + amount, maxHP);
         }
 
+
         public override void Render()
         {
             if (_changeDetector == null) return;
@@ -57,6 +59,9 @@ namespace ArcShot.Networking
             foreach (var change in _changeDetector.DetectChanges(this))
             {
                 if (change != nameof(CurrentHP)) continue;
+
+                Debug.Log(
+                    $"[HealthNetworkController] Render phát hiện CurrentHP đổi = {CurrentHP}, _healthBar null={_healthBar == null}");
 
                 UpdateHealthBar();
                 OnHealthChanged?.Invoke(CurrentHP, maxHP);

@@ -936,9 +936,9 @@ GameObject:
   - component: {fileID: 636933161040976606}
   - component: {fileID: 6113708098638433586}
   - component: {fileID: 6985077213923788883}
-  - component: {fileID: 7773359816927768360}
   - component: {fileID: 4475922172313489137}
   - component: {fileID: 7248865234402584718}
+  - component: {fileID: 4020144058452746098}
   m_Layer: 0
   m_Name: Character_Blue
   m_TagString: Untagged
@@ -1089,18 +1089,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHP: 100
   _healthBar: {fileID: 2029669105144469733}
---- !u!114 &7773359816927768360
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9051448516502430598}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9ee77ec0f385af140b1b8314d9006e2a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &4475922172313489137
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1122,6 +1110,7 @@ MonoBehaviour:
   - {fileID: 7248865234402584718}
   - {fileID: 7260008622689742625}
   - {fileID: 6113708098638433586}
+  - {fileID: 4020144058452746098}
   - {fileID: 3165774269902143396}
   ForceRemoteRenderTimeframe: 0
 --- !u!114 &7248865234402584718
@@ -1164,6 +1153,19 @@ MonoBehaviour:
     MinImpactfulCollisionAlignment: 0.3
     ImpactStartCorrectionTime: 0.1
     ImpactCorrectionTimeComplete: 0.3
+--- !u!114 &4020144058452746098
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9051448516502430598}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 497ce90ddd665ca4886860fb7ec5810a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _health: {fileID: 6113708098638433586}
 --- !u!1 &9140056167944730503
 GameObject:
   m_ObjectHideFlags: 0

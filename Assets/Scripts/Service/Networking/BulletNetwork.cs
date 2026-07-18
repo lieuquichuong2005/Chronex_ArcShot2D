@@ -1,4 +1,5 @@
 using System;
+using Arcshot.Networking;
 using Fusion;
 using UnityEngine;
 
@@ -43,9 +44,14 @@ namespace ArcShot.Networking
             if (_resolved) return;
             if (Object == null || !Object.HasStateAuthority) return;
 
+            Debug.Log(
+                $"[BulletNetwork] Trigger với: {other.name}, attachedRigidbody: {other.attachedRigidbody?.name ?? "null"}");
+
             var receiver = other.attachedRigidbody != null
                 ? other.attachedRigidbody.GetComponent<DamageReceiverNetwork>()
                 : null;
+
+            Debug.Log($"[BulletNetwork] DamageReceiverNetwork tìm thấy: {(receiver != null ? "CÓ" : "KHÔNG")}");
 
             receiver?.HostReceiveDamage(damage);
 
@@ -81,21 +87,6 @@ namespace ArcShot.Networking
 
             var angle = Mathf.Atan2(rb.linearVelocity.y, rb.linearVelocity.x) * Mathf.Rad2Deg;
             transform.rotation = Quaternion.Euler(0f, 0f, angle);
-        }
-    }
-
-    /// <summary>
-    /// TODO tạm: giả định DamageReceiver gốc chỉ forward sang HealthController.TakeDamage.
-    /// Cần bạn xác nhận DamageReceiver.cs thật để mình sửa đúng - đây là bản đoán để code compile được.
-    /// </summary>
-    public sealed class DamageReceiverNetwork : NetworkBehaviour
-    {
-        [SerializeField]
-        private HealthNetworkController _health;
-
-        public void HostReceiveDamage(int damage)
-        {
-            if (Object.HasStateAuthority) _health.HostTakeDamage(damage);
         }
     }
 }
