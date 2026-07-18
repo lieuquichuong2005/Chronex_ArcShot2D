@@ -67,5 +67,6 @@ public class LevelScene : MonoBehaviour
     {
         _inputLayer.SetActive(isActive);
         _bottomLayer.SetActive(isActive);
+        _skipTurnButton.gameObject.SetActive(isActive);
     }
 }

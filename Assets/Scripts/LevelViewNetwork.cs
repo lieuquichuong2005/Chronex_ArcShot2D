@@ -77,14 +77,17 @@ namespace ArcShot
             // RegisterLocalPlayer().Forget();
         }
 
+        private void Update()
+        {
+            UpdateHud();
+        }
+
         private void OnDestroy()
         {
             if (TurnManagerNetwork.Instance != null) // ĐỔI: dùng Instance thay vì field _turnManagerNetwork
                 TurnManagerNetwork.Instance.OnTurnStarted -= HandleTurnStarted;
             if (PlayerNetworkController.LocalPlayer != null)
-            {
                 PlayerNetworkController.LocalPlayer.OnTurnChanged -= HandleLocalTurnChanged;
-            }
         }
 
         private void SpawnPlayersHost()
@@ -115,24 +118,24 @@ namespace ArcShot
 
         private void SpawnPlayerAt(PlayerRef owner, Vector2 localSpawnPos, bool facingRight, int turnOrderIndex)
         {
-            GameObject characterGo = _characterManager.GetRandomCharacter();
+            var characterGo = _characterManager.GetRandomCharacter();
             if (characterGo == null)
             {
                 Debug.LogError("[LevelViewNetwork] GetRandomCharacter() trả về null.");
                 return;
             }
 
-            NetworkObject characterPrefab = characterGo.GetComponent<NetworkObject>();
+            var characterPrefab = characterGo.GetComponent<NetworkObject>();
             if (characterPrefab == null)
             {
                 Debug.LogError($"[LevelViewNetwork] Prefab '{characterGo.name}' chưa có NetworkObject.");
                 return;
             }
 
-            Vector3 worldPos = _mapTransform.TransformPoint(localSpawnPos);
+            var worldPos = _mapTransform.TransformPoint(localSpawnPos);
 
             // ĐỔI: Runner.Spawn -> _networkService.Runner.Spawn (property Runner của NetworkBehaviour không còn nữa)
-            NetworkObject spawned = _networkService.Runner.Spawn(characterPrefab, worldPos, Quaternion.identity, owner);
+            var spawned = _networkService.Runner.Spawn(characterPrefab, worldPos, Quaternion.identity, owner);
 
             var playerCtrl = spawned.GetComponent<PlayerNetworkController>();
             if (playerCtrl == null)
@@ -184,9 +187,7 @@ namespace ArcShot
             TurnManagerNetwork.Instance.OnTurnStarted += HandleTurnStarted;
 
             if (TurnManagerNetwork.Instance.CurrentPlayerIndex >= 0)
-            {
                 HandleTurnStarted(TurnManagerNetwork.Instance.CurrentPlayerIndex);
-            }
         }
 
         private void HandleTurnStarted(int playerIndex)
@@ -197,7 +198,7 @@ namespace ArcShot
         private async UniTaskVoid HandleTurnStartedAsync(int playerIndex)
         {
             PlayerNetworkController target = null;
-            float elapsed = 0f;
+            var elapsed = 0f;
             const float timeoutSeconds = 3f;
 
             while (target == null && elapsed < timeoutSeconds)
@@ -220,13 +221,11 @@ namespace ArcShot
             }
 
             if (_isHost)
-            {
                 foreach (var p in PlayerNetworkController.AllPlayers)
                 {
                     p.HostSetTurnActive(p == target);
                     HandleLocalTurnChanged(p == target);
                 }
-            }
 
             cameraFollow.FollowPlayer(target);
             boundGun = target.GetComponentInChildren<GunNetworkController>();
@@ -293,6 +292,33 @@ namespace ArcShot
                 await UniTask.Yield();
 
             PlayerNetworkController.LocalPlayer.OnTurnChanged += HandleLocalTurnChanged;
+        }
+
+        private void UpdateHud()
+        {
+            var player = PlayerNetworkController.LocalPlayer;
+
+            if (player == null)
+                return;
+
+            var gun = player.GetComponentInChildren<GunNetworkController>();
+
+            if (gun == null)
+                return;
+
+            if (scene.FirePower != null)
+                scene.FirePower.fillAmount = gun.ChargePercent;
+
+            if (scene.FireAngle != null)
+                scene.FireAngle.text = $"{gun.CurrentAngle:0}";
+
+            if (scene.Stamina != null)
+                scene.Stamina.fillAmount = player.StaminaPercent;
+
+            if (scene.TimeTurnRemain != null &&
+                TurnManagerNetwork.Instance != null)
+                scene.TimeTurnRemain.text =
+                    $"{Mathf.CeilToInt(TurnManagerNetwork.Instance.RemainingTime)}s";
         }
     }
 }
