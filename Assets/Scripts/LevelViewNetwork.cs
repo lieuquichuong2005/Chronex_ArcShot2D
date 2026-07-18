@@ -224,7 +224,7 @@ namespace ArcShot
                 foreach (var p in PlayerNetworkController.AllPlayers)
                 {
                     p.HostSetTurnActive(p == target);
-                    HandleLocalTurnChanged(p == target);
+                    // HandleLocalTurnChanged(p == target);
                 }
 
             cameraFollow.FollowPlayer(target);
@@ -291,7 +291,10 @@ namespace ArcShot
             while (PlayerNetworkController.LocalPlayer == null)
                 await UniTask.Yield();
 
-            PlayerNetworkController.LocalPlayer.OnTurnChanged += HandleLocalTurnChanged;
+            var player = PlayerNetworkController.LocalPlayer;
+            player.OnTurnChanged += HandleLocalTurnChanged;
+
+            HandleLocalTurnChanged(player.IsMyTurn);
         }
 
         private void UpdateHud()
