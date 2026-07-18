@@ -61,21 +61,24 @@ namespace ArcShot
         {
             if (!SpawnMap()) return;
 
-            _isHost = _networkService.Runner.IsServer; // THÊM
+            _isHost = _networkService.Runner.IsServer;
 
             if (_isHost)
             {
                 SpawnPlayersHost();
-                SpawnTurnManager(); // ĐỔI: gọi hàm mới thay vì HostInitialize trực tiếp
+                SpawnTurnManager();
             }
 
-            SubscribeTurnManagerWhenReady().Forget(); // ĐỔI: thay dòng _turnManagerNetwork.OnTurnStarted += ...
+            SubscribeTurnManagerWhenReady().Forget();
             BindLocalPlayer().Forget();
+
+            BulletNetwork.AnyBulletSpawned += HandleAnyBulletSpawned; // THÊM
+            BulletNetwork.AnyBulletResolved += HandleAnyBulletResolved; // THÊM
 
             if (scene.SkipTurnButton != null)
                 scene.SkipTurnButton.onClick.AddListener(HandleSkipTurnClicked);
-            // RegisterLocalPlayer().Forget();
         }
+
 
         private void Update()
         {
@@ -84,11 +87,15 @@ namespace ArcShot
 
         private void OnDestroy()
         {
-            if (TurnManagerNetwork.Instance != null) // ĐỔI: dùng Instance thay vì field _turnManagerNetwork
+            if (TurnManagerNetwork.Instance != null)
                 TurnManagerNetwork.Instance.OnTurnStarted -= HandleTurnStarted;
             if (PlayerNetworkController.LocalPlayer != null)
                 PlayerNetworkController.LocalPlayer.OnTurnChanged -= HandleLocalTurnChanged;
+
+            BulletNetwork.AnyBulletSpawned -= HandleAnyBulletSpawned;
+            BulletNetwork.AnyBulletResolved -= HandleAnyBulletResolved;
         }
+
 
         private void SpawnPlayersHost()
         {
@@ -157,7 +164,6 @@ namespace ArcShot
             gun.OnBulletFired += HandleBulletFired;
         }
 
-        // THÊM MỚI - thay cho đoạn gọi _turnManagerNetwork.HostInitialize trực tiếp trong Start()
         private void SpawnTurnManager()
         {
             _networkService.Runner.Spawn(_turnManagerNetworkPrefab);
@@ -170,7 +176,6 @@ namespace ArcShot
             WaitAndInitializeTurnManager(participants).Forget();
         }
 
-        // THÊM MỚI
         private async UniTaskVoid WaitAndInitializeTurnManager(List<ITurnParticipant> participants)
         {
             while (TurnManagerNetwork.Instance == null)
@@ -245,17 +250,17 @@ namespace ArcShot
 
         private void HandleBulletFired(BulletNetwork bullet)
         {
-            if (_isHost) // ĐỔI
-                TurnManagerNetwork.Instance?.HostLockAllPlayers(); // ĐỔI
-
-            cameraFollow.FollowBullet(bullet);
-            bullet.OnResolved += HandleBulletResolved;
+            if (_isHost)
+            {
+                TurnManagerNetwork.Instance?.HostLockAllPlayers();
+                bullet.OnResolved += HandleBulletResolved;
+            }
         }
 
         private void HandleBulletResolved()
         {
-            if (_isHost) // ĐỔI
-                TurnManagerNetwork.Instance?.HostEndCurrentTurn(); // ĐỔI
+            if (_isHost)
+                TurnManagerNetwork.Instance?.HostEndCurrentTurn();
         }
 
         private bool SpawnMap()
@@ -328,6 +333,24 @@ namespace ArcShot
                 TurnManagerNetwork.Instance != null)
                 scene.TimeTurnRemain.text =
                     $"{Mathf.CeilToInt(TurnManagerNetwork.Instance.RemainingTime)}s";
+        }
+
+        private void HandleAnyBulletSpawned(BulletNetwork bullet)
+        {
+            cameraFollow.FollowBullet(bullet);
+        }
+
+        private void HandleAnyBulletResolved()
+        {
+            if (TurnManagerNetwork.Instance == null) return;
+
+            var current = PlayerNetworkController.AllPlayers
+                .FirstOrDefault(p => p.TurnOrderIndex == TurnManagerNetwork.Instance.CurrentPlayerIndex);
+
+            if (current != null)
+            {
+                cameraFollow.FollowPlayer(current);
+            }
         }
     }
 }

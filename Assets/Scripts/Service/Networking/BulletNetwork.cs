@@ -27,9 +27,22 @@ namespace ArcShot.Networking
         [Networked] private TickTimer LifeTimer { get; set; }
         private bool _resolved;
 
+        public static event Action<BulletNetwork> AnyBulletSpawned;
+        public static event Action AnyBulletResolved;
+
         public override void Spawned()
         {
-            if (Object.HasStateAuthority) LifeTimer = TickTimer.CreateFromSeconds(Runner, lifeTime);
+            if (Object.HasStateAuthority)
+            {
+                LifeTimer = TickTimer.CreateFromSeconds(Runner, lifeTime);
+            }
+
+            AnyBulletSpawned?.Invoke(this);
+        }
+
+        public override void Despawned(NetworkRunner runner, bool hasState)
+        {
+            AnyBulletResolved?.Invoke();
         }
 
         public override void FixedUpdateNetwork()
@@ -44,14 +57,9 @@ namespace ArcShot.Networking
             if (_resolved) return;
             if (Object == null || !Object.HasStateAuthority) return;
 
-            Debug.Log(
-                $"[BulletNetwork] Trigger với: {other.name}, attachedRigidbody: {other.attachedRigidbody?.name ?? "null"}");
-
             var receiver = other.attachedRigidbody != null
                 ? other.attachedRigidbody.GetComponent<DamageReceiverNetwork>()
                 : null;
-
-            Debug.Log($"[BulletNetwork] DamageReceiverNetwork tìm thấy: {(receiver != null ? "CÓ" : "KHÔNG")}");
 
             receiver?.HostReceiveDamage(damage);
 
