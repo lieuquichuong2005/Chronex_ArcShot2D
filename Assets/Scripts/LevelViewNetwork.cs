@@ -233,8 +233,14 @@ namespace ArcShot
 
         private void HandleSkipTurnClicked()
         {
-            if (_isHost) // ĐỔI
-                TurnManagerNetwork.Instance?.HostEndCurrentTurn(); // ĐỔI: dùng Instance
+            if (_isHost)
+            {
+                TurnManagerNetwork.Instance?.HostEndCurrentTurn();
+            }
+            else
+            {
+                TurnManagerNetwork.Instance?.RPC_RequestEndTurn();
+            }
         }
 
         private void HandleBulletFired(BulletNetwork bullet)

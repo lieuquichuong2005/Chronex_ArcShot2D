@@ -58,7 +58,7 @@ namespace Chronex.Networking
             _changeDetector = GetChangeDetector(ChangeDetector.Source.SimulationState);
         }
 
-        public override void Despawned(NetworkRunner runner, bool hasState) 
+        public override void Despawned(NetworkRunner runner, bool hasState)
         {
             if (Instance == this) Instance = null;
         }
@@ -108,6 +108,12 @@ namespace Chronex.Networking
         public void HostLockAllPlayers()
         {
             if (Object.HasStateAuthority) _turnManager?.LockAllPlayers();
+        }
+
+        [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+        public void RPC_RequestEndTurn()
+        {
+            _turnManager?.EndCurrentTurn();
         }
     }
 }
