@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: e4c3134a68f5dc44cb0b2b3371b4c30d
+guid: c338caae9ffe0de418fee86ab924e7ae
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 4412929025976260669
-    second: Turn_0
+      213: 7625075936530227717
+    second: Background_Victory_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -75,7 +75,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 0
+    textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -126,13 +126,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Turn_0
+      name: Background_Victory_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 159
-        height: 161
+        width: 1672
+        height: 941
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -141,8 +141,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: d385354819fdd3d30800000000000000
-      internalID: 4412929025976260669
+      spriteID: 50263463a26b1d960800000000000000
+      internalID: 7625075936530227717
       vertices: []
       indices: 
       edges: []
@@ -160,8 +160,7 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable:
-      Turn_0: 4412929025976260669
+    nameFileIdTable: {}
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
