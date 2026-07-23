@@ -356,7 +356,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: c338caae9ffe0de418fee86ab924e7ae, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 8e14b329998688d4e9196588ca996ac9, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -3835,7 +3835,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _backgroundImage: {fileID: 4499578516035289018}
   _titleImage: {fileID: 5522143657802681531}
-  _mvp: {fileID: 282355762433836613}
+  _mvp: {fileID: 2912266952917522833}
+  _character: {fileID: 4341018276763540027}
+  _base: {fileID: 322683067802741561}
   _playerName: {fileID: 763452861867446650}
   _damageDealtText: {fileID: 680709011132247070}
   _matchDurationText: {fileID: 6037512970895280579}
@@ -3855,6 +3857,12 @@ MonoBehaviour:
   _bgDefeated: {fileID: 21300000, guid: 8e14b329998688d4e9196588ca996ac9, type: 3}
   _titleVictory: {fileID: 21300000, guid: 07e225ac6bae7ae4b81dd5612d1a2f03, type: 3}
   _titleDefeated: {fileID: 21300000, guid: 58609f4cbd4999d4f90d511195c3f9f6, type: 3}
+  _mvpVictory: {fileID: 21300000, guid: 23db663b6a4a2c443a1f13bb4b6de6ba, type: 3}
+  _mvpDefeated: {fileID: 21300000, guid: b19c322e21eaa8347ad2419ae4caef0b, type: 3}
+  _characterVictory: {fileID: 21300000, guid: ccd8270acf0accb48b475fd7c2ff52c2, type: 3}
+  _characterDefeated: {fileID: 21300000, guid: b6b80fd239adc8a458590192acbece13, type: 3}
+  _baseVictory: {fileID: 21300000, guid: 5fa9dd1f1a65a594182e5be42683c695, type: 3}
+  _baseDefeated: {fileID: 21300000, guid: 6e9e4f71f2c3513459bf46905bebe157, type: 3}
   _expBarAnimationDuration: 0.8
   _delayBetweenLevelUps: 0.15
 --- !u!1 &4388035821128311858

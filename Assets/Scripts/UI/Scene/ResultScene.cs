@@ -5,7 +5,6 @@ using QuiChuong2005.Framework.Services.Audio;
 using QuiChuong2005.Framework.Services.Scenes;
 using TMPro;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class ResultScene : MonoBehaviour
@@ -18,7 +17,13 @@ public class ResultScene : MonoBehaviour
     private Image _titleImage;
 
     [SerializeField]
-    private GameObject _mvp;
+    private Image _mvp;
+
+    [SerializeField]
+    private Image _character;
+
+    [SerializeField]
+    private Image _base;
 
     [SerializeField]
     private TextMeshProUGUI _playerName;
@@ -75,6 +80,15 @@ public class ResultScene : MonoBehaviour
     [SerializeField]
     private Sprite _titleVictory, _titleDefeated;
 
+    [SerializeField]
+    private Sprite _mvpVictory, _mvpDefeated;
+
+    [SerializeField]
+    private Sprite _characterVictory, _characterDefeated;
+
+    [SerializeField]
+    private Sprite _baseVictory, _baseDefeated;
+
     [Header("SCENE SETTINGS")]
     [SerializeField]
     private float _expBarAnimationDuration = 0.8f;
@@ -115,7 +129,11 @@ public class ResultScene : MonoBehaviour
         _titleImage.sprite = data.IsVictory ? _titleVictory : _titleDefeated;
 
         // MVP: hiện tại chỉ có 1vs1 nên mặc định người thắng luôn là MVP
-        _mvp.SetActive(data.IsMVP);
+        _mvp.sprite = data.IsVictory ? _mvpVictory : _mvpDefeated;
+        _base.sprite = data.IsVictory ? _baseVictory : _baseDefeated;
+        _character.sprite = data.IsVictory ? _characterVictory : _characterDefeated;
+
+        _mvp.gameObject.SetActive(data.IsMVP);
 
         // Tên người chơi lấy đúng từ LevelScene truyền qua
         _playerName.text = data.PlayerName;
