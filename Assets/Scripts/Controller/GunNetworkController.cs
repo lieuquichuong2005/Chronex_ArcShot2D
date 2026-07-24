@@ -137,6 +137,9 @@ namespace ArcShot
             bulletRb.linearVelocity = direction * shootForce;
 
             var bullet = spawned.GetComponent<BulletNetwork>();
+            bullet.SetShooter(player);
+
+            player.HostIncrementShotsFired(); 
             OnBulletFired?.Invoke(bullet);
         }
     }

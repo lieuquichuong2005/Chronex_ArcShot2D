@@ -3008,6 +3008,7 @@ MonoBehaviour:
     playerCount: 2
     turnDuration: 15
   _turnManagerNetworkPrefab: {fileID: 5937284617317818917, guid: 49367c59a1797f84d8b909204c0add53, type: 3}
+  _matchStatsTrackerPrefab: {fileID: 9056179359992424435, guid: 0035ee932d605f544940b4240e9aead7, type: 3}
   scene: {fileID: 7932610585787104710}
   _playerTransform: {fileID: 8334513656463451001}
   _mapTransform: {fileID: 92589276210578373}

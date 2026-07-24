@@ -25,6 +25,8 @@ namespace ArcShot.Networking
         public event Action OnResolved;
 
         [Networked] private TickTimer LifeTimer { get; set; }
+        [Networked] public PlayerNetworkController Shooter { get; set; }
+
         private bool _resolved;
 
         public static event Action<BulletNetwork> AnyBulletSpawned;
@@ -57,14 +59,33 @@ namespace ArcShot.Networking
             if (_resolved) return;
             if (Object == null || !Object.HasStateAuthority) return;
 
-            var receiver = other.attachedRigidbody != null
-                ? other.attachedRigidbody.GetComponent<DamageReceiverNetwork>()
-                : null;
+            var receiverObj = other.attachedRigidbody != null ? other.attachedRigidbody.gameObject : null;
+            var receiver = receiverObj != null ? receiverObj.GetComponent<DamageReceiverNetwork>() : null;
 
-            receiver?.HostReceiveDamage(damage);
+            if (receiver != null)
+            {
+                receiver.HostReceiveDamage(damage);
+
+                var victim = receiverObj.GetComponent<PlayerNetworkController>();
+                if (victim != null)
+                {
+                    victim.HostRegisterDamageTaken(damage);
+                }
+
+                if (Shooter != null)
+                {
+                    Shooter.HostRegisterHit(damage);
+                }
+            }
 
             Resolve();
         }
+
+        public void SetShooter(PlayerNetworkController shooter)
+        {
+            if (Object.HasStateAuthority) Shooter = shooter;
+        }
+
 
         private void OnBecameInvisible()
         {

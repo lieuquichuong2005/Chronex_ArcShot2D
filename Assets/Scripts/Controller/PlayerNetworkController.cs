@@ -44,6 +44,13 @@ namespace ArcShot
         [Networked] public NetworkBool FacingRight { get; set; } = true;
         [Networked] public float CurrentStamina { get; set; }
 
+        [Networked] public int TeamId { get; set; }
+        [Networked] public float DamageDealt { get; set; }
+        [Networked] public float DamageTaken { get; set; }
+        [Networked] public int ShotsFired { get; set; }
+        [Networked] public int ShotsHit { get; set; }
+        public float Accuracy => ShotsFired > 0 ? (float)ShotsHit / ShotsFired * 100f : 0f;
+
         public static PlayerNetworkController LocalPlayer { get; private set; }
 
         public float StaminaPercent => maxStamina > 0f ? Mathf.Clamp01(CurrentStamina / maxStamina) : 0f;
@@ -140,9 +147,12 @@ namespace ArcShot
 
         private void HandleDeath()
         {
-            // TODO: giữ nguyên hành vi offline (SetActive(false)) - nhưng cần bàn thêm: có nên
-            // Despawn hẳn NetworkObject này không, để tránh vẫn chiếm slot TurnOrderIndex khi chết.
             gameObject.SetActive(false);
+
+            if (Object.HasStateAuthority) 
+            {
+                Chronex.Networking.MatchStatsTracker.Instance?.HostCheckMatchEnd();
+            }
         }
 
         /// <summary>Chỉ Host gọi - từ LevelViewNetwork khi bắt đầu turn mới.</summary>
@@ -165,6 +175,28 @@ namespace ArcShot
         public void SetTurnActive(bool active)
         {
             HostSetTurnActive(active);
+        }
+
+        /// <summary>Chỉ Host gọi - từ GunNetworkController khi bắn ra 1 viên đạn.</summary>
+        public void HostIncrementShotsFired()
+        {
+            if (Object.HasStateAuthority) ShotsFired++;
+        }
+
+        /// <summary>Chỉ Host gọi - từ BulletNetwork khi đạn TRÚNG mục tiêu (không phải hết giờ/ra khỏi map).</summary>
+        public void HostRegisterHit(float damage)
+        {
+            if (Object.HasStateAuthority)
+            {
+                ShotsHit++;
+                DamageDealt += damage;
+            }
+        }
+
+        /// <summary>Chỉ Host gọi - từ HealthNetworkController.HostTakeDamage của CHÍNH player này.</summary>
+        public void HostRegisterDamageTaken(float damage)
+        {
+            if (Object.HasStateAuthority) DamageTaken += damage;
         }
     }
 }

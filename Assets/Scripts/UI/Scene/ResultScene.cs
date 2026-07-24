@@ -1,5 +1,6 @@
 using System;
 using Cysharp.Threading.Tasks;
+using QuiChuong2005.Framework.Core;
 using QuiChuong2005.Framework.Core.DI;
 using QuiChuong2005.Framework.Services.Audio;
 using QuiChuong2005.Framework.Services.Scenes;
@@ -106,6 +107,8 @@ public class ResultScene : MonoBehaviour
 
     private void Awake()
     {
+        ServiceLocator.Instance.Resolve(this);
+
         _backToMenuButton.onClick.AddListener(() => { _ = OnBackToMenuClicked(); });
     }
 

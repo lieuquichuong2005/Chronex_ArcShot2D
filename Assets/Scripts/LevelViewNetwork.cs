@@ -7,6 +7,7 @@ using Cysharp.Threading.Tasks;
 using Fusion;
 using QuiChuong2005.Framework.Core;
 using QuiChuong2005.Framework.Core.DI;
+using QuiChuong2005.Framework.Services.Scenes;
 using UnityEngine;
 
 namespace ArcShot
@@ -32,7 +33,10 @@ namespace ArcShot
         private TurnManagerConfig turnConfig;
 
         [SerializeField]
-        private NetworkObject _turnManagerNetworkPrefab; // ĐỔI: kéo PREFAB vào đây, không phải object trong scene.
+        private NetworkObject _turnManagerNetworkPrefab;
+
+        [SerializeField]
+        private NetworkObject _matchStatsTrackerPrefab;
 
         [Header("UI")]
         [SerializeField]
@@ -46,6 +50,9 @@ namespace ArcShot
 
         [Inject]
         private Chronex.Services.Networking.INetworkService _networkService;
+
+        [Inject]
+        private ISceneService _sceneService;
 
         private MapConfig currentMapConfig;
         private GunNetworkController boundGun;
@@ -77,6 +84,8 @@ namespace ArcShot
 
             if (scene.SkipTurnButton != null)
                 scene.SkipTurnButton.onClick.AddListener(HandleSkipTurnClicked);
+
+            SubscribeMatchStatsWhenReady().Forget(); // THÊM
         }
 
 
@@ -94,6 +103,9 @@ namespace ArcShot
 
             BulletNetwork.AnyBulletSpawned -= HandleAnyBulletSpawned;
             BulletNetwork.AnyBulletResolved -= HandleAnyBulletResolved;
+
+            if (MatchStatsTracker.Instance != null) // THÊM
+                MatchStatsTracker.Instance.OnMatchEnded -= HandleMatchEnded;
         }
 
 
@@ -154,6 +166,10 @@ namespace ArcShot
             playerCtrl.TurnOrderIndex = turnOrderIndex;
             playerCtrl.FacingRight = facingRight;
 
+            playerCtrl.TurnOrderIndex = turnOrderIndex;
+            playerCtrl.FacingRight = facingRight;
+            playerCtrl.TeamId = facingRight ? 0 : 1;
+
             var gun = spawned.GetComponentInChildren<GunNetworkController>();
             if (gun == null)
             {
@@ -167,6 +183,7 @@ namespace ArcShot
         private void SpawnTurnManager()
         {
             _networkService.Runner.Spawn(_turnManagerNetworkPrefab);
+            _networkService.Runner.Spawn(_matchStatsTrackerPrefab);
 
             var participants = PlayerNetworkController.AllPlayers
                 .OrderBy(p => p.TurnOrderIndex)
@@ -226,11 +243,12 @@ namespace ArcShot
             }
 
             if (_isHost)
+            {
                 foreach (var p in PlayerNetworkController.AllPlayers)
-                {
                     p.HostSetTurnActive(p == target);
-                    // HandleLocalTurnChanged(p == target);
-                }
+
+                MatchStatsTracker.Instance?.HostIncrementTurnCount();
+            }
 
             cameraFollow.FollowPlayer(target);
             boundGun = target.GetComponentInChildren<GunNetworkController>();
@@ -239,13 +257,9 @@ namespace ArcShot
         private void HandleSkipTurnClicked()
         {
             if (_isHost)
-            {
                 TurnManagerNetwork.Instance?.HostEndCurrentTurn();
-            }
             else
-            {
                 TurnManagerNetwork.Instance?.RPC_RequestEndTurn();
-            }
         }
 
         private void HandleBulletFired(BulletNetwork bullet)
@@ -347,10 +361,49 @@ namespace ArcShot
             var current = PlayerNetworkController.AllPlayers
                 .FirstOrDefault(p => p.TurnOrderIndex == TurnManagerNetwork.Instance.CurrentPlayerIndex);
 
-            if (current != null)
+            if (current != null) cameraFollow.FollowPlayer(current);
+        }
+
+        private async UniTaskVoid SubscribeMatchStatsWhenReady() // THÊM
+        {
+            while (MatchStatsTracker.Instance == null)
+                await UniTask.Yield();
+
+            MatchStatsTracker.Instance.OnMatchEnded += HandleMatchEnded;
+        }
+
+        private void HandleMatchEnded(int winningTeamId)
+        {
+            var localPlayer = PlayerNetworkController.LocalPlayer;
+            if (localPlayer == null) return;
+
+            var stats = Chronex.Networking.MatchStatsTracker.Instance;
+
+            var result = new MatchResultData
             {
-                cameraFollow.FollowPlayer(current);
-            }
+                PlayerName =
+                    "Player", // TODO: thay bằng tên thật khi có chức năng đặt tên (đã ghi nhận từ RoomPlayerNetworkObject)
+                IsVictory = winningTeamId == -1 ? false : localPlayer.TeamId == winningTeamId,
+
+                DamageDealt = localPlayer.DamageDealt,
+                DamageTaken = localPlayer.DamageTaken,
+                MatchDuration = stats != null ? stats.GetMatchDuration() : 0f,
+                Accuracy = localPlayer.Accuracy,
+                Turns = stats != null ? stats.TurnCount : 0,
+                CritCount = 0, // TODO: chưa có cơ chế crit trong GunNetworkController/BulletNetwork
+
+                // TODO: chưa có hệ thống kinh tế/level thật - đây là công thức tạm để có số hiển thị
+                CoinBonus = Mathf.RoundToInt(localPlayer.DamageDealt * 2f),
+                ExpBonus = Mathf.RoundToInt(localPlayer.DamageDealt * 1.5f),
+
+                CurrentLevel = 1, // TODO: lấy từ PlayerProfile/DataService thật khi có
+                CurrentExp = 0, // TODO
+                RequiredExp = 100 // TODO
+            };
+
+            Chronex.UI.Result.MatchResultHolder.PendingResult = result;
+
+            _sceneService.LoadSceneAsync<ResultScene>(nameof(ResultScene)).Forget();
         }
     }
 }
