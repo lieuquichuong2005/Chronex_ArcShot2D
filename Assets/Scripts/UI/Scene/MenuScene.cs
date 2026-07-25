@@ -6,6 +6,7 @@ using Photon.Realtime;
 using QuiChuong2005.Framework.Core;
 using QuiChuong2005.Framework.Core.DI;
 using QuiChuong2005.Framework.Services.Scenes;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -40,6 +41,38 @@ public class MenuScene : MonoBehaviour
 
     [SerializeField]
     private JoinRoomDialog _joinRoomDialog;
+
+    [Space(5)]
+    [Header("UI REFERENCES")]
+    [SerializeField]
+    private Image _avatarImage;
+
+    [SerializeField]
+    private TextMeshProUGUI _playerNameText;
+
+    [SerializeField]
+    private Button _changeNameButton;
+
+    [SerializeField]
+    private TMP_InputField _playerNameInput;
+
+    [SerializeField]
+    private Button _completedChangeNameButton;
+
+    [SerializeField]
+    private TextMeshProUGUI _levelText;
+
+    [SerializeField]
+    private TextMeshProUGUI _levelProcessText;
+
+    [SerializeField]
+    private Image _expProcessBar;
+
+    [SerializeField]
+    private Image _rankIcon;
+
+    [SerializeField]
+    private TextMeshProUGUI _rankText;
 
     private MenuTabPanel _currentTab;
     private bool _isConnecting;
