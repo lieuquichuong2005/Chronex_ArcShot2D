@@ -20,9 +20,12 @@ namespace Chronex.Services.Profile
         {
             _dataService = dataService;
 
-            _data = _dataService.HasKey(DataKeys.Player) // ĐỔI: dùng DataKeys.Player thay vì string tự bịa
-                ? _dataService.Get(DataKeys.Player, CreateDefault())
-                : CreateDefault();
+            if (_dataService == null)
+            {
+                Debug.LogError("DataService is null");
+            }
+
+            _data = _dataService.Get(DataKeys.Player, CreateDefault());
 
             if (!_dataService.HasKey(DataKeys.Player)) // ĐỔI
             {
@@ -50,7 +53,8 @@ namespace Chronex.Services.Profile
             {
                 _data.CurrentExp -= _data.RequiredExp;
                 _data.Level++;
-                _data.RequiredExp = Mathf.RoundToInt(_data.RequiredExp * 1.2f); // TODO: chỉnh công thức lên cấp theo thiết kế thật.
+                _data.RequiredExp =
+                    Mathf.RoundToInt(_data.RequiredExp * 1.2f); // TODO: chỉnh công thức lên cấp theo thiết kế thật.
             }
 
             _dataService.Set(DataKeys.Player, _data); // ĐỔI

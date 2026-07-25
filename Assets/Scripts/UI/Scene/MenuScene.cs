@@ -31,8 +31,7 @@ public class MenuScene : MonoBehaviour
     [Inject]
     private ISceneService _sceneService;
 
-    [Inject]
-    private IPlayerProfileService _playerProfileService; // THÊM
+    private IPlayerProfileService _playerProfileService;
 
     [SerializeField]
     private List<MenuTabPanel> _tabConfigs = new();
@@ -87,20 +86,20 @@ public class MenuScene : MonoBehaviour
 
     private void Awake()
     {
+        RegisterNetworkServiceIfNeeded();
+        ServiceLocator.Instance.Resolve(this);
+
         InitTabButton();
 
         _currentTab = _tabConfigs.Find(x => x.tabKind == MenuTab.Home);
         _currentTab.tabButton.IsActivate = true;
         SetTab(MenuTab.Home);
 
-        RegisterNetworkServiceIfNeeded();
         RegisterPlayerProfileServiceIfNeeded(); // THÊM
     }
 
     private void Start()
     {
-        ServiceLocator.Instance.Resolve(this);
-
         _createRoomButton.onClick.AddListener(OnClickCreateRoom);
         _quickMatchButton.onClick.AddListener(OnClickQuickMatch);
         _joinRoomButton.onClick.AddListener(OnClickJoinRoom);
@@ -180,9 +179,14 @@ public class MenuScene : MonoBehaviour
     {
         var locator = ServiceLocator.Instance;
 
+        if (_dataService == null)
+        {
+            Debug.LogError("DataService is null");
+        }
+
         try
         {
-            locator.Get<IPlayerProfileService>();
+            _playerProfileService = locator.Get<IPlayerProfileService>();
         }
         catch (InvalidOperationException)
         {
@@ -212,6 +216,7 @@ public class MenuScene : MonoBehaviour
             SetRoomButtonsInteractable(true);
         }
     }
+
 
     private async void OnClickQuickMatch()
     {

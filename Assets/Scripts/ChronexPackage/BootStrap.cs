@@ -96,9 +96,19 @@ namespace QuiChuong2005.Framework.Services
             var audioService = new AudioService();
             audioService.RegisterLibrary<global::Audio>(_audioLibrary);
             locator.Register<IAudioService>(audioService);
+            // --- Phase 0: DataService ---
+            var dataService = new Data.DataService(
+                new Data.Storage.FileDataStorage(
+                    new Data.Storage.PersistentDataPathProvider()),
+                new Data.Serialization.JsonDataSerializer());
 
             // --- Phase 0: Scene service (không phụ thuộc, không async) ---
             locator.Register<ISceneService>(new SceneService());
+            locator.Register<Data.IDataService>(dataService);
+
+            // --- Phase 0.5: PlayerProfileService (phụ thuộc DataService vừa đăng ký) ---
+            locator.Register<Chronex.Services.Profile.IPlayerProfileService>(
+                new Chronex.Services.Profile.PlayerProfileService(dataService));
 
             // --- Phase 1: Firebase SDK ---
             OnStatusChanged?.Invoke("Đang khởi tạo Firebase...");
@@ -106,7 +116,7 @@ namespace QuiChuong2005.Framework.Services
             locator.Register(firebaseService);
             await firebaseService.InitializeAsync(token);
 
-            // --- Phase 2: Authentication (phụ thuộc Firebase) ---
+            // --- Phase 2: Authentication ---
             OnStatusChanged?.Invoke("Đang xác thực người dùng...");
             var authService = new AuthenticationService();
             locator.Register(authService);
