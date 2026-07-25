@@ -69,7 +69,10 @@ namespace ArcShot
             AllPlayers.Add(this);
 
             if (Object.HasInputAuthority)
+            {
                 LocalPlayer = this;
+            }
+
 
             if (Object.HasStateAuthority)
                 CurrentStamina = maxStamina;
@@ -149,7 +152,7 @@ namespace ArcShot
         {
             gameObject.SetActive(false);
 
-            if (Object.HasStateAuthority) 
+            if (Object.HasStateAuthority)
             {
                 Chronex.Networking.MatchStatsTracker.Instance?.HostCheckMatchEnd();
             }

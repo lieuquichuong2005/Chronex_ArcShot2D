@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
 using Arcshot;
+using Chronex.Services.Profile;
 using Chronex.UI.Room;
 using Photon.Realtime;
 using QuiChuong2005.Framework.Core;
 using QuiChuong2005.Framework.Core.DI;
+using QuiChuong2005.Framework.Services.Data;
 using QuiChuong2005.Framework.Services.Scenes;
 using TMPro;
 using UnityEngine;
@@ -24,7 +26,13 @@ public class MenuScene : MonoBehaviour
     private Chronex.Services.Networking.INetworkService _networkService;
 
     [Inject]
+    private IDataService _dataService;
+
+    [Inject]
     private ISceneService _sceneService;
+
+    [Inject]
+    private IPlayerProfileService _playerProfileService; // THÊM
 
     [SerializeField]
     private List<MenuTabPanel> _tabConfigs = new();
@@ -86,6 +94,7 @@ public class MenuScene : MonoBehaviour
         SetTab(MenuTab.Home);
 
         RegisterNetworkServiceIfNeeded();
+        RegisterPlayerProfileServiceIfNeeded(); // THÊM
     }
 
     private void Start()
@@ -97,7 +106,91 @@ public class MenuScene : MonoBehaviour
         _joinRoomButton.onClick.AddListener(OnClickJoinRoom);
 
         _joinRoomDialog.OnJoinRoom += JoinRoomById;
+
+        InitPlayerProfile();
     }
+
+    private void OnDestroy()
+    {
+        if (_joinRoomDialog != null)
+            _joinRoomDialog.OnJoinRoom -= JoinRoomById;
+
+        if (_playerProfileService != null) // THÊM
+            _playerProfileService.ProfileChanged -= RefreshProfileDisplay;
+    }
+
+    // ---------------- PLAYER PROFILE (Name / Level / Exp) ----------------
+
+    private void InitPlayerProfile()
+    {
+        _playerProfileService.ProfileChanged += RefreshProfileDisplay;
+
+        RefreshProfileDisplay();
+
+        _changeNameButton.onClick.AddListener(OnClickChangeName);
+        _completedChangeNameButton.onClick.AddListener(OnClickCompleteChangeName);
+
+        SetNameEditMode(false);
+    }
+
+    private void RefreshProfileDisplay()
+    {
+        _playerNameText.text = _playerProfileService.PlayerName;
+
+        _levelText.text = _playerProfileService.Level.ToString();
+        _levelProcessText.text = $"{_playerProfileService.CurrentExp}/{_playerProfileService.RequiredExp}";
+        _expProcessBar.fillAmount = _playerProfileService.RequiredExp > 0
+            ? Mathf.Clamp01((float)_playerProfileService.CurrentExp / _playerProfileService.RequiredExp)
+            : 0f;
+
+        // TODO: Rank icon/text chưa có hệ thống - giữ nguyên giá trị mặc định gán sẵn trong Inspector.
+    }
+
+    private void OnClickChangeName()
+    {
+        _playerNameInput.text = _playerProfileService.PlayerName;
+        SetNameEditMode(true);
+
+        _playerNameInput.Select();
+        _playerNameInput.ActivateInputField();
+    }
+
+    private void OnClickCompleteChangeName()
+    {
+        string newName = _playerNameInput.text.Trim();
+
+        if (!string.IsNullOrEmpty(newName))
+        {
+            _playerProfileService.SetPlayerName(newName); // RefreshProfileDisplay tự chạy qua event ProfileChanged
+        }
+
+        SetNameEditMode(false);
+    }
+
+    private void SetNameEditMode(bool isEditing)
+    {
+        _playerNameText.gameObject.SetActive(!isEditing);
+        _changeNameButton.gameObject.SetActive(!isEditing);
+
+        _playerNameInput.gameObject.SetActive(isEditing);
+        _completedChangeNameButton.gameObject.SetActive(isEditing);
+    }
+
+    private void RegisterPlayerProfileServiceIfNeeded() // THÊM
+    {
+        var locator = ServiceLocator.Instance;
+
+        try
+        {
+            locator.Get<IPlayerProfileService>();
+        }
+        catch (InvalidOperationException)
+        {
+            locator.Register<IPlayerProfileService>(new PlayerProfileService(_dataService));
+        }
+    }
+
+    // ---------------- ROOM (giữ nguyên, không đổi) ----------------
 
     private async void OnClickCreateRoom()
     {
@@ -192,12 +285,6 @@ public class MenuScene : MonoBehaviour
         foreach (var tabConfig in _tabConfigs) tabConfig.tabPanel.SetActive(tabConfig.tabKind == tab);
     }
 
-    private void OnDestroy()
-    {
-        if (_joinRoomDialog != null)
-            _joinRoomDialog.OnJoinRoom -= JoinRoomById;
-    }
-
     private async void JoinRoomById(string roomId)
     {
         if (_isConnecting)
@@ -222,9 +309,6 @@ public class MenuScene : MonoBehaviour
 
             _isConnecting = false;
             SetRoomButtonsInteractable(true);
-
-            // Có thể hiện popup lỗi ở đây
-            // _joinRoomDialog.ShowError("Room not found");
         }
     }
 }

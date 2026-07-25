@@ -30,9 +30,11 @@ namespace Chronex.Networking
         {
             if (Object.HasInputAuthority)
             {
-                // TODO: thay bằng tên thật khi có chức năng đặt tên ở Menu (đọc từ DataService).
-                string autoName = $"Player{Random.Range(1000, 9999)}";
-                RPC_SetName(autoName);
+                string playerName = QuiChuong2005.Framework.Core.ServiceLocator.Instance
+                    .Get<Chronex.Services.Profile.IPlayerProfileService>()
+                    .PlayerName;
+
+                RPC_SetName(playerName);
             }
         }
 
