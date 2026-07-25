@@ -136,7 +136,7 @@ public class MenuScene : MonoBehaviour
     {
         _playerNameText.text = _playerProfileService.PlayerName;
 
-        _levelText.text = _playerProfileService.Level.ToString();
+        _levelText.text = $"Level {_playerProfileService.Level}";
         _levelProcessText.text = $"{_playerProfileService.CurrentExp}/{_playerProfileService.RequiredExp}";
         _expProcessBar.fillAmount = _playerProfileService.RequiredExp > 0
             ? Mathf.Clamp01((float)_playerProfileService.CurrentExp / _playerProfileService.RequiredExp)
