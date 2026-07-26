@@ -8,6 +8,7 @@ namespace Chronex.Services.Profile
     {
         private readonly IDataService _dataService;
         private PlayerProfileData _data;
+        public Arcshot.CharacterSkin Skin => _data.Skin;
 
         public string PlayerName => _data.PlayerName;
         public int Level => _data.Level;
@@ -70,6 +71,14 @@ namespace Chronex.Services.Profile
                 CurrentExp = 0,
                 RequiredExp = 100
             };
+        }
+
+        public void SetSkin(Arcshot.CharacterSkin skin)
+        {
+            _data.Skin = skin;
+            _dataService.Set(DataKeys.Player, _data);
+
+            ProfileChanged?.Invoke();
         }
     }
 }

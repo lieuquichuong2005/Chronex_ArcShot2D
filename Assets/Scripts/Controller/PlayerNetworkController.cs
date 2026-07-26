@@ -44,6 +44,10 @@ namespace ArcShot
         [SerializeField]
         private SpriteRenderer _cannon;
 
+        [Header("Skin")]
+        [SerializeField]
+        private Arcshot.SpriteConfig _spriteConfig;
+
         // Đăng ký/gỡ đăng ký static để LevelViewNetwork tìm đúng player theo TurnOrderIndex
         // mà không cần giữ reference thủ công qua network (Spawned() chạy trên MỌI peer).
         public static readonly System.Collections.Generic.List<PlayerNetworkController> AllPlayers = new();
@@ -58,6 +62,8 @@ namespace ArcShot
         [Networked] public float DamageTaken { get; set; }
         [Networked] public int ShotsFired { get; set; }
         [Networked] public int ShotsHit { get; set; }
+        [Networked] public Arcshot.CharacterSkin Skin { get; set; }
+
         public float Accuracy => ShotsFired > 0 ? (float)ShotsHit / ShotsFired * 100f : 0f;
 
         public static PlayerNetworkController LocalPlayer { get; private set; }
@@ -80,15 +86,23 @@ namespace ArcShot
             if (Object.HasInputAuthority)
             {
                 LocalPlayer = this;
-            }
 
+                var mySkin = QuiChuong2005.Framework.Core.ServiceLocator.Instance
+                    .Get<Chronex.Services.Profile.IPlayerProfileService>()
+                    .Skin;
+
+                RPC_SetSkin(mySkin);
+            }
 
             if (Object.HasStateAuthority)
                 CurrentStamina = maxStamina;
 
             ApplyFacingVisual(FacingRight);
             if (_turnTransform != null) _turnTransform.SetActive(IsMyTurn);
+
+            ApplySkin(Skin);
         }
+
 
         public override void Despawned(NetworkRunner runner, bool hasState)
         {
@@ -128,12 +142,13 @@ namespace ArcShot
                         break;
 
                     case nameof(IsMyTurn):
-
                         if (_turnTransform != null)
                             _turnTransform.SetActive(IsMyTurn);
-
                         OnTurnChanged?.Invoke(IsMyTurn);
+                        break;
 
+                    case nameof(Skin):
+                        ApplySkin(Skin);
                         break;
                 }
         }
@@ -209,6 +224,29 @@ namespace ArcShot
         public void HostRegisterDamageTaken(float damage)
         {
             if (Object.HasStateAuthority) DamageTaken += damage;
+        }
+
+        [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
+        private void RPC_SetSkin(Arcshot.CharacterSkin skin)
+        {
+            Skin = skin;
+        }
+
+        private void ApplySkin(Arcshot.CharacterSkin skin)
+        {
+            if (_spriteConfig == null) return;
+
+            var config = _spriteConfig.characterConfig.Find(c => c.Skin.Equals(skin));
+
+            if (config == null)
+            {
+                Debug.LogWarning($"[PlayerNetworkController] Không tìm thấy SpriteConfig cho skin '{skin}'.");
+                return;
+            }
+
+            if (_character != null) _character.sprite = config.CharacterSprite;
+            if (_tire != null) _tire.sprite = config.TireSprite;
+            if (_cannon != null) _cannon.sprite = config.CannonSprite;
         }
     }
 }

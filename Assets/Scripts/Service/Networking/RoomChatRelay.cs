@@ -26,7 +26,6 @@ namespace Chronex.Networking
             MessageReceived?.Invoke(playerName, message);
         }
 
-        // THÊM METHOD NÀY
         [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
         public void RPC_StartGame()
         {

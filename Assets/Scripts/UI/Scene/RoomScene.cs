@@ -248,13 +248,14 @@ namespace Chronex.UI.Room
             if (_isHost)
             {
                 _readyStartButton.interactable = false;
-                RoomChatRelay.Instance.RPC_StartGame();
+                RoomChatRelay.Instance?.RPC_StartGame();
             }
             else
             {
                 OnLocalPlayerTogglePressed();
             }
         }
+
 
         // ---------------- LEAVE / INVITE ----------------
 

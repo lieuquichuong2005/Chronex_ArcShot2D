@@ -9,5 +9,6 @@ namespace Chronex.Services.Profile
         public int Level = 1;
         public int CurrentExp;
         public int RequiredExp = 100;
+        public Arcshot.CharacterSkin Skin;
     }
 }

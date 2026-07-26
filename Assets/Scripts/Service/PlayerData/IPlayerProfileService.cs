@@ -8,10 +8,12 @@ namespace Chronex.Services.Profile
         int Level { get; }
         int CurrentExp { get; }
         int RequiredExp { get; }
+        Arcshot.CharacterSkin Skin { get; } 
 
         event Action ProfileChanged;
 
         void SetPlayerName(string name);
         void AddExp(int amount);
+        void SetSkin(Arcshot.CharacterSkin skin); 
     }
 }

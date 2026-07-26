@@ -558,7 +558,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 2
   m_Sprite: {fileID: 21300000, guid: 23fdc1769eec5f746b57c7a49b446917, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -835,7 +835,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: -1
+  m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 86a8891fba2422d479ba2d56e317f9f5, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -1008,6 +1008,10 @@ MonoBehaviour:
   _turnTransform: {fileID: 7601075159796991118}
   rb: {fileID: 7139648153145819482}
   visual: {fileID: 1023332603411498697}
+  _character: {fileID: 591491352929961661}
+  _tire: {fileID: 3818159043446112388}
+  _cannon: {fileID: 1578178946692588330}
+  _spriteConfig: {fileID: 11400000, guid: 2796af324b706d74c935db4c47d36c74, type: 2}
   _TurnOrderIndex: -1
   _IsMyTurn:
     RawValue: 0
@@ -1019,6 +1023,7 @@ MonoBehaviour:
   _DamageTaken: 0
   _ShotsFired: 0
   _ShotsHit: 0
+  _Skin: 0
 --- !u!61 &636933161040976606
 BoxCollider2D:
   m_ObjectHideFlags: 0
