@@ -357,7 +357,7 @@ namespace ArcShot
             if (current != null) cameraFollow.FollowPlayer(current);
         }
 
-        private async UniTaskVoid SubscribeMatchStatsWhenReady() // THÊM
+        private async UniTaskVoid SubscribeMatchStatsWhenReady()
         {
             while (MatchStatsTracker.Instance == null)
                 await UniTask.Yield();
@@ -367,10 +367,15 @@ namespace ArcShot
 
         private void HandleMatchEnded(int winningTeamId)
         {
+            HandleMatchEndedAsync(winningTeamId).Forget();
+        }
+
+        private async UniTaskVoid HandleMatchEndedAsync(int winningTeamId) // THÊM
+        {
             var localPlayer = PlayerNetworkController.LocalPlayer;
             if (localPlayer == null) return;
 
-            var stats = Chronex.Networking.MatchStatsTracker.Instance;
+            var stats = MatchStatsTracker.Instance;
 
             var result = new MatchResultData
             {
@@ -382,20 +387,18 @@ namespace ArcShot
                 MatchDuration = stats != null ? stats.GetMatchDuration() : 0f,
                 Accuracy = localPlayer.Accuracy,
                 Turns = stats != null ? stats.TurnCount : 0,
-                CritCount = 0, // TODO: chưa có cơ chế crit trong GunNetworkController/BulletNetwork
+                CritCount = 0,
 
-                // TODO: chưa có hệ thống kinh tế/level thật - đây là công thức tạm để có số hiển thị
                 CoinBonus = Mathf.RoundToInt(localPlayer.DamageDealt * 2f),
                 ExpBonus = Mathf.RoundToInt(localPlayer.DamageDealt * 1.5f),
 
-                CurrentLevel = 1, // TODO: lấy từ PlayerProfile/DataService thật khi có
-                CurrentExp = 0, // TODO
-                RequiredExp = 100 // TODO
+                CurrentLevel = 1,
+                CurrentExp = 0,
+                RequiredExp = 100
             };
 
-            Chronex.UI.Result.MatchResultHolder.PendingResult = result;
-
-            _sceneService.LoadSceneAsync<ResultScene>(nameof(ResultScene)).Forget();
+            var resultScene = await _sceneService.LoadSceneAsync<ResultScene>(nameof(ResultScene));
+            await resultScene.Initialize(result);
         }
     }
 }
