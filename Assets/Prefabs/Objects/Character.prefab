@@ -1372,6 +1372,12 @@ MonoBehaviour:
   minForce: 2
   maxForce: 20
   chargeTime: 3
+  _recoilVisual: {fileID: 937900788393339053}
+  _recoilDistance: 0.5
+  _recoilKickDuration: 0.15
+  _recoilReturnDuration: 0.45
+  _recoilKickEase: 6
+  _recoilReturnEase: 27
   _CurrentAngle: 45
   _CurrentCharge: 0
   _IsCharging:

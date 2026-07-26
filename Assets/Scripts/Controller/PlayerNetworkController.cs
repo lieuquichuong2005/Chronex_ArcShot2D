@@ -110,7 +110,6 @@ namespace ArcShot
             ApplyName(PlayerName.ToString());
         }
 
-
         public override void Despawned(NetworkRunner runner, bool hasState)
         {
             AllPlayers.Remove(this);

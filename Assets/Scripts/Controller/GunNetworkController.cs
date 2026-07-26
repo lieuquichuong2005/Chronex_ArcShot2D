@@ -2,6 +2,7 @@ using System;
 using ArcShot.Networking;
 using Fusion;
 using UnityEngine;
+using DG.Tweening;
 
 namespace ArcShot
 {
@@ -43,6 +44,25 @@ namespace ArcShot
         [SerializeField]
         private float chargeTime = 4f;
 
+        [Header("Recoil")]
+        [SerializeField]
+        private Transform _recoilVisual;
+
+        [SerializeField]
+        private float _recoilDistance = 0.3f;
+
+        [SerializeField]
+        private float _recoilKickDuration = 0.05f;
+
+        [SerializeField]
+        private float _recoilReturnDuration = 0.25f;
+
+        [SerializeField]
+        private Ease _recoilKickEase = Ease.OutQuad;
+
+        [SerializeField]
+        private Ease _recoilReturnEase = Ease.OutBack;
+
         [Networked] public float CurrentAngle { get; set; } = 45f;
         [Networked] public float CurrentCharge { get; set; }
         [Networked] public NetworkBool IsCharging { get; set; }
@@ -52,10 +72,29 @@ namespace ArcShot
         private ChangeDetector _changeDetector;
         private bool _wasShootHeld;
 
+        private bool _wasCharging;
+        private Vector3 _recoilBasePosition;
+        private Tween _recoilTween;
+
         public override void Spawned()
         {
             _changeDetector = GetChangeDetector(ChangeDetector.Source.SimulationState);
             ApplyRotationVisual();
+
+            if (_recoilVisual != null)
+            {
+                _recoilBasePosition = _recoilVisual.localPosition;
+            }
+        }
+
+        public override void Despawned(NetworkRunner runner, bool hasState)
+        {
+            _recoilTween?.Kill();
+        }
+
+        private void OnDestroy()
+        {
+            _recoilTween?.Kill();
         }
 
         public override void FixedUpdateNetwork()
@@ -76,9 +115,37 @@ namespace ArcShot
         {
             if (_changeDetector == null) return;
 
-            foreach (var change in _changeDetector.DetectChanges(this))
+            foreach (string change in _changeDetector.DetectChanges(this))
+            {
                 if (change == nameof(CurrentAngle))
+                {
                     ApplyRotationVisual();
+                }
+                else if (change == nameof(IsCharging))
+                {
+                    if (_wasCharging && !IsCharging)
+                    {
+                        TriggerRecoil();
+                    }
+
+                    _wasCharging = IsCharging;
+                }
+            }
+        }
+
+        private void TriggerRecoil()
+        {
+            if (_recoilVisual == null) return;
+
+            _recoilTween?.Kill();
+            _recoilVisual.localPosition = _recoilBasePosition;
+
+            Vector3 kickPosition = _recoilBasePosition + new Vector3(-_recoilDistance, 0f, 0f);
+
+            _recoilTween = DOTween.Sequence()
+                .Append(_recoilVisual.DOLocalMove(kickPosition, _recoilKickDuration).SetEase(_recoilKickEase))
+                .Append(
+                    _recoilVisual.DOLocalMove(_recoilBasePosition, _recoilReturnDuration).SetEase(_recoilReturnEase));
         }
 
         private void RotateGun(float aimInput)
@@ -139,7 +206,7 @@ namespace ArcShot
             var bullet = spawned.GetComponent<BulletNetwork>();
             bullet.SetShooter(player);
 
-            player.HostIncrementShotsFired(); 
+            player.HostIncrementShotsFired();
             OnBulletFired?.Invoke(bullet);
         }
     }
