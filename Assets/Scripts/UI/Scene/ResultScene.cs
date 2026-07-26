@@ -103,6 +103,9 @@ public class ResultScene : MonoBehaviour
     [Inject]
     private IAudioService _audioService;
 
+    [Inject]
+    private Chronex.Services.Networking.INetworkService _networkService;
+
     private MatchResultData _data;
 
     private void Awake()
@@ -235,6 +238,8 @@ public class ResultScene : MonoBehaviour
 
     private async UniTask OnBackToMenuClicked()
     {
+        await _networkService.LeaveRoomAsync();
+
         var scene = await _sceneService.LoadSceneAsync<MenuScene>(nameof(MenuScene));
     }
 }

@@ -28,8 +28,7 @@ namespace Chronex.Services.Networking
             int maxPlayers,
             CancellationToken cancellationToken = default)
         {
-            await EnsureRunnerAsync();
-
+            await EnsureCleanRunnerAsync();
             var roomCode = RoomCodeGenerator.Generate();
 
             var result = await Runner.StartGame(new StartGameArgs
@@ -59,8 +58,7 @@ namespace Chronex.Services.Networking
                     "Room code không được để trống.",
                     nameof(roomCode));
 
-            await EnsureRunnerAsync();
-
+            await EnsureCleanRunnerAsync();
             var normalizedCode = roomCode.Trim().ToUpperInvariant();
 
             var result = await Runner.StartGame(new StartGameArgs
@@ -82,8 +80,7 @@ namespace Chronex.Services.Networking
 
         public async UniTask<List<SessionInfo>> BrowseRoomsAsync(CancellationToken cancellationToken = default)
         {
-            await EnsureRunnerAsync();
-
+            await EnsureCleanRunnerAsync();
             var tcs = new UniTaskCompletionSource<List<SessionInfo>>();
 
             void OnUpdated(List<SessionInfo> list)
@@ -169,6 +166,51 @@ namespace Chronex.Services.Networking
                     SessionListUpdated?.Invoke(list);
 
                     _sessionListTcs?.TrySetResult(list);
+                });
+
+            Runner.AddCallbacks(_callbacks);
+
+            await UniTask.Yield();
+        }
+
+        private async UniTask EnsureCleanRunnerAsync()
+        {
+            if (Runner != null)
+            {
+                try
+                {
+                    await Runner.Shutdown();
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogWarning(
+                        $"[NetworkService] Shutdown Runner cũ gặp lỗi (bỏ qua, vẫn tiếp tục dọn): {ex.Message}");
+                }
+                finally
+                {
+                    if (Runner != null && Runner.gameObject != null)
+                    {
+                        UnityEngine.Object.Destroy(Runner.gameObject);
+                    }
+
+                    Runner = null;
+                }
+            }
+
+            var runnerObject = new GameObject(RunnerObjectName);
+            UnityEngine.Object.DontDestroyOnLoad(runnerObject);
+
+            Runner = runnerObject.AddComponent<NetworkRunner>();
+            Runner.ProvideInput = true;
+
+            _callbacks = runnerObject.AddComponent<NetworkRunnerCallbacks>();
+            _callbacks.Initialize(
+                onPlayerJoined: p => PlayerJoined?.Invoke(p),
+                onPlayerLeft: p => PlayerLeft?.Invoke(p),
+                onSessionListUpdated: list =>
+                {
+                    _lastSessionList = list;
+                    SessionListUpdated?.Invoke(list);
                 });
 
             Runner.AddCallbacks(_callbacks);
