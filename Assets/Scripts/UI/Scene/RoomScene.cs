@@ -44,8 +44,13 @@ namespace Chronex.UI.Room
         private TextMeshProUGUI _maxPlayer;
 
         [SerializeField]
-        private Image
-            _map; // TODO: chưa dùng - cần Custom Session Properties (đã đồng ý làm sau khi core flow ổn định).
+        private Image _map;
+
+        [SerializeField]
+        private Button _previousMapButton;
+
+        [SerializeField]
+        private Button _nextMapButton;
 
         [Space(5)]
         [Header("Buttons")]
@@ -62,10 +67,10 @@ namespace Chronex.UI.Room
         private TextMeshProUGUI _readyStartButtonText;
 
         [SerializeField]
-        private NetworkObject _roomPlayerNetworkPrefab; // Thêm mới - prefab có NetworkObject + RoomPlayerNetworkObject.
+        private NetworkObject _roomPlayerNetworkPrefab;
 
         [SerializeField]
-        private NetworkObject _chatRelayPrefab; // Thêm mới - prefab rỗng có NetworkObject + RoomChatRelay.
+        private NetworkObject _chatRelayPrefab;
 
         [Inject]
         private INetworkService _networkService;

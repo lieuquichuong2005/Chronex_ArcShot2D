@@ -7,7 +7,7 @@ public class MapConfigsManager : ScriptableObject
 {
     public List<MapConfig> MapConfigs = new();
 
-    private Dictionary<string, MapConfig> mapConfigMap = new Dictionary<string, MapConfig>();
+    private Dictionary<string, MapConfig> mapConfigMap = new();
 
     private void InitMap()
     {
