@@ -15,7 +15,6 @@ namespace Chronex.Networking
         public static MatchStatsTracker Instance { get; private set; }
 
         [Networked] public float MatchStartTime { get; set; }
-        [Networked] public int TurnCount { get; set; }
         [Networked] public NetworkBool MatchEnded { get; set; }
 
         public System.Action<int> OnMatchEnded; // param: winningTeamId
@@ -37,11 +36,6 @@ namespace Chronex.Networking
 
         public float GetMatchDuration() => Runner.SimulationTime - MatchStartTime;
 
-        /// <summary>Chỉ Host gọi - từ TurnManagerNetwork mỗi khi OnTurnStarted bắn ra.</summary>
-        public void HostIncrementTurnCount()
-        {
-            if (Object.HasStateAuthority) TurnCount++;
-        }
 
         /// <summary>
         /// Chỉ Host gọi - từ PlayerNetworkController.HandleDeath. Kiểm tra còn bao nhiêu team

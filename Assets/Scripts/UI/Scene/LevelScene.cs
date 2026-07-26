@@ -23,6 +23,9 @@ public class LevelScene : MonoBehaviour
     private TextMeshProUGUI _timeTurnRemain;
 
     [SerializeField]
+    private TextMeshProUGUI _turn;
+
+    [SerializeField]
     private Button _skipTurnButton;
 
 
@@ -55,6 +58,7 @@ public class LevelScene : MonoBehaviour
     public Image Stamina => _stamina;
     public TextMeshProUGUI FireAngle => _fireAngle;
     public TextMeshProUGUI TimeTurnRemain => _timeTurnRemain;
+    public TextMeshProUGUI Turn => _turn;
     public Button SkipTurnButton => _skipTurnButton;
 
     public EventTrigger MoveLeftButton => _moveLeftButton;

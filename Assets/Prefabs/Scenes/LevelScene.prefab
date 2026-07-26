@@ -1502,6 +1502,7 @@ MonoBehaviour:
   _stamina: {fileID: 899440765357695841}
   _fireAngle: {fileID: 1844289983428012031}
   _timeTurnRemain: {fileID: 3401262215881952721}
+  _turn: {fileID: 8636908032539634556}
   _skipTurnButton: {fileID: 6084506062581227666}
   _moveLeftButton: {fileID: 5139648771773611636}
   _moveRightButton: {fileID: 7325577646445994401}

@@ -25,7 +25,7 @@ namespace Chronex.Networking
         public event System.Action<int> OnRoundCompleted;
         public event System.Action<float> OnTurnTimeChanged;
 
-        private TurnManager _turnManager; // Chỉ khởi tạo và dùng thật ở phía Host.
+        private TurnManager _turnManager;
         private ChangeDetector _changeDetector;
         private int _lastKnownPlayerIndex = -1;
 

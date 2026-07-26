@@ -236,15 +236,20 @@ namespace ArcShot
             }
 
             if (_isHost)
-            {
                 foreach (var p in PlayerNetworkController.AllPlayers)
                     p.HostSetTurnActive(p == target);
 
-                MatchStatsTracker.Instance?.HostIncrementTurnCount();
-            }
-
             cameraFollow.FollowPlayer(target);
             boundGun = target.GetComponentInChildren<GunNetworkController>();
+
+            UpdateTurnDisplay();
+        }
+
+        private void UpdateTurnDisplay()
+        {
+            if (scene.Turn == null || TurnManagerNetwork.Instance == null) return;
+
+            scene.Turn.text = $"{TurnManagerNetwork.Instance.RoundCount + 1:00}";
         }
 
         private void HandleSkipTurnClicked()
@@ -327,19 +332,10 @@ namespace ArcShot
             if (gun == null)
                 return;
 
-            if (scene.FirePower != null)
-                scene.FirePower.fillAmount = gun.ChargePercent;
-
-            if (scene.FireAngle != null)
-                scene.FireAngle.text = $"{gun.CurrentAngle:0}";
-
-            if (scene.Stamina != null)
-                scene.Stamina.fillAmount = player.StaminaPercent;
-
-            if (scene.TimeTurnRemain != null &&
-                TurnManagerNetwork.Instance != null)
-                scene.TimeTurnRemain.text =
-                    $"{Mathf.CeilToInt(TurnManagerNetwork.Instance.RemainingTime)}s";
+            scene.FirePower.fillAmount = gun.ChargePercent;
+            scene.FireAngle.text = $"{gun.CurrentAngle:0}";
+            scene.Stamina.fillAmount = player.StaminaPercent;
+            scene.TimeTurnRemain.text = $"{Mathf.CeilToInt(TurnManagerNetwork.Instance.RemainingTime)}s";
         }
 
         private void HandleAnyBulletSpawned(BulletNetwork bullet)
@@ -370,7 +366,7 @@ namespace ArcShot
             HandleMatchEndedAsync(winningTeamId).Forget();
         }
 
-        private async UniTaskVoid HandleMatchEndedAsync(int winningTeamId) // THÊM
+        private async UniTaskVoid HandleMatchEndedAsync(int winningTeamId)
         {
             var localPlayer = PlayerNetworkController.LocalPlayer;
             if (localPlayer == null) return;
@@ -386,7 +382,7 @@ namespace ArcShot
                 DamageTaken = localPlayer.DamageTaken,
                 MatchDuration = stats != null ? stats.GetMatchDuration() : 0f,
                 Accuracy = localPlayer.Accuracy,
-                Turns = stats != null ? stats.TurnCount : 0,
+                Turns = TurnManagerNetwork.Instance != null ? TurnManagerNetwork.Instance.RoundCount + 1 : 0,
                 CritCount = 0,
 
                 CoinBonus = Mathf.RoundToInt(localPlayer.DamageDealt * 2f),
