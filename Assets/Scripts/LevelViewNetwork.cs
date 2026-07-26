@@ -111,7 +111,7 @@ namespace ArcShot
             BulletNetwork.AnyBulletSpawned -= HandleAnyBulletSpawned;
             BulletNetwork.AnyBulletResolved -= HandleAnyBulletResolved;
 
-            if (MatchStatsTracker.Instance != null) // THÊM
+            if (MatchStatsTracker.Instance != null)
                 MatchStatsTracker.Instance.OnMatchEnded -= HandleMatchEnded;
         }
 
@@ -374,9 +374,8 @@ namespace ArcShot
 
             var result = new MatchResultData
             {
-                PlayerName =
-                    "Player", // TODO: thay bằng tên thật khi có chức năng đặt tên (đã ghi nhận từ RoomPlayerNetworkObject)
-                IsVictory = winningTeamId == -1 ? false : localPlayer.TeamId == winningTeamId,
+                PlayerName = localPlayer.PlayerName.ToString(),
+                IsVictory = winningTeamId != -1 && localPlayer.TeamId == winningTeamId,
 
                 DamageDealt = localPlayer.DamageDealt,
                 DamageTaken = localPlayer.DamageTaken,

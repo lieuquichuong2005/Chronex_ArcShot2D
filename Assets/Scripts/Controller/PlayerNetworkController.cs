@@ -1,6 +1,7 @@
 using System;
 using ArcShot.Networking;
 using Fusion;
+using TMPro;
 using UnityEngine;
 
 namespace ArcShot
@@ -36,6 +37,9 @@ namespace ArcShot
         private Transform visual;
 
         [SerializeField]
+        private TextMeshProUGUI _playerName;
+
+        [SerializeField]
         private SpriteRenderer _character;
 
         [SerializeField]
@@ -63,6 +67,8 @@ namespace ArcShot
         [Networked] public int ShotsFired { get; set; }
         [Networked] public int ShotsHit { get; set; }
         [Networked] public Arcshot.CharacterSkin Skin { get; set; }
+        [Networked] public NetworkString<_32> PlayerName { get; set; }
+
 
         public float Accuracy => ShotsFired > 0 ? (float)ShotsHit / ShotsFired * 100f : 0f;
 
@@ -87,11 +93,11 @@ namespace ArcShot
             {
                 LocalPlayer = this;
 
-                var mySkin = QuiChuong2005.Framework.Core.ServiceLocator.Instance
-                    .Get<Chronex.Services.Profile.IPlayerProfileService>()
-                    .Skin;
+                var profileService = QuiChuong2005.Framework.Core.ServiceLocator.Instance
+                    .Get<Chronex.Services.Profile.IPlayerProfileService>();
 
-                RPC_SetSkin(mySkin);
+                RPC_SetSkin(profileService.Skin);
+                RPC_SetName(profileService.PlayerName);
             }
 
             if (Object.HasStateAuthority)
@@ -101,6 +107,7 @@ namespace ArcShot
             if (_turnTransform != null) _turnTransform.SetActive(IsMyTurn);
 
             ApplySkin(Skin);
+            ApplyName(PlayerName.ToString());
         }
 
 
@@ -149,6 +156,10 @@ namespace ArcShot
 
                     case nameof(Skin):
                         ApplySkin(Skin);
+                        break;
+
+                    case nameof(PlayerName):
+                        ApplyName(PlayerName.ToString());
                         break;
                 }
         }
@@ -247,6 +258,17 @@ namespace ArcShot
             if (_character != null) _character.sprite = config.CharacterSprite;
             if (_tire != null) _tire.sprite = config.TireSprite;
             if (_cannon != null) _cannon.sprite = config.CannonSprite;
+        }
+
+        [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)] // THÊM
+        private void RPC_SetName(string name)
+        {
+            PlayerName = name;
+        }
+
+        private void ApplyName(string name) // THÊM
+        {
+            if (_playerName != null) _playerName.text = name;
         }
     }
 }
