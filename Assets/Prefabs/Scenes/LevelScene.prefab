@@ -3004,6 +3004,7 @@ MonoBehaviour:
   mapConfigsManager: {fileID: 11400000, guid: 2eb01d2ba3d008740b5f1cf2bef9f992, type: 2}
   _characterManager: {fileID: 11400000, guid: 161592d942013ff40a340360b450480c, type: 2}
   _spriteManagerConfig: {fileID: 11400000, guid: 2796af324b706d74c935db4c47d36c74, type: 2}
+  _characterPrefab: {fileID: 4475922172313489137, guid: c717b077800e54c43918a5863702dd26, type: 3}
   selectedMapId: map_02
   turnConfig:
     playerCount: 2

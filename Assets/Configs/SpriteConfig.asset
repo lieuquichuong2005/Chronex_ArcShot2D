@@ -21,3 +21,7 @@ MonoBehaviour:
     CharacterSprite: {fileID: 21300000, guid: 17a8d53b5b6fbea458ff82e3f3627ab0, type: 3}
     TireSprite: {fileID: 21300000, guid: 434aef89b6146ac4691fb4638bf54b9f, type: 3}
     CannonSprite: {fileID: 21300000, guid: 8dfd3eada9f8c7949a3a9ef633eb3285, type: 3}
+  - Skin: 2
+    CharacterSprite: {fileID: 21300000, guid: 5a0d290761fc2954f952dac35ccd79ee, type: 3}
+    TireSprite: {fileID: 21300000, guid: ceae187365d84234dbd7992fea8fde3e, type: 3}
+    CannonSprite: {fileID: 21300000, guid: 6d941cb800091c140b53162a9e2b7d67, type: 3}

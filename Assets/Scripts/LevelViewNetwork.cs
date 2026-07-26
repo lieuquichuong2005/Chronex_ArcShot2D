@@ -30,6 +30,9 @@ namespace ArcShot
         private SpriteConfig _spriteManagerConfig;
 
         [SerializeField]
+        private NetworkObject _characterPrefab;
+
+        [SerializeField]
         private string selectedMapId;
 
         [Header("Turn")]
@@ -141,29 +144,15 @@ namespace ArcShot
 
         private void SpawnPlayerAt(PlayerRef owner, Vector2 localSpawnPos, bool facingRight, int turnOrderIndex)
         {
-            var characterGo = _characterManager.GetRandomCharacter();
-            if (characterGo == null)
-            {
-                Debug.LogError("[LevelViewNetwork] GetRandomCharacter() trả về null.");
-                return;
-            }
-
-            var characterPrefab = characterGo.GetComponent<NetworkObject>();
-            if (characterPrefab == null)
-            {
-                Debug.LogError($"[LevelViewNetwork] Prefab '{characterGo.name}' chưa có NetworkObject.");
-                return;
-            }
-
             var worldPos = _mapTransform.TransformPoint(localSpawnPos);
 
             // ĐỔI: Runner.Spawn -> _networkService.Runner.Spawn (property Runner của NetworkBehaviour không còn nữa)
-            var spawned = _networkService.Runner.Spawn(characterPrefab, worldPos, Quaternion.identity, owner);
+            var spawned = _networkService.Runner.Spawn(_characterPrefab, worldPos, Quaternion.identity, owner);
 
             var playerCtrl = spawned.GetComponent<PlayerNetworkController>();
             if (playerCtrl == null)
             {
-                Debug.LogError($"[LevelViewNetwork] Prefab '{characterGo.name}' chưa có PlayerNetworkController.");
+                Debug.LogError($"[LevelViewNetwork] Prefab '{_characterPrefab.name}' chưa có PlayerNetworkController.");
                 return;
             }
 
@@ -177,7 +166,7 @@ namespace ArcShot
             var gun = spawned.GetComponentInChildren<GunNetworkController>();
             if (gun == null)
             {
-                Debug.LogError($"[LevelViewNetwork] Prefab '{characterGo.name}' chưa có GunNetworkController.");
+                Debug.LogError($"[LevelViewNetwork] Prefab '{_characterPrefab.name}' chưa có GunNetworkController.");
                 return;
             }
 
