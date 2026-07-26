@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Arcshot;
 using ArcShot.Networking;
 using Chronex.Networking;
 using Cysharp.Threading.Tasks;
@@ -12,7 +13,7 @@ using UnityEngine;
 
 namespace ArcShot
 {
-    public class LevelViewNetwork : MonoBehaviour // ĐỔI: NetworkBehaviour -> MonoBehaviour
+    public class LevelViewNetwork : MonoBehaviour
     {
         [Header("Camera")]
         [SerializeField]
@@ -24,6 +25,9 @@ namespace ArcShot
 
         [SerializeField]
         private CharacterManager _characterManager;
+
+        [SerializeField]
+        private SpriteConfig _spriteManagerConfig;
 
         [SerializeField]
         private string selectedMapId;
@@ -56,7 +60,7 @@ namespace ArcShot
 
         private MapConfig currentMapConfig;
         private GunNetworkController boundGun;
-        private bool _isHost; // THÊM: lưu lại thay cho Object.HasStateAuthority (không còn dùng được nữa)
+        private bool _isHost;
 
 
         private void Awake()

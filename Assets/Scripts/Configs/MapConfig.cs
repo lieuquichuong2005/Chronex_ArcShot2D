@@ -4,7 +4,7 @@ using UnityEngine;
 using System.Linq;
 using UnityEditor;
 
-[CreateAssetMenu(fileName = "MapConfig", menuName = "ArcShot2D/Configs/MapConfig")]
+[CreateAssetMenu(fileName = "MapConfig", menuName = "ArcShot/Configs/MapConfig")]
 public class MapConfig : ScriptableObject
 {
     public string MapId;

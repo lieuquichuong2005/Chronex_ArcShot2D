@@ -940,7 +940,7 @@ GameObject:
   - component: {fileID: 7248865234402584718}
   - component: {fileID: 4020144058452746098}
   m_Layer: 0
-  m_Name: Character_Blue
+  m_Name: Character
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1014,6 +1014,11 @@ MonoBehaviour:
   _FacingRight:
     RawValue: 1
   _CurrentStamina: 0
+  _TeamId: 0
+  _DamageDealt: 0
+  _DamageTaken: 0
+  _ShotsFired: 0
+  _ShotsHit: 0
 --- !u!61 &636933161040976606
 BoxCollider2D:
   m_ObjectHideFlags: 0

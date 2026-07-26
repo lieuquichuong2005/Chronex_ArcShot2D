@@ -35,6 +35,15 @@ namespace ArcShot
         [SerializeField]
         private Transform visual;
 
+        [SerializeField]
+        private SpriteRenderer _character;
+
+        [SerializeField]
+        private SpriteRenderer _tire;
+
+        [SerializeField]
+        private SpriteRenderer _cannon;
+
         // Đăng ký/gỡ đăng ký static để LevelViewNetwork tìm đúng player theo TurnOrderIndex
         // mà không cần giữ reference thủ công qua network (Spawned() chạy trên MỌI peer).
         public static readonly System.Collections.Generic.List<PlayerNetworkController> AllPlayers = new();

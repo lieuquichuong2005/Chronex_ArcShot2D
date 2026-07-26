@@ -8,7 +8,7 @@ namespace ArcShot
     /// kiểu Gunny: lực bắn, tầm bắn, sát thương, máu, giáp, gió ảnh hưởng, v.v.
     /// Tạo asset qua menu: Assets > Create > Game > Stats > Player Stat
     /// </summary>
-    [CreateAssetMenu(fileName = "PlayerStat", menuName = "ArcShot2D/Configs/Player Stat", order = 0)]
+    [CreateAssetMenu(fileName = "PlayerStat", menuName = "ArcShot/Configs/Player Stat", order = 0)]
     public class PlayerStat : ScriptableObject
     {
         [Header("Identity")] [SerializeField] private string statId = "player_default";

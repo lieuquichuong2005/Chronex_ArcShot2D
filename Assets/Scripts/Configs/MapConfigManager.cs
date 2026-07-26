@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using EditorAttributes;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "MapConfigsManager", menuName = "ArcShot2D/Manager/MapConfigsManager")]
+[CreateAssetMenu(fileName = "MapConfigsManager", menuName = "ArcShot/Manager/MapConfigsManager")]
 public class MapConfigsManager : ScriptableObject
 {
     public List<MapConfig> MapConfigs = new();

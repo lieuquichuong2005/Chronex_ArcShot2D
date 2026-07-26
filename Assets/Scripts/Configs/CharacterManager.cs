@@ -2,19 +2,29 @@ using System.Collections.Generic;
 using EditorAttributes;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "CharacterConfigManager", menuName = "ArcShot2D/Manager/PlayerConfigManager")]
-public class CharacterManager : ScriptableObject
+namespace Arcshot
 {
-    public List<GameObject> Characters = new();
-
-    public GameObject GetRandomCharacter()
+    public enum CharacterSkin
     {
-        return Characters[UnityEngine.Random.Range(0, Characters.Count)];
+        Blue,
+        Red,
+        Purple,
     }
 
-    [Button]
-    public void ClearCharacters()
+    [CreateAssetMenu(fileName = "CharacterConfigManager", menuName = "ArcShot/Manager/PlayerConfigManager")]
+    public class CharacterManager : ScriptableObject
     {
-        Characters.Clear();
+        public List<GameObject> Characters = new();
+
+        public GameObject GetRandomCharacter()
+        {
+            return Characters[UnityEngine.Random.Range(0, Characters.Count)];
+        }
+
+        [Button]
+        public void ClearCharacters()
+        {
+            Characters.Clear();
+        }
     }
 }
