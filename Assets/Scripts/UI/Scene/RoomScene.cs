@@ -72,6 +72,9 @@ namespace Chronex.UI.Room
         [SerializeField]
         private NetworkObject _chatRelayPrefab;
 
+        [SerializeField]
+        private MapConfigsManager _mapConfigsManager;
+
         [Inject]
         private INetworkService _networkService;
 
@@ -103,6 +106,7 @@ namespace Chronex.UI.Room
             {
                 RoomChatRelay.Instance.MessageReceived -= HandleChatMessageReceived;
                 RoomChatRelay.Instance.GameStarted -= HandleGameStarted;
+                RoomChatRelay.Instance.MapIndexChanged -= UpdateMapDisplay; 
             }
         }
 
@@ -139,6 +143,11 @@ namespace Chronex.UI.Room
             _leaveRoomButton.onClick.AddListener(OnClickLeaveRoom);
             _inviteButton.onClick.AddListener(OnClickInvite);
             _sendButton.onClick.AddListener(OnClickSendChat);
+
+            _previousMapButton.onClick.AddListener(OnClickPreviousMap);
+            _nextMapButton.onClick.AddListener(OnClickNextMap);
+            _previousMapButton.interactable = _isHost;
+            _nextMapButton.interactable = _isHost;
         }
 
         private void UpdatePlayerCountText()
@@ -223,9 +232,7 @@ namespace Chronex.UI.Room
         private bool AreAllClientsReady()
         {
             if (_networkService == null || _networkService.Runner == null || !_networkService.Runner.IsRunning)
-            {
                 return false;
-            }
 
             var clients = _networkService.Runner.ActivePlayers
                 .Select(p => _networkService.Runner.GetPlayerObject(p))
@@ -282,6 +289,7 @@ namespace Chronex.UI.Room
         private void SpawnChatRelay()
         {
             _networkService.Runner.Spawn(_chatRelayPrefab);
+            InitializeMapIndexWhenReady().Forget();
         }
 
         private void TrySubscribeChatRelay()
@@ -290,6 +298,9 @@ namespace Chronex.UI.Room
             {
                 RoomChatRelay.Instance.MessageReceived += HandleChatMessageReceived;
                 RoomChatRelay.Instance.GameStarted += HandleGameStarted;
+                RoomChatRelay.Instance.MapIndexChanged += UpdateMapDisplay;
+
+                UpdateMapDisplay(RoomChatRelay.Instance.MapIndex);
             }
             else
             {
@@ -356,7 +367,52 @@ namespace Chronex.UI.Room
 
         private void HandleGameStarted()
         {
+            if (RoomChatRelay.Instance != null && _mapConfigsManager != null)
+            {
+                int index = RoomChatRelay.Instance.MapIndex;
+                if (index >= 0 && index < _mapConfigsManager.MapConfigs.Count)
+                {
+                    QuiChuong2005.Framework.Services.Bootstrap.Instance.SelectedMapId =
+                        _mapConfigsManager.MapConfigs[index].MapId; 
+                }
+            }
+
             _sceneManager.LoadSceneAsync<LevelScene>(nameof(LevelScene)).Forget();
+        }
+
+        private void OnClickPreviousMap()
+        {
+            if (!_isHost || RoomChatRelay.Instance == null) return;
+
+            var count = _mapConfigsManager.MapConfigs.Count;
+            var newIndex = (RoomChatRelay.Instance.MapIndex - 1 + count) % count;
+
+            RoomChatRelay.Instance.MapIndex = newIndex;
+        }
+
+        private void OnClickNextMap()
+        {
+            if (!_isHost || RoomChatRelay.Instance == null) return;
+
+            var count = _mapConfigsManager.MapConfigs.Count;
+            var newIndex = (RoomChatRelay.Instance.MapIndex + 1) % count;
+
+            RoomChatRelay.Instance.MapIndex = newIndex;
+        }
+
+        private void UpdateMapDisplay(int index)
+        {
+            if (_mapConfigsManager == null || index < 0 || index >= _mapConfigsManager.MapConfigs.Count) return;
+
+            _map.sprite = _mapConfigsManager.MapConfigs[index].IconMap;
+        }
+
+        private async UniTaskVoid InitializeMapIndexWhenReady()
+        {
+            while (RoomChatRelay.Instance == null)
+                await UniTask.Yield();
+
+            RoomChatRelay.Instance.MapIndex = 0;
         }
     }
 }

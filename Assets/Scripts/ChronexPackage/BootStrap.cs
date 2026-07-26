@@ -20,13 +20,14 @@ namespace QuiChuong2005.Framework.Services
         public static Bootstrap Instance { get; private set; }
 
         [SerializeField]
-        private AudioLibrary _audioLibrary; // kéo asset vào đây trong Inspector
+        private AudioLibrary _audioLibrary;
 
         public bool IsInitialized { get; private set; }
 
         public event Action<string> OnStatusChanged;
         public event Action OnCompleted;
         public event Action<string> OnError;
+        public string SelectedMapId { get; set; }
 
         private CancellationTokenSource _cts;
         private UniTask _runTask;

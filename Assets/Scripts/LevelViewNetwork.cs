@@ -277,11 +277,15 @@ namespace ArcShot
 
         private bool SpawnMap()
         {
-            currentMapConfig = mapConfigsManager.GetMapConfig(selectedMapId);
+            string mapId = !string.IsNullOrEmpty(QuiChuong2005.Framework.Services.Bootstrap.Instance?.SelectedMapId)
+                ? QuiChuong2005.Framework.Services.Bootstrap.Instance.SelectedMapId
+                : selectedMapId;
+
+            currentMapConfig = mapConfigsManager.GetMapConfig(mapId);
 
             if (currentMapConfig == null || currentMapConfig.MapPrefab == null)
             {
-                Debug.LogError($"[LevelViewNetwork] Không tìm thấy MapConfig cho '{selectedMapId}'.");
+                Debug.LogError($"[LevelViewNetwork] Không tìm thấy MapConfig cho '{mapId}'.");
                 return false;
             }
 
