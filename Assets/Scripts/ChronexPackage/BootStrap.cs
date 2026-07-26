@@ -93,9 +93,8 @@ namespace QuiChuong2005.Framework.Services
         {
             var locator = ServiceLocator.Instance;
 
-            // --- Phase 0: SceneService (không phụ thuộc gì, cần sẵn sàng sớm nhất) ---
-            locator.Register<ISceneService>(
-                new SceneService());
+            // --- Phase 0: SceneService + AudioService ---
+            locator.Register<ISceneService>(new SceneService());
 
             var audioService = new AudioService();
             audioService.RegisterLibrary<global::Audio>(_audioLibrary);
@@ -107,29 +106,16 @@ namespace QuiChuong2005.Framework.Services
             locator.Register(firebaseService);
             await firebaseService.InitializeAsync(token);
 
-            // --- Phase 2: Authentication (phụ thuộc Firebase) ---
+            // --- Phase 2: Authentication (chỉ để có UserId TẠM cho Photon, KHÔNG dùng để tạo DataService) ---
             OnStatusChanged?.Invoke("Đang xác thực người dùng...");
             var authService = new AuthenticationService();
             locator.Register(authService);
             locator.Resolve(authService);
             await authService.InitializeAsync(token);
 
-            // --- Phase 3: DataService + PlayerProfileService (phụ thuộc UID từ Auth) ---
-            OnStatusChanged?.Invoke("Đang tải dữ liệu người chơi...");
-
-            var uid = authService.GetCurrentUser()?.UserId ?? "guest";
-
-            var dataService = new Data.DataService(
-                new Data.Storage.FileDataStorage(
-                    new Data.Storage.UserScopedDataPathProvider(uid)),
-                new Data.Serialization.JsonDataSerializer());
-
-            locator.Register<Data.IDataService>(dataService);
-
-            locator.Register<Chronex.Services.Profile.IPlayerProfileService>(
-                new Chronex.Services.Profile.PlayerProfileService(dataService));
-
             OnStatusChanged?.Invoke("Hoàn tất khởi tạo.");
+
+            // XOÁ TOÀN BỘ Phase 3 (DataService + PlayerProfileService) khỏi đây.
         }
     }
 }

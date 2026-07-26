@@ -253,6 +253,8 @@ public class LogInScene : MonoBehaviour
         SetProcessing(false);
         _messageText.text = "";
 
+        RegisterUserScopedServices(user.UserId);
+
         var sceneService = ServiceLocator.Instance.Get<ISceneService>();
         sceneService.LoadSceneAsync<MenuScene>(nameof(MenuScene)).Forget();
     }
@@ -318,5 +320,20 @@ public class LogInScene : MonoBehaviour
         _username.text = "";
         _password.text = "";
         _confirmPassword.text = "";
+    }
+
+    private void RegisterUserScopedServices(string uid)
+    {
+        var locator = ServiceLocator.Instance;
+
+        var dataService = new QuiChuong2005.Framework.Services.Data.DataService(
+            new QuiChuong2005.Framework.Services.Data.Storage.FileDataStorage(
+                new QuiChuong2005.Framework.Services.Data.Storage.UserScopedDataPathProvider(uid)),
+            new QuiChuong2005.Framework.Services.Data.Serialization.JsonDataSerializer());
+
+        locator.Register<QuiChuong2005.Framework.Services.Data.IDataService>(dataService);
+
+        locator.Register<Chronex.Services.Profile.IPlayerProfileService>(
+            new Chronex.Services.Profile.PlayerProfileService(dataService));
     }
 }
