@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using Arcshot;
+using Chronex.Services;
 using Chronex.Services.Profile;
 using Chronex.UI.Room;
+using Cysharp.Threading.Tasks;
 using Photon.Realtime;
 using QuiChuong2005.Framework.Core;
 using QuiChuong2005.Framework.Core.DI;
@@ -30,6 +32,9 @@ public class MenuScene : MonoBehaviour
 
     [Inject]
     private ISceneService _sceneService;
+
+    [Inject]
+    private AuthenticationService _authService;
 
     private IPlayerProfileService _playerProfileService;
 
@@ -273,6 +278,18 @@ public class MenuScene : MonoBehaviour
         foreach (var config in _tabConfigs)
             config.tabButton.OnClick += tab =>
             {
+                if (config.tabKind == MenuTab.LogOut)
+                {
+                    OnLogOutButtonPressed();
+                    return;
+                }
+
+                if (config.tabKind == MenuTab.Quit)
+                {
+                    OnQuitButtonPressed();
+                    return;
+                }
+
                 if (_currentTab == config)
                     return;
 
@@ -287,7 +304,15 @@ public class MenuScene : MonoBehaviour
 
     private void SetTab(MenuTab tab)
     {
-        foreach (var tabConfig in _tabConfigs) tabConfig.tabPanel.SetActive(tabConfig.tabKind == tab);
+        foreach (var tabConfig in _tabConfigs)
+        {
+            if (tabConfig.tabPanel == null)
+            {
+                continue;
+            }
+
+            tabConfig.tabPanel.SetActive(tabConfig.tabKind == tab);
+        }
     }
 
     private async void JoinRoomById(string roomId)
@@ -315,5 +340,16 @@ public class MenuScene : MonoBehaviour
             _isConnecting = false;
             SetRoomButtonsInteractable(true);
         }
+    }
+
+    private void OnLogOutButtonPressed()
+    {
+        _authService?.Logout();
+        _sceneService.LoadSceneAsync<LogInScene>(nameof(LogInScene)).Forget();
+    }
+
+    private void OnQuitButtonPressed()
+    {
+        Application.Quit();
     }
 }

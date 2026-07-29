@@ -115,8 +115,6 @@ namespace QuiChuong2005.Framework.Services
             await authService.InitializeAsync(token);
 
             OnStatusChanged?.Invoke("Hoàn tất khởi tạo.");
-
-            // XOÁ TOÀN BỘ Phase 3 (DataService + PlayerProfileService) khỏi đây.
         }
     }
 }

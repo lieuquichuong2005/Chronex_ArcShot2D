@@ -272,6 +272,10 @@ MonoBehaviour:
     Icon: {fileID: 21300000, guid: f6362a8d25b6c9a44a83be928f9c9782, type: 3}
   - Tab: 7
     Icon: {fileID: 21300000, guid: 1ce58f418040d9643a00200053ca5bc6, type: 3}
+  - Tab: 8
+    Icon: {fileID: 21300000, guid: 09d514a2852848e499c0c6a41ad992a0, type: 3}
+  - Tab: 9
+    Icon: {fileID: 21300000, guid: 652f8f1d228cbea45ad0d6c30742a490, type: 3}
 --- !u!1 &6210311061229278183
 GameObject:
   m_ObjectHideFlags: 0

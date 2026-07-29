@@ -1,5 +1,7 @@
 using System.Threading;
+using Chronex.Services;
 using Cysharp.Threading.Tasks;
+using Firebase.Auth;
 using QuiChuong2005.Framework.Core;
 using QuiChuong2005.Framework.Services;
 using QuiChuong2005.Framework.Services.Scenes;
@@ -69,8 +71,7 @@ namespace QuiChuong2005.Arcshot
                 _loadingText.text = "Load Complete";
             }
 
-            var sceneService = ServiceLocator.Instance.Get<ISceneService>();
-            sceneService.LoadSceneAsync<LogInScene>(nameof(LogInScene)).Forget();
+            _ = AutoLoginAsync();
         }
 
         private void HandleError(string message)
@@ -117,6 +118,28 @@ namespace QuiChuong2005.Arcshot
                     cancellationToken: token,
                     cancelImmediately: true
                 ).SuppressCancellationThrow();
+            }
+        }
+
+        private async UniTaskVoid AutoLoginAsync()
+        {
+            Debug.Log("Auto Login");
+
+            if (_loadingText != null)
+                _loadingText.text = "Checking Login...";
+
+            var authService = ServiceLocator.Instance.Get<AuthenticationService>();
+
+            bool success = await authService.TryAutoLoginAsync();
+            var sceneService = ServiceLocator.Instance.Get<ISceneService>();
+
+            if (success)
+            {
+                sceneService.LoadSceneAsync<MenuScene>(nameof(MenuScene)).Forget();
+            }
+            else
+            {
+                sceneService.LoadSceneAsync<LogInScene>(nameof(LogInScene)).Forget();
             }
         }
     }

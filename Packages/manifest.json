@@ -1,7 +1,7 @@
 {
   "dependencies": {
     "com.cysharp.unitask": "https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask",
-    "com.quichuong2005.framework": "file:C:/Users/ADMIN/Documents/Unity/QuiChuong2005",
+    "com.quichuong2005.framework": "https://github.com/lieuquichuong2005/QuiChuong2005.git",
     "com.unity.cinemachine": "3.1.7",
     "com.unity.collab-proxy": "2.11.3",
     "com.unity.feature.2d": "2.0.1",

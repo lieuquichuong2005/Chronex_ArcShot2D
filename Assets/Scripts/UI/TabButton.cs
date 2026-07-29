@@ -20,6 +20,8 @@ namespace Arcshot
         Inventory,
         Loadout,
         Shop,
+        LogOut,
+        Quit,
     }
 
     public class TabButton : MonoBehaviour
