@@ -124,7 +124,7 @@ namespace Chronex.Services
                 await user.ReloadAsync();
 
                 _currentUser = user;
-                UserServiceRegister.Register(user.UserId);
+                await UserServiceRegister.RegisterAsync(user.UserId);
                 OnLoginSuccess?.Invoke(user);
 
                 return true;

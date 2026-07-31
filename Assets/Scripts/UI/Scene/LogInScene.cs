@@ -265,7 +265,7 @@ public class LogInScene : MonoBehaviour
 
         SetProcessing(false);
         _messageText.text = "";
-        UserServiceRegister.Register(user.UserId);
+        UserServiceRegister.RegisterAsync(user.UserId);
 
         var sceneService = ServiceLocator.Instance.Get<ISceneService>();
         sceneService.LoadSceneAsync<MenuScene>(nameof(MenuScene)).Forget();
