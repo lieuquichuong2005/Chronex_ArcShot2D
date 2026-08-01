@@ -79,6 +79,7 @@ public class LogInScene : MonoBehaviour
     private bool _isLoginPasswordVisible;
     private bool _isSignInPasswordVisible;
     private bool _isProcessing;
+    private bool _hasHandledLoginSuccess;
 
     private void Awake()
     {
@@ -103,14 +104,15 @@ public class LogInScene : MonoBehaviour
 
     private void OnEnable()
     {
-        _authService.OnLoginSuccess += HandleLoginSuccess;
+        _hasHandledLoginSuccess = false;
+        _authService.OnLoginSuccess += user => { _ = HandleLoginSuccess(user); };
         _authService.OnAuthError += HandleError;
         _authService.OnLogout += HandleLogout;
     }
 
     private void OnDisable()
     {
-        _authService.OnLoginSuccess -= HandleLoginSuccess;
+        _authService.OnLoginSuccess -= (user) => { HandleLoginSuccess(user); };
         _authService.OnAuthError -= HandleError;
         _authService.OnLogout -= HandleLogout;
     }
@@ -259,13 +261,15 @@ public class LogInScene : MonoBehaviour
         image.sprite = isVisible ? _showSprite : _hiddenSprite;
     }
 
-    private void HandleLoginSuccess(Firebase.Auth.FirebaseUser user)
+    private async UniTaskVoid HandleLoginSuccess(Firebase.Auth.FirebaseUser user)
     {
-        Debug.Log("Load Scene");
+        if (_hasHandledLoginSuccess) return;
+        _hasHandledLoginSuccess = true;
 
         SetProcessing(false);
         _messageText.text = "";
-        UserServiceRegister.RegisterAsync(user.UserId);
+
+        await UserServiceRegister.RegisterAsync(user.UserId);
 
         var sceneService = ServiceLocator.Instance.Get<ISceneService>();
         sceneService.LoadSceneAsync<MenuScene>(nameof(MenuScene)).Forget();

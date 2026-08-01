@@ -88,6 +88,7 @@ public class MenuScene : MonoBehaviour
 
     private MenuTabPanel _currentTab;
     private bool _isConnecting;
+    private bool _isLoggingOut; 
 
     private void Awake()
     {
@@ -344,6 +345,10 @@ public class MenuScene : MonoBehaviour
 
     private void OnLogOutButtonPressed()
     {
+        if (_isLoggingOut) return;
+        _isLoggingOut = true;
+
+        UserServiceRegister.Unregister(); // gỡ + Save() service của user hiện tại
         _authService?.Logout();
         _sceneService.LoadSceneAsync<LogInScene>(nameof(LogInScene)).Forget();
     }
