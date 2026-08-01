@@ -8,7 +8,9 @@ using Cysharp.Threading.Tasks;
 using Photon.Realtime;
 using QuiChuong2005.Framework.Core;
 using QuiChuong2005.Framework.Core.DI;
+using QuiChuong2005.Framework.Services.Audio;
 using QuiChuong2005.Framework.Services.Data;
+using QuiChuong2005.Framework.Services.Dialog;
 using QuiChuong2005.Framework.Services.Scenes;
 using TMPro;
 using UnityEngine;
@@ -25,6 +27,9 @@ public class MenuScene : MonoBehaviour
     }
 
     [Inject]
+    private IAudioService _audioService;
+
+    [Inject]
     private Chronex.Services.Networking.INetworkService _networkService;
 
     [Inject]
@@ -35,6 +40,9 @@ public class MenuScene : MonoBehaviour
 
     [Inject]
     private AuthenticationService _authService;
+
+    [Inject]
+    private IDialogService _dialogService;
 
     private IPlayerProfileService _playerProfileService;
 
@@ -88,7 +96,7 @@ public class MenuScene : MonoBehaviour
 
     private MenuTabPanel _currentTab;
     private bool _isConnecting;
-    private bool _isLoggingOut; 
+    private bool _isLoggingOut;
 
     private void Awake()
     {
@@ -113,6 +121,7 @@ public class MenuScene : MonoBehaviour
         _joinRoomDialog.OnJoinRoom += JoinRoomById;
 
         InitPlayerProfile();
+        _audioService.PlayMusicAsync(Audio.MenuScene);
     }
 
     private void OnDestroy()
@@ -153,6 +162,7 @@ public class MenuScene : MonoBehaviour
 
     private void OnClickChangeName()
     {
+        _audioService.PlaySfx(Audio.SFX_Click);
         _playerNameInput.text = _playerProfileService.PlayerName;
         SetNameEditMode(true);
 
@@ -162,12 +172,11 @@ public class MenuScene : MonoBehaviour
 
     private void OnClickCompleteChangeName()
     {
-        string newName = _playerNameInput.text.Trim();
+        _audioService.PlaySfx(Audio.SFX_Click);
+        var newName = _playerNameInput.text.Trim();
 
         if (!string.IsNullOrEmpty(newName))
-        {
             _playerProfileService.SetPlayerName(newName); // RefreshProfileDisplay tự chạy qua event ProfileChanged
-        }
 
         SetNameEditMode(false);
     }
@@ -181,14 +190,11 @@ public class MenuScene : MonoBehaviour
         _completedChangeNameButton.gameObject.SetActive(isEditing);
     }
 
-    private void RegisterPlayerProfileServiceIfNeeded() // THÊM
+    private void RegisterPlayerProfileServiceIfNeeded()
     {
         var locator = ServiceLocator.Instance;
 
-        if (_dataService == null)
-        {
-            Debug.LogError("DataService is null");
-        }
+        if (_dataService == null) Debug.LogError("DataService is null");
 
         try
         {
@@ -204,13 +210,14 @@ public class MenuScene : MonoBehaviour
 
     private async void OnClickCreateRoom()
     {
+        _audioService.PlaySfx(Audio.SFX_Click);
         if (_isConnecting) return;
         _isConnecting = true;
         SetRoomButtonsInteractable(false);
 
         try
         {
-            string code = await _networkService.CreateRoomAsync(maxPlayers: 4);
+            var code = await _networkService.CreateRoomAsync(4);
             Debug.Log($"[Menu] Tạo phòng thành công, code: {code}");
 
             await _sceneService.LoadSceneAsync<RoomScene>(nameof(RoomScene));
@@ -226,13 +233,14 @@ public class MenuScene : MonoBehaviour
 
     private async void OnClickQuickMatch()
     {
+        _audioService.PlaySfx(Audio.SFX_Click);
         if (_isConnecting) return;
         _isConnecting = true;
         SetRoomButtonsInteractable(false);
 
         try
         {
-            await _networkService.QuickMatchAsync(maxPlayers: 4);
+            await _networkService.QuickMatchAsync(4);
             Debug.Log("[Menu] Quick match thành công.");
 
             await _sceneService.LoadSceneAsync<RoomScene>(nameof(RoomScene));
@@ -247,6 +255,7 @@ public class MenuScene : MonoBehaviour
 
     private void OnClickJoinRoom()
     {
+        _audioService.PlaySfx(Audio.SFX_Click);
         if (_isConnecting)
             return;
 
@@ -261,7 +270,7 @@ public class MenuScene : MonoBehaviour
 
     private void RegisterNetworkServiceIfNeeded()
     {
-        var locator = QuiChuong2005.Framework.Core.ServiceLocator.Instance;
+        var locator = ServiceLocator.Instance;
 
         try
         {
@@ -307,10 +316,7 @@ public class MenuScene : MonoBehaviour
     {
         foreach (var tabConfig in _tabConfigs)
         {
-            if (tabConfig.tabPanel == null)
-            {
-                continue;
-            }
+            if (tabConfig.tabPanel == null) continue;
 
             tabConfig.tabPanel.SetActive(tabConfig.tabKind == tab);
         }
@@ -345,6 +351,7 @@ public class MenuScene : MonoBehaviour
 
     private void OnLogOutButtonPressed()
     {
+        _audioService.PlaySfx(Audio.SFX_Click);
         if (_isLoggingOut) return;
         _isLoggingOut = true;
 
@@ -355,6 +362,18 @@ public class MenuScene : MonoBehaviour
 
     private void OnQuitButtonPressed()
     {
+        _audioService.PlaySfx(Audio.SFX_Click);
         Application.Quit();
+    }
+
+    public void OnSettingButtonPressed()
+    {
+        _audioService.PlaySfx(Audio.SFX_Click);
+        _ = ShowSettingDialog();
+    }
+
+    private async UniTask ShowSettingDialog()
+    {
+        var dialog = _dialogService.ShowAsync<SettingDialog>();
     }
 }

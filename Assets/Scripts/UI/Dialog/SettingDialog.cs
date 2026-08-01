@@ -2,10 +2,11 @@ using QuiChuong2005.Framework.Core;
 using QuiChuong2005.Framework.Core.DI;
 using QuiChuong2005.Framework.Services.Audio;
 using QuiChuong2005.Framework.Services.Data;
+using QuiChuong2005.Framework.Services.Dialog;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class SettingDialog : MonoBehaviour
+public class SettingDialog : DialogBase
 {
     [Inject]
     private IAudioService _audioService;
@@ -62,11 +63,11 @@ public class SettingDialog : MonoBehaviour
 
     public void OnCloseButtonPressed()
     {
+        _audioService.PlaySfx(Audio.SFX_Click);
         SaveSettings();
 
         // TODO: đổi sang IPopupService.Close(this) khi Framework có Popup Service,
-        // hiện tại chỉ ẩn dialog đơn giản.
-        gameObject.SetActive(false);
+        _ = HideAsync();
     }
 
     private void SaveSettings()

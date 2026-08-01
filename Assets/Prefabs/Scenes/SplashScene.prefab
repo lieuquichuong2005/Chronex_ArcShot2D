@@ -130,6 +130,7 @@ MonoBehaviour:
   _loadingText: {fileID: 1740410347184638865}
   _dotIntervalSeconds: 0.4
   _maxDotCount: 6
+  _dialogCatalogSo: {fileID: 11400000, guid: ebd046b2920881e41a5b45e3e680d5f5, type: 2}
 --- !u!1 &6861291223564074541
 GameObject:
   m_ObjectHideFlags: 0

@@ -4,6 +4,7 @@ using Cysharp.Threading.Tasks;
 using Firebase.Auth;
 using QuiChuong2005.Framework.Core;
 using QuiChuong2005.Framework.Services;
+using QuiChuong2005.Framework.Services.Dialog;
 using QuiChuong2005.Framework.Services.Scenes;
 using TMPro;
 using UnityEngine;
@@ -24,7 +25,10 @@ namespace QuiChuong2005.Arcshot
         [SerializeField, Tooltip("Số chấm tối đa trước khi lặp lại")]
         private int _maxDotCount = 3;
 
-        private QuiChuong2005.Framework.Services.Bootstrap _bootstrap;
+        [SerializeField]
+        private DialogCatalogSO _dialogCatalogSo;
+
+        private Bootstrap _bootstrap;
         private string _currentBaseMessage = "Loading";
         private CancellationTokenSource _dotAnimationCts;
 
@@ -58,7 +62,7 @@ namespace QuiChuong2005.Arcshot
             Input.multiTouchEnabled = false;
 
             StartDotAnimation();
-            _bootstrap.RunAsync().Forget();
+            _ = _bootstrap.RunAsync(_dialogCatalogSo);
         }
 
         private void HandleStatusChanged(string message)

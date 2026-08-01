@@ -4,8 +4,11 @@ using Chronex.Services;
 using Cysharp.Threading.Tasks;
 using QuiChuong2005.Framework.Core;
 using QuiChuong2005.Framework.Services.Audio;
+using QuiChuong2005.Framework.Services.Dialog;
 using QuiChuong2005.Framework.Services.Scenes;
 using UnityEngine;
+using UnityEngine.UI;
+using Object = UnityEngine.Object;
 
 
 namespace QuiChuong2005.Framework.Services
@@ -58,7 +61,7 @@ namespace QuiChuong2005.Framework.Services
         /// Gọi bởi SplashSceneController. An toàn khi gọi nhiều lần -
         /// nếu đã init xong hoặc đang init dở thì trả về task hiện có, không chạy lại từ đầu.
         /// </summary>
-        public UniTask RunAsync()
+        public UniTask RunAsync(DialogCatalogSO dialogCatalogSo)
         {
             if (IsInitialized)
             {
@@ -68,14 +71,14 @@ namespace QuiChuong2005.Framework.Services
 
             return _runTask.Status == UniTaskStatus.Pending
                 ? _runTask
-                : _runTask = RunInternalAsync();
+                : _runTask = RunInternalAsync(dialogCatalogSo);
         }
 
-        private async UniTask RunInternalAsync()
+        private async UniTask RunInternalAsync(DialogCatalogSO dialogCatalogSo)
         {
             try
             {
-                await InitializeCoreServicesAsync(_cts.Token);
+                await InitializeCoreServicesAsync(dialogCatalogSo, _cts.Token);
                 IsInitialized = true;
                 OnCompleted?.Invoke();
             }
@@ -90,7 +93,7 @@ namespace QuiChuong2005.Framework.Services
             }
         }
 
-        private async UniTask InitializeCoreServicesAsync(CancellationToken token)
+        private async UniTask InitializeCoreServicesAsync(DialogCatalogSO dialogCatalogSo, CancellationToken token)
         {
             var locator = ServiceLocator.Instance;
 
@@ -113,6 +116,16 @@ namespace QuiChuong2005.Framework.Services
             locator.Register(authService);
             locator.Resolve(authService);
             await authService.InitializeAsync(token);
+
+            var dialogCanvasGO = new GameObject("[DialogService] Canvas", typeof(Canvas), typeof(CanvasScaler),
+                typeof(GraphicRaycaster));
+            DontDestroyOnLoad(dialogCanvasGO);
+
+            var dialogService = new DialogService(
+                dialogRootProvider: () => dialogCanvasGO.transform,
+                prefabs: dialogCatalogSo.Dialogs);
+
+            locator.Register<IDialogService>(dialogService);
 
             OnStatusChanged?.Invoke("Hoàn tất khởi tạo.");
         }
