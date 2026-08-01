@@ -53,6 +53,10 @@ namespace QuiChuong2005.Arcshot
 
         private void Start()
         {
+            Application.runInBackground = true;
+            Application.targetFrameRate = 60;
+            Input.multiTouchEnabled = false;
+
             StartDotAnimation();
             _bootstrap.RunAsync().Forget();
         }
