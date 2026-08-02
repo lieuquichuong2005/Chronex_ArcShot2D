@@ -117,14 +117,7 @@ namespace QuiChuong2005.Framework.Services
             locator.Resolve(authService);
             await authService.InitializeAsync(token);
 
-            var dialogCanvasGO = new GameObject("[DialogService] Canvas", typeof(Canvas), typeof(CanvasScaler),
-                typeof(GraphicRaycaster));
-            DontDestroyOnLoad(dialogCanvasGO);
-
-            var dialogService = new DialogService(
-                dialogRootProvider: () => dialogCanvasGO.transform,
-                prefabs: dialogCatalogSo.Dialogs);
-
+            var dialogService = new DialogService(dialogCatalogSo.Dialogs);
             locator.Register<IDialogService>(dialogService);
 
             OnStatusChanged?.Invoke("Hoàn tất khởi tạo.");

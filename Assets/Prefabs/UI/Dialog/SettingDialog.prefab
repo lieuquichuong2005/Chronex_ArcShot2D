@@ -382,7 +382,7 @@ MonoBehaviour:
   m_IgnoreLayout: 0
   m_MinWidth: -1
   m_MinHeight: -1
-  m_PreferredWidth: -1
+  m_PreferredWidth: 90
   m_PreferredHeight: -1
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
@@ -1790,6 +1790,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1840526926242432979}
   - component: {fileID: 6500951671226055531}
+  - component: {fileID: 5733621654576269662}
   m_Layer: 0
   m_Name: SettingDialog
   m_TagString: Untagged
@@ -1830,8 +1831,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d10209e4bf7067a48945bca1b55e5db3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _canvasGroup: {fileID: 0}
+  _fadeDuration: 0.2
   _musicVolumnSlider: {fileID: 8540737993458884003}
   _sfxVolumnSlider: {fileID: 4204462585956068789}
+--- !u!225 &5733621654576269662
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6983846000222357346}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &7000073011048268723
 GameObject:
   m_ObjectHideFlags: 0
@@ -1951,7 +1966,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 8499777131398515157}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 6500951671226055531}
+        m_TargetAssemblyTypeName: SettingDialog, Assembly-CSharp
+        m_MethodName: OnCloseButtonPressed
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &7100642672650089101
 GameObject:
   m_ObjectHideFlags: 0
@@ -2362,7 +2389,7 @@ MonoBehaviour:
   m_IgnoreLayout: 0
   m_MinWidth: -1
   m_MinHeight: -1
-  m_PreferredWidth: -1
+  m_PreferredWidth: 90
   m_PreferredHeight: -1
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
