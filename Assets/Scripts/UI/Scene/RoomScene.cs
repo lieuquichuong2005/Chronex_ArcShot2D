@@ -5,6 +5,8 @@ using Cysharp.Threading.Tasks;
 using Fusion;
 using QuiChuong2005.Framework.Core;
 using QuiChuong2005.Framework.Core.DI;
+using QuiChuong2005.Framework.Services.Audio;
+using QuiChuong2005.Framework.Services.Dialog;
 using QuiChuong2005.Framework.Services.Scenes;
 using TMPro;
 using UnityEngine;
@@ -81,6 +83,12 @@ namespace Chronex.UI.Room
         [Inject]
         private ISceneService _sceneManager;
 
+        [Inject]
+        private IAudioService _audioService;
+
+        [Inject]
+        private IDialogService _dialogService;
+
         private readonly System.Collections.Generic.Dictionary<PlayerRef, PlayerRoom> _spawnedViews = new();
         private bool _isHost;
         private int _maxPlayerCount;
@@ -106,7 +114,7 @@ namespace Chronex.UI.Room
             {
                 RoomChatRelay.Instance.MessageReceived -= HandleChatMessageReceived;
                 RoomChatRelay.Instance.GameStarted -= HandleGameStarted;
-                RoomChatRelay.Instance.MapIndexChanged -= UpdateMapDisplay; 
+                RoomChatRelay.Instance.MapIndexChanged -= UpdateMapDisplay;
             }
         }
 
@@ -373,7 +381,7 @@ namespace Chronex.UI.Room
                 if (index >= 0 && index < _mapConfigsManager.MapConfigs.Count)
                 {
                     QuiChuong2005.Framework.Services.Bootstrap.Instance.SelectedMapId =
-                        _mapConfigsManager.MapConfigs[index].MapId; 
+                        _mapConfigsManager.MapConfigs[index].MapId;
                 }
             }
 
@@ -413,6 +421,17 @@ namespace Chronex.UI.Room
                 await UniTask.Yield();
 
             RoomChatRelay.Instance.MapIndex = 0;
+        }
+
+        public void OnSettingButtonPressed()
+        {
+            _audioService.PlaySfx(Audio.SFX_Click);
+            _ = ShowSettingDialog();
+        }
+
+        private async UniTask ShowSettingDialog()
+        {
+            var dialog = _dialogService.ShowAsync<SettingDialog>();
         }
     }
 }
