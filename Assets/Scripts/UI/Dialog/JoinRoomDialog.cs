@@ -1,4 +1,5 @@
 using System;
+using QuiChuong2005.Framework.Core;
 using QuiChuong2005.Framework.Core.DI;
 using QuiChuong2005.Framework.Services.Audio;
 using QuiChuong2005.Framework.Services.Dialog;
@@ -24,9 +25,10 @@ public class JoinRoomDialog : DialogBase
 
     private void Awake()
     {
+        ServiceLocator.Instance.Resolve(this);
+
         _leaveButton.onClick.AddListener(Hide);
         _joinButton.onClick.AddListener(OnClickJoin);
-
         _inputRoomId.onSubmit.AddListener(_ => OnClickJoin());
 
         gameObject.SetActive(false);
