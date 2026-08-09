@@ -20,7 +20,7 @@ public static class UserServiceRegister
             new JsonDataSerializer());
         locator.Register<IDataService>(dataService);
 
-        locator.Register<IPlayerProfileService>(new PlayerProfileService(dataService));
+        locator.Register<IPlayerProfileService>(new PlayerProfileService(dataService, uid));
 
         var storeService = new StoreService(dataService);
         locator.Register<IStoreService>(storeService);

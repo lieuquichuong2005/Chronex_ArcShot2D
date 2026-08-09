@@ -7,6 +7,7 @@ namespace Chronex.Services.Profile
     public sealed class PlayerProfileService : IPlayerProfileService
     {
         private readonly IDataService _dataService;
+        private readonly string _dataKey;
         private PlayerProfileData _data;
         public Arcshot.CharacterSkin Skin => _data.Skin;
 
@@ -17,7 +18,7 @@ namespace Chronex.Services.Profile
 
         public event Action ProfileChanged;
 
-        public PlayerProfileService(IDataService dataService)
+        public PlayerProfileService(IDataService dataService, string userId = null)
         {
             _dataService = dataService;
 
@@ -26,11 +27,27 @@ namespace Chronex.Services.Profile
                 Debug.LogError("DataService is null");
             }
 
-            _data = _dataService.Get(DataKeys.Player, CreateDefault());
+            // Nếu có userId -> dùng key riêng theo từng player để tránh đè dữ liệu
+            // Nếu không có userId -> dùng key cũ để backward compatible
+            _dataKey = string.IsNullOrEmpty(userId)
+                ? DataKeys.Player
+                : $"{DataKeys.Player}_{userId}";
 
-            if (!_dataService.HasKey(DataKeys.Player)) // ĐỔI
+            // Migration: nếu key mới chưa có dữ liệu nhưng key cũ có -> chuyển sang key mới
+            if (!_dataService.HasKey(_dataKey) && _dataService.HasKey(DataKeys.Player))
             {
-                _dataService.Set(DataKeys.Player, _data); // ĐỔI
+                _data = _dataService.Get(DataKeys.Player, CreateDefault());
+                _dataService.Set(_dataKey, _data);
+                _dataService.Delete(DataKeys.Player);
+            }
+            else
+            {
+                _data = _dataService.Get(_dataKey, CreateDefault());
+
+                if (!_dataService.HasKey(_dataKey))
+                {
+                    _dataService.Set(_dataKey, _data);
+                }
             }
         }
 
@@ -39,7 +56,7 @@ namespace Chronex.Services.Profile
             if (string.IsNullOrWhiteSpace(name)) return;
 
             _data.PlayerName = name.Trim();
-            _dataService.Set(DataKeys.Player, _data); // ĐỔI
+            _dataService.Set(_dataKey, _data);
 
             ProfileChanged?.Invoke();
         }
@@ -58,7 +75,7 @@ namespace Chronex.Services.Profile
                     Mathf.RoundToInt(_data.RequiredExp * 1.2f); // TODO: chỉnh công thức lên cấp theo thiết kế thật.
             }
 
-            _dataService.Set(DataKeys.Player, _data); // ĐỔI
+            _dataService.Set(_dataKey, _data);
             ProfileChanged?.Invoke();
         }
 
@@ -76,7 +93,7 @@ namespace Chronex.Services.Profile
         public void SetSkin(Arcshot.CharacterSkin skin)
         {
             _data.Skin = skin;
-            _dataService.Set(DataKeys.Player, _data);
+            _dataService.Set(_dataKey, _data);
 
             ProfileChanged?.Invoke();
         }

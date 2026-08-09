@@ -202,7 +202,8 @@ public class MenuScene : MonoBehaviour
         }
         catch (InvalidOperationException)
         {
-            locator.Register<IPlayerProfileService>(new PlayerProfileService(_dataService));
+            string userId = _authService?.GetCurrentUser()?.UserId;
+            locator.Register<IPlayerProfileService>(new PlayerProfileService(_dataService, userId));
         }
     }
 
