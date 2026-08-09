@@ -1,4 +1,5 @@
 using System;
+using Chronex.Services.Profile;
 using Cysharp.Threading.Tasks;
 using QuiChuong2005.Framework.Core;
 using QuiChuong2005.Framework.Core.DI;
@@ -102,11 +103,15 @@ public class ResultScene : MonoBehaviour
 
     [Inject]
     private IAudioService _audioService;
+    
+    [Inject]
+    private IPlayerProfileService _playerProfileService;
 
     [Inject]
     private Chronex.Services.Networking.INetworkService _networkService;
 
     private MatchResultData _data;
+    private bool _hasAppliedExp;
 
     private void Awake()
     {
@@ -125,6 +130,12 @@ public class ResultScene : MonoBehaviour
         _data = data ?? throw new ArgumentNullException(nameof(data));
 
         SetupStaticInfo(data);
+        if (!_hasAppliedExp)
+        {
+            _hasAppliedExp = true;
+            _playerProfileService.AddExp(data.ExpBonus);
+        }
+        
         await AnimateExpGainAsync(data.CurrentExp, data.ExpBonus, data.RequiredExp, data.CurrentLevel);
     }
 
