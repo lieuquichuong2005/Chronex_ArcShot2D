@@ -103,7 +103,7 @@ public class ResultScene : MonoBehaviour
 
     [Inject]
     private IAudioService _audioService;
-    
+
     [Inject]
     private IPlayerProfileService _playerProfileService;
 
@@ -129,33 +129,34 @@ public class ResultScene : MonoBehaviour
     {
         _data = data ?? throw new ArgumentNullException(nameof(data));
 
-        SetupStaticInfo(data);
+        var startExp = _playerProfileService.CurrentExp;
+        var startLevel = _playerProfileService.Level;
+        var requiredExp = _playerProfileService.RequiredExp;
+
+        SetupStaticInfo(data, startExp, startLevel, requiredExp);
+
         if (!_hasAppliedExp)
         {
             _hasAppliedExp = true;
             _playerProfileService.AddExp(data.ExpBonus);
         }
-        
-        await AnimateExpGainAsync(data.CurrentExp, data.ExpBonus, data.RequiredExp, data.CurrentLevel);
+
+        await AnimateExpGainAsync(startExp, data.ExpBonus, requiredExp, startLevel);
     }
 
-    private void SetupStaticInfo(MatchResultData data)
+    private void SetupStaticInfo(MatchResultData data, int startExp, int startLevel, int requiredExp)
     {
-        // Nền + tiêu đề Thắng / Thua
         _backgroundImage.sprite = data.IsVictory ? _bgVictory : _bgDefeated;
         _titleImage.sprite = data.IsVictory ? _titleVictory : _titleDefeated;
 
-        // MVP: hiện tại chỉ có 1vs1 nên mặc định người thắng luôn là MVP
         _mvp.sprite = data.IsVictory ? _mvpVictory : _mvpDefeated;
         _base.sprite = data.IsVictory ? _baseVictory : _baseDefeated;
         _character.sprite = data.IsVictory ? _characterVictory : _characterDefeated;
 
         _mvp.gameObject.SetActive(data.IsMVP);
 
-        // Tên người chơi lấy đúng từ LevelScene truyền qua
-        _playerName.text = data.PlayerName;
+        _playerName.text = _playerProfileService.PlayerName;
 
-        // Các chỉ số trận đấu
         _damageDealtText.text = Mathf.RoundToInt(data.DamageDealt).ToString();
         _damageTakenText.text = Mathf.RoundToInt(data.DamageTaken).ToString();
         _matchDurationText.text = FormatDuration(data.MatchDuration);
@@ -163,20 +164,17 @@ public class ResultScene : MonoBehaviour
         _turnsText.text = data.Turns.ToString();
         _critText.text = data.CritCount.ToString();
 
-        // Phần thưởng (coin + exp cộng thêm)
         _coinBonusText.text = $"+{data.CoinBonus}";
         _expBonusText.text = $"+{data.ExpBonus}";
 
-        // Icon Level hiện tại, kèm text level bên cạnh
-        _levelShapeText.text = data.CurrentLevel.ToString();
-        _levelText.text = $"Lv.{data.CurrentLevel}";
+        _levelShapeText.text = startLevel.ToString();
+        _levelText.text = $"Lv.{startLevel}";
 
-        // Trạng thái ban đầu của thanh EXP trước khi chạy animation
         _expProcess.type = Image.Type.Filled; // nhớ set Image Type = Filled trong Inspector
-        _expProcess.fillAmount = data.RequiredExp > 0
-            ? (float)data.CurrentExp / data.RequiredExp
+        _expProcess.fillAmount = requiredExp > 0
+            ? (float)startExp / requiredExp
             : 0f;
-        _expProcessText.text = $"{data.CurrentExp}/{data.RequiredExp}";
+        _expProcessText.text = $"{startExp}/{requiredExp}";
         _expBonus.text = string.Empty;
     }
 
