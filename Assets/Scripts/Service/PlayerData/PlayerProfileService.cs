@@ -1,5 +1,5 @@
 using System;
-using QuiChuong2005.Framework.Services.Data;
+using QuiChuong2005;
 using UnityEngine;
 
 namespace Chronex.Services.Profile

@@ -2,13 +2,9 @@ using System;
 using System.Threading;
 using Chronex.Services;
 using Cysharp.Threading.Tasks;
-using QuiChuong2005.Framework.Core;
+using QuiChuong2005;
 using QuiChuong2005.Framework.Services.Audio;
-using QuiChuong2005.Framework.Services.Dialog;
-using QuiChuong2005.Framework.Services.Scenes;
 using UnityEngine;
-using UnityEngine.UI;
-using Object = UnityEngine.Object;
 
 
 namespace QuiChuong2005.Framework.Services

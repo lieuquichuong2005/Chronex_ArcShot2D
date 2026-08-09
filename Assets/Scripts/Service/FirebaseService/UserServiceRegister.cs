@@ -1,10 +1,6 @@
 using Chronex.Services.Profile;
 using Cysharp.Threading.Tasks;
-using QuiChuong2005.Framework.Core;
-using QuiChuong2005.Framework.Services.Data;
-using QuiChuong2005.Framework.Services.Data.Serialization;
-using QuiChuong2005.Framework.Services.Data.Storage;
-using QuiChuong2005.Framework.Services.Store;
+using QuiChuong2005;
 using UnityEngine;
 
 public static class UserServiceRegister

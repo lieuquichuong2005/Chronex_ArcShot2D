@@ -93,7 +93,7 @@ namespace ArcShot
             {
                 LocalPlayer = this;
 
-                var profileService = QuiChuong2005.Framework.Core.ServiceLocator.Instance
+                var profileService = QuiChuong2005.ServiceLocator.Instance
                     .Get<Chronex.Services.Profile.IPlayerProfileService>();
 
                 RPC_SetSkin(profileService.Skin);

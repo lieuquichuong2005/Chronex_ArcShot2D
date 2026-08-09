@@ -30,7 +30,7 @@ namespace Chronex.Networking
         {
             if (Object.HasInputAuthority)
             {
-                string playerName = QuiChuong2005.Framework.Core.ServiceLocator.Instance
+                string playerName = QuiChuong2005.ServiceLocator.Instance
                     .Get<Chronex.Services.Profile.IPlayerProfileService>()
                     .PlayerName;
 

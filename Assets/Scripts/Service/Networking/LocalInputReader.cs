@@ -1,7 +1,6 @@
 using System;
 using Chronex.Services.Networking;
-using QuiChuong2005.Framework.Core;
-using QuiChuong2005.Framework.Core.DI;
+using QuiChuong2005;
 using UnityEngine;
 using UnityEngine.EventSystems;
 

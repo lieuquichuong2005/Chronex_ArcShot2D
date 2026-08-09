@@ -1,11 +1,7 @@
 using System.Threading;
 using Chronex.Services;
 using Cysharp.Threading.Tasks;
-using Firebase.Auth;
-using QuiChuong2005.Framework.Core;
 using QuiChuong2005.Framework.Services;
-using QuiChuong2005.Framework.Services.Dialog;
-using QuiChuong2005.Framework.Services.Scenes;
 using TMPro;
 using UnityEngine;
 

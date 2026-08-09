@@ -1,10 +1,7 @@
 using System;
 using Chronex.Services.Profile;
 using Cysharp.Threading.Tasks;
-using QuiChuong2005.Framework.Core;
-using QuiChuong2005.Framework.Core.DI;
-using QuiChuong2005.Framework.Services.Audio;
-using QuiChuong2005.Framework.Services.Scenes;
+using QuiChuong2005;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
