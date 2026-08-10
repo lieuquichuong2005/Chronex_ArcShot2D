@@ -71,12 +71,19 @@ namespace Chronex.Services.Profile
             {
                 _data.CurrentExp -= _data.RequiredExp;
                 _data.Level++;
-                _data.RequiredExp =
-                    Mathf.RoundToInt(_data.RequiredExp * 1.2f); // TODO: chỉnh công thức lên cấp theo thiết kế thật.
+                _data.RequiredExp = CalculateRequiredExp(_data.Level);
             }
 
             _dataService.Set(_dataKey, _data);
             ProfileChanged?.Invoke();
+        }
+
+        /// <summary>
+        /// RequiredExp(level) = 500 + 200 * Pow(level - 1, 1.35)
+        /// </summary>
+        public static int CalculateRequiredExp(int level)
+        {
+            return Mathf.RoundToInt(500 + 200 * Mathf.Pow(level - 1, 1.35f));
         }
 
         private static PlayerProfileData CreateDefault()
@@ -86,7 +93,7 @@ namespace Chronex.Services.Profile
                 PlayerName = $"Player{UnityEngine.Random.Range(1000, 9999)}",
                 Level = 1,
                 CurrentExp = 0,
-                RequiredExp = 100
+                RequiredExp = CalculateRequiredExp(1)
             };
         }
 

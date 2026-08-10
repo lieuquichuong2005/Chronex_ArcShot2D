@@ -66,6 +66,7 @@ namespace ArcShot
         [Networked] public float DamageTaken { get; set; }
         [Networked] public int ShotsFired { get; set; }
         [Networked] public int ShotsHit { get; set; }
+        [Networked] public int CriticalHits { get; set; }
         [Networked] public Arcshot.CharacterSkin Skin { get; set; }
         [Networked] public NetworkString<_32> PlayerName { get; set; }
 
@@ -226,6 +227,16 @@ namespace ArcShot
             if (Object.HasStateAuthority)
             {
                 ShotsHit++;
+                DamageDealt += damage;
+            }
+        }
+
+        /// <summary>Chỉ Host gọi - từ BulletNetwork khi đạn TRÚNG mục tiêu và là critical hit.</summary>
+        public void HostRegisterCriticalHit(float damage)
+        {
+            if (Object.HasStateAuthority)
+            {
+                CriticalHits++;
                 DamageDealt += damage;
             }
         }

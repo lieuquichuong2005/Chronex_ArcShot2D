@@ -19,6 +19,11 @@ namespace ArcShot.Networking
         [SerializeField]
         private int damage = 25;
 
+        [Header("Critical Hit")]
+        [SerializeField]
+        [Range(0f, 1f)]
+        private float criticalHitChance = 0.3f;
+
         [SerializeField]
         private Rigidbody2D rb;
 
@@ -34,10 +39,7 @@ namespace ArcShot.Networking
 
         public override void Spawned()
         {
-            if (Object.HasStateAuthority)
-            {
-                LifeTimer = TickTimer.CreateFromSeconds(Runner, lifeTime);
-            }
+            if (Object.HasStateAuthority) LifeTimer = TickTimer.CreateFromSeconds(Runner, lifeTime);
 
             AnyBulletSpawned?.Invoke(this);
         }
@@ -64,17 +66,20 @@ namespace ArcShot.Networking
 
             if (receiver != null)
             {
-                receiver.HostReceiveDamage(damage);
+                var isCritical = UnityEngine.Random.value < criticalHitChance;
+                var finalDamage = isCritical ? damage * 2 : damage;
+
+                receiver.HostReceiveDamage(finalDamage);
 
                 var victim = receiverObj.GetComponent<PlayerNetworkController>();
-                if (victim != null)
-                {
-                    victim.HostRegisterDamageTaken(damage);
-                }
+                if (victim != null) victim.HostRegisterDamageTaken(finalDamage);
 
                 if (Shooter != null)
                 {
-                    Shooter.HostRegisterHit(damage);
+                    if (isCritical)
+                        Shooter.HostRegisterCriticalHit(finalDamage);
+                    else
+                        Shooter.HostRegisterHit(finalDamage);
                 }
             }
 

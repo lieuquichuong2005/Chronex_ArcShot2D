@@ -4,6 +4,7 @@ using System.Linq;
 using Arcshot;
 using ArcShot.Networking;
 using Chronex.Networking;
+using Chronex.Services.Profile;
 using Cysharp.Threading.Tasks;
 using Fusion;
 using QuiChuong2005;
@@ -275,7 +276,7 @@ namespace ArcShot
 
         private bool SpawnMap()
         {
-            string mapId = !string.IsNullOrEmpty(QuiChuong2005.Framework.Services.Bootstrap.Instance?.SelectedMapId)
+            var mapId = !string.IsNullOrEmpty(QuiChuong2005.Framework.Services.Bootstrap.Instance?.SelectedMapId)
                 ? QuiChuong2005.Framework.Services.Bootstrap.Instance.SelectedMapId
                 : selectedMapId;
 
@@ -375,24 +376,61 @@ namespace ArcShot
 
             var stats = MatchStatsTracker.Instance;
 
+            var profileService = ServiceLocator.Instance
+                .Get<IPlayerProfileService>();
+
+            // --- Calculate Match EXP ---
+            // BaseExp = 50
+            const float baseExp = 50f;
+
+            // WinBonus = 20 if player wins, otherwise 0
+            var isVictory = winningTeamId != -1 && localPlayer.TeamId == winningTeamId;
+            var winBonus = isVictory ? 20f : 0f;
+
+            // DamageScore: ExpectedDamage = 85 (midpoint of 70-100)
+            const float expectedDamage = 85f;
+            var damageScore = Mathf.Clamp01(localPlayer.DamageDealt / expectedDamage);
+
+            // AccuracyScore: BulletsHit / BulletsFired (ratio 0-1)
+            var accuracyScore = localPlayer.ShotsFired > 0
+                ? Mathf.Clamp01((float)localPlayer.ShotsHit / localPlayer.ShotsFired)
+                : 0f;
+
+            // CritScore: CriticalHits / TotalHits, 30% crit rate = max score
+            float totalHits = localPlayer.ShotsHit; // ShotsHit includes both normal and crit hits
+            var critRate = totalHits > 0 ? (float)localPlayer.CriticalHits / totalHits : 0f;
+            var critScore = Mathf.Clamp01(critRate / 0.30f);
+
+            // PerformanceScore = DamageScore * 0.5 + AccuracyScore * 0.3 + CritScore * 0.2
+            var performanceScore = damageScore * 0.5f + accuracyScore * 0.3f + critScore * 0.2f;
+
+            // PerformanceExp = PerformanceScore * 80
+            var performanceExp = performanceScore * 80f;
+
+            // MatchExp = BaseExp + PerformanceExp + WinBonus, clamped to max 200
+            var matchExp = baseExp + performanceExp + winBonus;
+            matchExp = Mathf.Min(matchExp, 200f);
+
+            var expBonus = Mathf.RoundToInt(matchExp);
+
             var result = new MatchResultData
             {
                 PlayerName = localPlayer.PlayerName.ToString(),
-                IsVictory = winningTeamId != -1 && localPlayer.TeamId == winningTeamId,
+                IsVictory = isVictory,
 
                 DamageDealt = localPlayer.DamageDealt,
                 DamageTaken = localPlayer.DamageTaken,
                 MatchDuration = stats != null ? stats.GetMatchDuration() : 0f,
                 Accuracy = localPlayer.Accuracy,
                 Turns = TurnManagerNetwork.Instance != null ? TurnManagerNetwork.Instance.RoundCount + 1 : 0,
-                CritCount = 0,
+                CritCount = localPlayer.CriticalHits,
 
                 CoinBonus = Mathf.RoundToInt(localPlayer.DamageDealt * 2f),
-                ExpBonus = Mathf.RoundToInt(localPlayer.DamageDealt * 1.5f),
+                ExpBonus = expBonus,
 
-                CurrentLevel = 1,
-                CurrentExp = 0,
-                RequiredExp = 100
+                CurrentLevel = profileService?.Level ?? 1,
+                CurrentExp = profileService?.CurrentExp ?? 0,
+                RequiredExp = profileService?.RequiredExp ?? PlayerProfileService.CalculateRequiredExp(1)
             };
 
             var resultScene = await _sceneService.LoadSceneAsync<ResultScene>(nameof(ResultScene));
