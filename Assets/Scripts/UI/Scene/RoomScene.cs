@@ -18,7 +18,7 @@ namespace Chronex.UI.Room
     {
         [Header("Player")]
         [SerializeField]
-        private PlayerRoom _playerRoom; // Dùng làm PREFAB để Instantiate cho từng player.
+        private PlayerRoom _playerRoom; 
 
         [SerializeField]
         private Transform _playerParent;
@@ -72,6 +72,13 @@ namespace Chronex.UI.Room
 
         [SerializeField]
         private MapConfigsManager _mapConfigsManager;
+
+        [Space(5)]
+        [SerializeField]
+        private ChatPrefab _chatMessagePrefab;
+
+        [SerializeField]
+        private ScrollRect _chatScrollRect;
 
         [Inject]
         private INetworkService _networkService;
@@ -326,9 +333,18 @@ namespace Chronex.UI.Room
 
         private void HandleChatMessageReceived(string playerName, string message)
         {
-            // TODO: cần 1 chat message prefab (TMP Text) để Instantiate vào _chatParent -
-            // hiện tại field _chatParent chỉ là Transform container, chưa có prefab dòng chat cụ thể.
-            Debug.Log($"[Chat] {playerName}: {message}");
+            var chatItem = Instantiate(_chatMessagePrefab, _chatParent);
+            chatItem.SetContent(playerName, message);
+
+            ScrollChatToBottom();
+        }
+
+        private void ScrollChatToBottom()
+        {
+            if (_chatScrollRect == null) return;
+
+            Canvas.ForceUpdateCanvases();
+            _chatScrollRect.verticalNormalizedPosition = 0f;
         }
 
         private async UniTaskVoid BindPlayerViewWhenReady(PlayerRef player)
