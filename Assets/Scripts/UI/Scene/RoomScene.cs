@@ -159,6 +159,8 @@ namespace Chronex.UI.Room
             _nextMapButton.onClick.AddListener(OnClickNextMap);
             _previousMapButton.interactable = _isHost;
             _nextMapButton.interactable = _isHost;
+
+            _chatInput.onSubmit.AddListener(_ => { OnClickSendChat(); });
         }
 
         private void UpdatePlayerCountText()
