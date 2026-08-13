@@ -924,6 +924,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 90cdc462213b11f4a845131267430a2e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _slotIndexText: {fileID: 4655262022386001431}
   _playerName: {fileID: 3256425552895685849}
   _playerLevel: {fileID: 200576977627495336}
   _playerRank: {fileID: 3050500494573582948}

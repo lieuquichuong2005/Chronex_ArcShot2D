@@ -14,27 +14,35 @@ namespace Chronex.Networking
         [Networked, OnChangedRender(nameof(OnPlayerNameChanged))]
         public NetworkString<_32> PlayerName { get; set; }
 
+        [Networked, OnChangedRender(nameof(OnLevelChanged))]
+        public int Level { get; set; }
+
         [Networked, OnChangedRender(nameof(OnReadyChanged))]
         public NetworkBool IsReady { get; set; }
 
         [Networked, OnChangedRender(nameof(OnHostChanged))]
         public NetworkBool IsHost { get; set; }
 
+        [Networked, OnChangedRender(nameof(OnSlotIndexChanged))]
+        public int SlotIndex { get; set; }
+
         public event Action OnDespawned;
 
         public event Action PlayerNameChanged;
+        public event Action LevelChanged;
         public event Action ReadyChanged;
         public event Action HostChanged;
+
+        public event Action SlotIndexChanged;
 
         public override void Spawned()
         {
             if (Object.HasInputAuthority)
             {
-                string playerName = QuiChuong2005.ServiceLocator.Instance
-                    .Get<Chronex.Services.Profile.IPlayerProfileService>()
-                    .PlayerName;
+                var profile = QuiChuong2005.ServiceLocator.Instance
+                    .Get<Chronex.Services.Profile.IPlayerProfileService>();
 
-                RPC_SetName(playerName);
+                RPC_SetProfile(profile.PlayerName, profile.Level);
             }
         }
 
@@ -48,6 +56,13 @@ namespace Chronex.Networking
 
         [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
         public void RPC_SetReady(NetworkBool ready) => IsReady = ready;
+
+        [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
+        public void RPC_SetProfile(string name, int level)
+        {
+            PlayerName = name;
+            Level = level;
+        }
 
         private void OnPlayerNameChanged()
         {
@@ -63,5 +78,12 @@ namespace Chronex.Networking
         {
             HostChanged?.Invoke();
         }
+
+        private void OnSlotIndexChanged()
+        {
+            SlotIndexChanged?.Invoke();
+        }
+
+        private void OnLevelChanged() => LevelChanged?.Invoke();
     }
 }

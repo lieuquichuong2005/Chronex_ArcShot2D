@@ -18,7 +18,7 @@ namespace Chronex.UI.Room
     {
         [Header("Player")]
         [SerializeField]
-        private PlayerRoom _playerRoom; 
+        private PlayerRoom _playerRoom;
 
         [SerializeField]
         private Transform _playerParent;
@@ -95,6 +95,7 @@ namespace Chronex.UI.Room
         private readonly System.Collections.Generic.Dictionary<PlayerRef, PlayerRoom> _spawnedViews = new();
         private bool _isHost;
         private int _maxPlayerCount;
+        private int _nextSlotIndex = 1;
 
         private void Awake()
         {
@@ -181,13 +182,12 @@ namespace Chronex.UI.Room
 
         private void SpawnPlayerObject(PlayerRef player, bool isHost)
         {
-            Debug.Log($"Spawn player object: {player}");
-
             var spawned = _networkService.Runner.Spawn(_roomPlayerNetworkPrefab, inputAuthority: player);
             _networkService.Runner.SetPlayerObject(player, spawned);
 
             var data = spawned.GetComponent<RoomPlayerNetworkObject>();
             data.IsHost = isHost;
+            data.SlotIndex = _nextSlotIndex++;
 
             BindPlayerView(player, data);
             UpdatePlayerCountText();

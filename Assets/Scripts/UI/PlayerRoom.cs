@@ -17,6 +17,9 @@ public class PlayerRoom : MonoBehaviour
     private IAudioService _audioService;
 
     [SerializeField]
+    private TextMeshProUGUI _slotIndexText;
+
+    [SerializeField]
     private TextMeshProUGUI _playerName;
 
     [SerializeField]
@@ -62,41 +65,38 @@ public class PlayerRoom : MonoBehaviour
         ServiceLocator.Instance.Resolve(this);
     }
 
-    /// <summary>
-    /// Gọi bởi RoomSceneController ngay sau khi Instantiate prefab này cho 1 player.
-    /// </summary>
     public void Bind(RoomPlayerNetworkObject data, bool isLocalPlayer)
     {
         _data = data;
         _isLocalPlayer = isLocalPlayer;
 
         _data.PlayerNameChanged += Refresh;
+        _data.LevelChanged += Refresh;
         _data.ReadyChanged += Refresh;
         _data.HostChanged += Refresh;
+        _data.SlotIndexChanged += Refresh;
         _data.OnDespawned += HandleDespawn;
-
-        _playerLevel.text = "Lv.1";
 
         Refresh();
     }
 
     private void HandleDespawn()
     {
-        if (_data == null)
-            return;
+        if (_data == null) return;
 
         _data.PlayerNameChanged -= Refresh;
+        _data.LevelChanged -= Refresh;
         _data.ReadyChanged -= Refresh;
         _data.HostChanged -= Refresh;
+        _data.SlotIndexChanged -= Refresh;
         _data.OnDespawned -= HandleDespawn;
 
         _data = null;
     }
 
-
     public void OnPressed()
     {
-        if (!_isLocalPlayer || _data.IsHost) return; // Host không tự bấm Ready cho chính mình.
+        if (!_isLocalPlayer || _data.IsHost) return;
 
         _audioService.PlaySfx(Audio.SFX_Click);
         PressedCallback?.Invoke();
@@ -105,6 +105,8 @@ public class PlayerRoom : MonoBehaviour
     private void Refresh()
     {
         _playerName.text = _data.PlayerName.ToString();
+        _playerLevel.text = $"Lv.{_data.Level}";
+        _slotIndexText.text = _data.SlotIndex.ToString();
 
         UpdateReadyState();
         ReadyStateChanged?.Invoke();
