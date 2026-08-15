@@ -53,6 +53,12 @@ namespace ArcShot.Networking
         {
             if (!Object.HasStateAuthority) return;
 
+            if (WindManager.Instance != null)
+            {
+                float windForce = WindManager.Instance.GetWindForce();
+                rb.AddForce(new Vector2(windForce, 0f), ForceMode2D.Force);
+            }
+
             if (LifeTimer.Expired(Runner)) Resolve();
         }
 

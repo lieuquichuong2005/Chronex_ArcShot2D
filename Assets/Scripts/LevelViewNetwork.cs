@@ -44,6 +44,10 @@ namespace ArcShot
         [SerializeField]
         private NetworkObject _matchStatsTrackerPrefab;
 
+        [Header("Wind")]
+        [SerializeField]
+        private NetworkObject _WindManagerPrefab;
+
         [Header("UI")]
         [SerializeField]
         private LevelScene scene;
@@ -83,17 +87,17 @@ namespace ArcShot
             }
 
             SubscribeTurnManagerWhenReady().Forget();
+            SubscribeWindManagerWhenReady().Forget();
             BindLocalPlayer().Forget();
 
-            BulletNetwork.AnyBulletSpawned += HandleAnyBulletSpawned; // THÊM
-            BulletNetwork.AnyBulletResolved += HandleAnyBulletResolved; // THÊM
+            BulletNetwork.AnyBulletSpawned += HandleAnyBulletSpawned;
+            BulletNetwork.AnyBulletResolved += HandleAnyBulletResolved;
 
             if (scene.SkipTurnButton != null)
                 scene.SkipTurnButton.onClick.AddListener(HandleSkipTurnClicked);
 
-            SubscribeMatchStatsWhenReady().Forget(); // THÊM
+            SubscribeMatchStatsWhenReady().Forget();
         }
-
 
         private void Update()
         {
@@ -106,6 +110,8 @@ namespace ArcShot
                 TurnManagerNetwork.Instance.OnTurnStarted -= HandleTurnStarted;
             if (PlayerNetworkController.LocalPlayer != null)
                 PlayerNetworkController.LocalPlayer.OnTurnChanged -= HandleLocalTurnChanged;
+            if (WindManager.Instance != null)
+                WindManager.Instance.WindChanged -= HandleWindChanged;
 
             BulletNetwork.AnyBulletSpawned -= HandleAnyBulletSpawned;
             BulletNetwork.AnyBulletResolved -= HandleAnyBulletResolved;
@@ -113,7 +119,6 @@ namespace ArcShot
             if (MatchStatsTracker.Instance != null)
                 MatchStatsTracker.Instance.OnMatchEnded -= HandleMatchEnded;
         }
-
 
         private void SpawnPlayersHost()
         {
@@ -176,6 +181,7 @@ namespace ArcShot
         {
             _networkService.Runner.Spawn(_turnManagerNetworkPrefab);
             _networkService.Runner.Spawn(_matchStatsTrackerPrefab);
+            _networkService.Runner.Spawn(_WindManagerPrefab); // THÊM
 
             var participants = PlayerNetworkController.AllPlayers
                 .OrderBy(p => p.TurnOrderIndex)
@@ -435,6 +441,21 @@ namespace ArcShot
 
             var resultScene = await _sceneService.LoadSceneAsync<ResultScene>(nameof(ResultScene));
             await resultScene.Initialize(result);
+        }
+
+        private async UniTaskVoid SubscribeWindManagerWhenReady()
+        {
+            while (WindManager.Instance == null)
+                await UniTask.Yield();
+
+            WindManager.Instance.WindChanged += HandleWindChanged;
+
+            HandleWindChanged(WindManager.Instance.WindDirection, WindManager.Instance.WindLevel);
+        }
+
+        private void HandleWindChanged(int direction, int level)
+        {
+            scene.SetWind(direction, level);
         }
     }
 }

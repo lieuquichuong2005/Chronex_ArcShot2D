@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using Chronex.Networking;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -29,6 +31,12 @@ public class LevelScene : MonoBehaviour
     private Button _skipTurnButton;
 
 
+    [SerializeField]
+    private Image _windDirection;
+
+    [SerializeField]
+    private GameObject[] _windLevelObjects;
+
     [Header("Movement Buttons")]
     [SerializeField]
     private EventTrigger _moveLeftButton;
@@ -53,7 +61,6 @@ public class LevelScene : MonoBehaviour
     [SerializeField]
     private GameObject _bottomLayer;
 
-
     public Image FirePower => _firePower;
     public Image Stamina => _stamina;
     public TextMeshProUGUI FireAngle => _fireAngle;
@@ -72,5 +79,18 @@ public class LevelScene : MonoBehaviour
         _inputLayer.SetActive(isActive);
         _bottomLayer.SetActive(isActive);
         _skipTurnButton.gameObject.SetActive(isActive);
+    }
+
+    public void SetWind(int direction, int level)
+    {
+        if (direction != 0)
+        {
+            var scale = _windDirection.transform.localScale;
+            scale.x = direction < 0 ? Mathf.Abs(scale.x) : -Mathf.Abs(scale.x);
+            _windDirection.transform.localScale = scale;
+        }
+
+        for (var i = 0; i < _windLevelObjects.Length; i++)
+            _windLevelObjects[i].SetActive(i < level);
     }
 }
