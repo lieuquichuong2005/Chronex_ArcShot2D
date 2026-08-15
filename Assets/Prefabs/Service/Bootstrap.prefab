@@ -45,3 +45,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _audioLibrary: {fileID: 11400000, guid: 6debd9cba0759594db11e80bc11f4739, type: 2}
+  _entityFactory: {fileID: 11400000, guid: e7ebef65b977fa84c8f619b03acd5ef9, type: 2}

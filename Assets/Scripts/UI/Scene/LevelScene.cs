@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Chronex.Networking;
 using TMPro;
 using UnityEngine;
@@ -91,6 +92,11 @@ public class LevelScene : MonoBehaviour
         if (direction == 0)
         {
             _windDirection.sprite = _calmWind;
+            foreach (var leaf in _windLevelObjects)
+            {
+                leaf.SetActive(false);
+            }
+
             return;
         }
 

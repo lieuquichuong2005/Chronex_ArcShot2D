@@ -1,5 +1,6 @@
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using QuiChuong2005;
 using TMPro;
 using UnityEngine;
 
@@ -9,7 +10,7 @@ namespace ArcShot
     /// Text damage bay lên tại vị trí bị bắn trúng. Component thuần local (không networked) -
     /// mỗi client tự spawn khi nhận RPC broadcast từ BulletNetwork.
     /// </summary>
-    public class DamageFloatingText : MonoBehaviour
+    public class DamageFloatingText : EntityBase
     {
         [SerializeField]
         private TextMeshPro _text;

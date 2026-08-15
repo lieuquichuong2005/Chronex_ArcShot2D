@@ -21,6 +21,9 @@ namespace QuiChuong2005.Framework.Services
         [SerializeField]
         private AudioLibrary _audioLibrary;
 
+        [SerializeField]
+        private EntityCatalogSO _entityFactory;
+
         public bool IsInitialized { get; private set; }
 
         public event Action<string> OnStatusChanged;
@@ -99,6 +102,9 @@ namespace QuiChuong2005.Framework.Services
             var audioService = new AudioService();
             audioService.RegisterLibrary<global::Audio>(_audioLibrary);
             locator.Register<IAudioService>(audioService);
+
+            var entityService = new EntityService(_entityFactory.Entities);
+            locator.Register<IEntityService>(entityService);
 
             // --- Phase 1: Firebase SDK ---
             OnStatusChanged?.Invoke("Đang khởi tạo Firebase...");
