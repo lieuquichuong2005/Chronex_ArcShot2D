@@ -294,6 +294,8 @@ namespace ArcShot
                 return false;
             }
 
+            scene.SetBackground(currentMapConfig.MapBackground); 
+
             Instantiate(currentMapConfig.MapPrefab, _mapTransform);
             return true;
         }

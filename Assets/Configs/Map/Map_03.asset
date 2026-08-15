@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Map_03
   m_EditorClassIdentifier: 
   MapId: map_03
+  MapBackground: {fileID: 21300000, guid: 33b78e45a7ec6eb40b50412326c5c7db, type: 3}
   IconMap: {fileID: 21300000, guid: b011f31c4dc0b8040aa7afa8fd33c282, type: 3}
   MapPrefab: {fileID: 2915942995752035095, guid: a122068efaa124e44a715259f0cbf1ee, type: 3}
   CanDig: 0

@@ -8,6 +8,7 @@ using UnityEditor;
 public class MapConfig : ScriptableObject
 {
     public string MapId;
+    public Sprite MapBackground;
     public Sprite IconMap;
     public GameObject MapPrefab;
     public bool CanDig;

@@ -11,6 +11,9 @@ using UnityEngine.UI;
 /// </summary>
 public class LevelScene : MonoBehaviour
 {
+    [SerializeField]
+    private Image _background;
+
     [Header("HUD")]
     [SerializeField]
     private Image _firePower;
@@ -29,7 +32,6 @@ public class LevelScene : MonoBehaviour
 
     [SerializeField]
     private Button _skipTurnButton;
-
 
     [SerializeField]
     private Image _windDirection;
@@ -92,5 +94,11 @@ public class LevelScene : MonoBehaviour
 
         for (var i = 0; i < _windLevelObjects.Length; i++)
             _windLevelObjects[i].SetActive(i < level);
+    }
+
+    public void SetBackground(Sprite background)
+    {
+        if (background == null) return;
+        _background.sprite = background;
     }
 }
