@@ -157,7 +157,7 @@ namespace ArcShot.Networking
                         Shooter.HostRegisterHit(finalDamage);
                 }
 
-                RPC_ShowDamageText(receiverObj.transform.position, finalDamage, isCritical);
+                receiver.RPC_ShowDamageText(finalDamage, isCritical);
             }
 
             Resolve();
