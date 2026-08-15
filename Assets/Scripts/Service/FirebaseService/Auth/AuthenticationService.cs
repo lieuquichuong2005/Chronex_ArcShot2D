@@ -27,20 +27,15 @@ namespace Chronex.Services
         public async UniTask InitializeAsync(CancellationToken cancellationToken)
         {
             if (_firebaseService == null || !_firebaseService.IsReady)
-            {
                 throw new InvalidOperationException(
                     "AuthenticationService yêu cầu FirebaseService phải khởi tạo trước. " +
                     "Kiểm tra thứ tự Register/Resolve trong Bootstrap.");
-            }
 
             _currentUser = _firebaseService.Auth.CurrentUser;
 
             // FPS online thường cần 1 UserId ngay tại splash để Photon connect được,
             // nên nếu chưa có session cũ thì auto anonymous login.
-            if (_currentUser == null)
-            {
-                await SignInAnonymouslyAsync(cancellationToken);
-            }
+            if (_currentUser == null) await SignInAnonymouslyAsync(cancellationToken);
         }
 
         private async UniTask SignInAnonymouslyAsync(CancellationToken cancellationToken)
@@ -49,7 +44,7 @@ namespace Chronex.Services
             {
                 // Lưu ý: kiểu trả về (AuthResult vs FirebaseUser) tuỳ version Firebase SDK,
                 // kiểm tra lại theo version bạn đang dùng.
-                AuthResult result = await _firebaseService.Auth
+                var result = await _firebaseService.Auth
                     .SignInAnonymouslyAsync()
                     .AsUniTask();
 
@@ -61,7 +56,7 @@ namespace Chronex.Services
             }
             catch (Exception ex)
             {
-                string message = GetErrorMessage(ex);
+                var message = GetErrorMessage(ex);
                 OnAuthError?.Invoke(message);
                 throw; // để Bootstrap biết Phase này fail và dừng flow
             }
@@ -71,7 +66,7 @@ namespace Chronex.Services
         {
             try
             {
-                AuthResult result = await _firebaseService.Auth
+                var result = await _firebaseService.Auth
                     .CreateUserWithEmailAndPasswordAsync(email, password)
                     .AsUniTask();
 
@@ -88,7 +83,7 @@ namespace Chronex.Services
         {
             try
             {
-                AuthResult result = await _firebaseService.Auth
+                var result = await _firebaseService.Auth
                     .SignInWithEmailAndPasswordAsync(email, password)
                     .AsUniTask();
 
@@ -144,9 +139,15 @@ namespace Chronex.Services
             OnLogout?.Invoke();
         }
 
-        public bool IsLoggedIn() => _currentUser != null;
+        public bool IsLoggedIn()
+        {
+            return _currentUser != null;
+        }
 
-        public FirebaseUser GetCurrentUser() => _currentUser;
+        public FirebaseUser GetCurrentUser()
+        {
+            return _currentUser;
+        }
 
         private string GetErrorMessage(Exception exception)
         {
@@ -154,20 +155,21 @@ namespace Chronex.Services
                              ?? (exception as AggregateException)?.GetBaseException() as FirebaseException;
 
             if (firebaseEx == null)
-                return "Có lỗi xảy ra.";
+                return "An error occurred.";
 
             var errorCode = (AuthError)firebaseEx.ErrorCode;
 
             return errorCode switch
             {
-                AuthError.WrongPassword => "Sai mật khẩu.",
-                AuthError.InvalidEmail => "Email không hợp lệ.",
-                AuthError.UserNotFound => "Tài khoản không tồn tại.",
-                AuthError.EmailAlreadyInUse => "Email đã được sử dụng.",
-                AuthError.WeakPassword => "Mật khẩu quá yếu (tối thiểu 6 ký tự).",
-                AuthError.MissingEmail => "Vui lòng nhập email.",
-                AuthError.MissingPassword => "Vui lòng nhập mật khẩu.",
-                _ => $"Lỗi: {errorCode}"
+                AuthError.WrongPassword => "Incorrect password.",
+                AuthError.InvalidEmail => "Invalid email address.",
+                AuthError.UserNotFound => "Account does not exist.",
+                AuthError.EmailAlreadyInUse => "Email is already in use.",
+                AuthError.WeakPassword => "Password is too weak (minimum 6 characters).",
+                AuthError.MissingEmail => "Please enter your email.",
+                AuthError.MissingPassword => "Please enter your password.",
+                AuthError.UserTokenExpired => "Your session has expired. Please log in again.",
+                _ => $"Error: {errorCode}"
             };
         }
     }
