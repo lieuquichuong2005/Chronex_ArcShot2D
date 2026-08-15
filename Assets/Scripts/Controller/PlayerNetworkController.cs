@@ -105,7 +105,7 @@ namespace ArcShot
                 CurrentStamina = maxStamina;
 
             ApplyFacingVisual(FacingRight);
-            if (_turnTransform != null) _turnTransform.SetActive(IsMyTurn);
+            // _turnTransform.SetActive(IsMyTurn);
 
             ApplySkin(Skin);
             ApplyName(PlayerName.ToString());
@@ -149,8 +149,7 @@ namespace ArcShot
                         break;
 
                     case nameof(IsMyTurn):
-                        if (_turnTransform != null)
-                            _turnTransform.SetActive(IsMyTurn);
+                        // _turnTransform.SetActive(IsMyTurn);
                         OnTurnChanged?.Invoke(IsMyTurn);
                         break;
 

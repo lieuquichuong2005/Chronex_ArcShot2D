@@ -191,8 +191,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _text: {fileID: 6198949542437769626}
-  duration: 1
-  riseHeight: 1.5
+  duration: 2
+  riseHeight: 3
   riseCurve:
     serializedVersion: 2
     m_Curve:
@@ -241,11 +241,11 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  bounceHeight: 0.3
-  bounceDuration: 0.15
+  bounceHeight: 0.5
+  bounceDuration: 0.3
   normalColor: {r: 1, g: 0, b: 0, a: 1}
   critColor: {r: 1, g: 0.15, b: 0.1, a: 1}
-  normalFontSize: 4
-  critFontSize: 6.5
+  normalFontSize: 10
+  critFontSize: 14
   critPunchScale: 1.4
-  critShakeStrength: 0.08
+  critShakeStrength: 0.1
