@@ -2,6 +2,7 @@ using System;
 using Arcshot.Networking;
 using Fusion;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace ArcShot.Networking
 {
@@ -13,16 +14,64 @@ namespace ArcShot.Networking
     [RequireComponent(typeof(NetworkTransform))]
     public sealed class BulletNetwork : NetworkBehaviour
     {
+        private enum HitQuality
+        {
+            Grazing,
+            Normal,
+            Direct,
+            Perfect
+        }
+
         [SerializeField]
         private float lifeTime = 10f;
 
+        [Header("Hit Quality")]
         [SerializeField]
-        private int damage = 25;
+        private float perfectThreshold = 0.4f;
+
+        [SerializeField]
+        private float directThreshold = 0.8f;
+
+        [SerializeField]
+        private float normalThreshold = 1.2f;
+
+        [Header("Damage Ranges")]
+        [SerializeField]
+        private Vector2Int grazingDamage = new(15, 18);
+
+        [SerializeField]
+        private Vector2Int normalDamage = new(21, 25);
+
+        [SerializeField]
+        private Vector2Int directDamage = new(26, 30);
+
+        [SerializeField]
+        private Vector2Int perfectDamage = new(29, 32);
 
         [Header("Critical Hit")]
         [SerializeField]
-        [Range(0f, 1f)]
-        private float criticalHitChance = 0.3f;
+        private int grazingCritChance = 5;
+
+        [SerializeField]
+        private int normalCritChance = 15;
+
+        [SerializeField]
+        private int directCritChance = 30;
+
+        [SerializeField]
+        private int perfectCritChance = 50;
+
+        [SerializeField]
+        private int critBonusMin = 3;
+
+        [SerializeField]
+        private int critBonusMax = 5;
+
+        [SerializeField]
+        private int perfectCritBonusMin = 4;
+
+        [SerializeField]
+        private int perfectCritBonusMax = 6;
 
         [SerializeField]
         private Rigidbody2D rb;
@@ -55,7 +104,7 @@ namespace ArcShot.Networking
 
             if (WindManager.Instance != null)
             {
-                float windForce = WindManager.Instance.GetWindForce();
+                var windForce = WindManager.Instance.GetWindForce();
                 rb.AddForce(new Vector2(windForce, 0f), ForceMode2D.Force);
             }
 
@@ -72,8 +121,28 @@ namespace ArcShot.Networking
 
             if (receiver != null)
             {
-                var isCritical = UnityEngine.Random.value < criticalHitChance;
-                var finalDamage = isCritical ? damage * 2 : damage;
+                Vector2 impactPoint = transform.position;
+                var targetCenter = other.attachedRigidbody != null
+                    ? (Vector2)other.attachedRigidbody.transform.position
+                    : (Vector2)other.transform.position;
+                var distance = Vector2.Distance(impactPoint, targetCenter);
+
+                var quality = GetHitQuality(distance);
+                var baseDamage = GetBaseDamage(quality);
+
+                var critChance = GetCritChance(quality);
+                var isCritical = Random.Range(0, 100) < critChance;
+
+                var finalDamage = baseDamage;
+                if (isCritical)
+                {
+                    var bonus = quality == HitQuality.Perfect
+                        ? Random.Range(perfectCritBonusMin, perfectCritBonusMax + 1)
+                        : Random.Range(critBonusMin, critBonusMax + 1);
+                    finalDamage = Mathf.Min(baseDamage + bonus, 35);
+                }
+
+                finalDamage = Mathf.Clamp(finalDamage, 15, 35);
 
                 receiver.HostReceiveDamage(finalDamage);
 
@@ -95,6 +164,39 @@ namespace ArcShot.Networking
         public void SetShooter(PlayerNetworkController shooter)
         {
             if (Object.HasStateAuthority) Shooter = shooter;
+        }
+
+
+        private HitQuality GetHitQuality(float distance)
+        {
+            if (distance < perfectThreshold) return HitQuality.Perfect;
+            if (distance < directThreshold) return HitQuality.Direct;
+            if (distance < normalThreshold) return HitQuality.Normal;
+            return HitQuality.Grazing;
+        }
+
+        private int GetBaseDamage(HitQuality quality)
+        {
+            return quality switch
+            {
+                HitQuality.Grazing => Random.Range(grazingDamage.x, grazingDamage.y + 1),
+                HitQuality.Normal => Random.Range(normalDamage.x, normalDamage.y + 1),
+                HitQuality.Direct => Random.Range(directDamage.x, directDamage.y + 1),
+                HitQuality.Perfect => Random.Range(perfectDamage.x, perfectDamage.y + 1),
+                _ => Random.Range(normalDamage.x, normalDamage.y + 1)
+            };
+        }
+
+        private int GetCritChance(HitQuality quality)
+        {
+            return quality switch
+            {
+                HitQuality.Grazing => grazingCritChance,
+                HitQuality.Normal => normalCritChance,
+                HitQuality.Direct => directCritChance,
+                HitQuality.Perfect => perfectCritChance,
+                _ => normalCritChance
+            };
         }
 
 

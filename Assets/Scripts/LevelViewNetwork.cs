@@ -395,8 +395,8 @@ namespace ArcShot
             var isVictory = winningTeamId != -1 && localPlayer.TeamId == winningTeamId;
             var winBonus = isVictory ? 20f : 0f;
 
-            // DamageScore: ExpectedDamage = 85 (midpoint of 70-100)
-            const float expectedDamage = 85f;
+            // DamageScore: ExpectedDamage = 150 (avg ~23-27 per hit, ~6 hits per match)
+            const float expectedDamage = 150f;
             var damageScore = Mathf.Clamp01(localPlayer.DamageDealt / expectedDamage);
 
             // AccuracyScore: BulletsHit / BulletsFired (ratio 0-1)
