@@ -14,6 +14,9 @@ public class LevelScene : MonoBehaviour
     [SerializeField]
     private Image _background;
 
+    [SerializeField]
+    private Sprite _calmWind, _dirWind;
+
     [Header("HUD")]
     [SerializeField]
     private Image _firePower;
@@ -85,12 +88,16 @@ public class LevelScene : MonoBehaviour
 
     public void SetWind(int direction, int level)
     {
-        if (direction != 0)
+        if (direction == 0)
         {
-            var scale = _windDirection.transform.localScale;
-            scale.x = direction < 0 ? Mathf.Abs(scale.x) : -Mathf.Abs(scale.x);
-            _windDirection.transform.localScale = scale;
+            _windDirection.sprite = _calmWind;
+            return;
         }
+
+        _windDirection.sprite = _dirWind;
+        var scale = _windDirection.transform.localScale;
+        scale.x = direction < 0 ? Mathf.Abs(scale.x) : -Mathf.Abs(scale.x);
+        _windDirection.transform.localScale = scale;
 
         for (var i = 0; i < _windLevelObjects.Length; i++)
             _windLevelObjects[i].SetActive(i < level);

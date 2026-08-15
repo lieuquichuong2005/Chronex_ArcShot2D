@@ -1580,6 +1580,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _background: {fileID: 1660878793575808587}
+  _calmWind: {fileID: 21300000, guid: f1e344e06eca43f488a6b0bd26ea4e91, type: 3}
+  _dirWind: {fileID: 21300000, guid: 48c44c641a9fcfe4ab627d16feb69cfa, type: 3}
   _firePower: {fileID: 9178737790847631178}
   _stamina: {fileID: 899440765357695841}
   _fireAngle: {fileID: 1844289983428012031}
