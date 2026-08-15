@@ -156,6 +156,8 @@ namespace ArcShot.Networking
                     else
                         Shooter.HostRegisterHit(finalDamage);
                 }
+
+                RPC_ShowDamageText(receiverObj.transform.position, finalDamage, isCritical);
             }
 
             Resolve();
@@ -165,7 +167,6 @@ namespace ArcShot.Networking
         {
             if (Object.HasStateAuthority) Shooter = shooter;
         }
-
 
         private HitQuality GetHitQuality(float distance)
         {
@@ -199,7 +200,6 @@ namespace ArcShot.Networking
             };
         }
 
-
         private void OnBecameInvisible()
         {
             if (_resolved) return; // THÊM
@@ -229,6 +229,13 @@ namespace ArcShot.Networking
 
             var angle = Mathf.Atan2(rb.linearVelocity.y, rb.linearVelocity.x) * Mathf.Rad2Deg;
             transform.rotation = Quaternion.Euler(0f, 0f, angle);
+        }
+
+        [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+        private void RPC_ShowDamageText(Vector3 position, int damage, bool isCritical)
+        {
+            if (DamageTextSpawner.Instance != null)
+                DamageTextSpawner.Instance.Spawn(position, damage, isCritical);
         }
     }
 }

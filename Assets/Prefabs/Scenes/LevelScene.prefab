@@ -3127,6 +3127,7 @@ GameObject:
   - component: {fileID: 8808471095808600263}
   - component: {fileID: 8925071998008182861}
   - component: {fileID: 268558168324739560}
+  - component: {fileID: 7266741274818327282}
   m_Layer: 0
   m_Name: LevelView
   m_TagString: Untagged
@@ -3222,6 +3223,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _scene: {fileID: 7932610585787104710}
+--- !u!114 &7266741274818327282
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5803957493423468898}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2191c6046a857f34e94c3193a8b23c70, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _damageTextPrefab: {fileID: 4265042620670652083, guid: b88f700747f6ef8408513d179d8adfa6, type: 3}
+  _spawnOffset: {x: 0, y: 1.2, z: 0}
+  _randomHorizontalOffset: 0.3
 --- !u!1 &5818170498648458071
 GameObject:
   m_ObjectHideFlags: 0
