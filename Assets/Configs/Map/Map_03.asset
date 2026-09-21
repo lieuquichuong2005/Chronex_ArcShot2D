@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c714e370ea3801a4db34439a5e13d1a9, type: 3}
+  m_Name: Map_03
+  m_EditorClassIdentifier: 
+  MapId: map_03
+  MapBackground: {fileID: 21300000, guid: 33b78e45a7ec6eb40b50412326c5c7db, type: 3}
+  IconMap: {fileID: 21300000, guid: b011f31c4dc0b8040aa7afa8fd33c282, type: 3}
+  MapPrefab: {fileID: 2915942995752035095, guid: a122068efaa124e44a715259f0cbf1ee, type: 3}
+  CanDig: 0
+  SpawnPoints_Left:
+  - {x: -6, y: 1.5}
+  - {x: -4, y: 1.5}
+  - {x: -2, y: 1.5}
+  SpawnPoints_Right:
+  - {x: 6, y: 1.5}
+  - {x: 4, y: 1.5}
+  - {x: 2, y: 1.5}

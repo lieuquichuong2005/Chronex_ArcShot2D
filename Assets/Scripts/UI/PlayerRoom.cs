@@ -1,0 +1,131 @@
+using System;
+using Chronex.Networking;
+using Fusion;
+using QuiChuong2005;
+using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
+
+/// <summary>
+/// View hiển thị 1 dòng player trong RoomScene. KHÔNG networked - đây là UI thuần,
+/// dữ liệu thật lấy từ RoomPlayerNetworkObject qua Bind(). Local player mới cho phép
+/// bấm để đổi Ready (client) - các dòng player khác chỉ hiển thị, không tương tác được.
+/// </summary>
+public class PlayerRoom : MonoBehaviour
+{
+    [Inject]
+    private IAudioService _audioService;
+
+    [SerializeField]
+    private TextMeshProUGUI _slotIndexText;
+
+    [SerializeField]
+    private TextMeshProUGUI _playerName;
+
+    [SerializeField]
+    private TextMeshProUGUI _playerLevel;
+
+    [SerializeField]
+    private Image _playerRank;
+
+    [SerializeField]
+    private Image _player;
+
+    [SerializeField]
+    private TextMeshProUGUI _stateText;
+
+    [SerializeField]
+    private Image _buttonImage;
+
+    [SerializeField]
+    private Image _iconState;
+
+    [SerializeField]
+    private Sprite _readyButtonSprite;
+
+    [SerializeField]
+    private Sprite _tickSprite;
+
+    [SerializeField]
+    private Sprite _prepareButtonSprite;
+
+    [SerializeField]
+    private Sprite _xSprite;
+
+    private RoomPlayerNetworkObject _data;
+    private bool _isLocalPlayer;
+
+    public Action PressedCallback;
+    public event Action ReadyStateChanged;
+
+    public bool IsReady => _data != null && _data.IsReady;
+
+    private void Awake()
+    {
+        ServiceLocator.Instance.Resolve(this);
+    }
+
+    public void Bind(RoomPlayerNetworkObject data, bool isLocalPlayer)
+    {
+        _data = data;
+        _isLocalPlayer = isLocalPlayer;
+
+        _data.PlayerNameChanged += Refresh;
+        _data.LevelChanged += Refresh;
+        _data.ReadyChanged += Refresh;
+        _data.HostChanged += Refresh;
+        _data.SlotIndexChanged += Refresh;
+        _data.OnDespawned += HandleDespawn;
+
+        Refresh();
+    }
+
+    private void HandleDespawn()
+    {
+        if (_data == null) return;
+
+        _data.PlayerNameChanged -= Refresh;
+        _data.LevelChanged -= Refresh;
+        _data.ReadyChanged -= Refresh;
+        _data.HostChanged -= Refresh;
+        _data.SlotIndexChanged -= Refresh;
+        _data.OnDespawned -= HandleDespawn;
+
+        _data = null;
+    }
+
+    public void OnPressed()
+    {
+        if (!_isLocalPlayer || _data.IsHost) return;
+
+        _audioService.PlaySfx(Audio.SFX_Click);
+        PressedCallback?.Invoke();
+    }
+
+    private void Refresh()
+    {
+        _playerName.text = _data.PlayerName.ToString();
+        _playerLevel.text = $"Lv.{_data.Level}";
+        _slotIndexText.text = _data.SlotIndex.ToString();
+
+        UpdateReadyState();
+        ReadyStateChanged?.Invoke();
+    }
+
+    private void UpdateReadyState()
+    {
+        bool ready = _data.IsReady;
+        bool isHost = _data.IsHost;
+        if (isHost)
+        {
+            _buttonImage.sprite = _readyButtonSprite;
+            _iconState.sprite = _tickSprite;
+            _stateText.text = "Host";
+            return;
+        }
+
+        _buttonImage.sprite = ready ? _readyButtonSprite : _prepareButtonSprite;
+        _iconState.sprite = ready ? _tickSprite : _xSprite;
+        _stateText.text = ready ? "Ready" : "Prepare";
+    }
+}
